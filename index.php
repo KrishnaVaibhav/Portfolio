@@ -1053,7 +1053,7 @@ mail($to,$subject,$txt,$headers);
 
                   <div class="card-body cc-education-header">
 
-                    <p>2009 - 2013</p>
+                    <p>2023 - 2025</p>
 
                     <div class="h5">Masters's Degree</div>
 
