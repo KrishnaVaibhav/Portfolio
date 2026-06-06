@@ -30,7 +30,7 @@ const socialLinks = [
   {
     icon: Linkedin,
     label: "LinkedIn",
-    href: "https://www.linkedin.com/in/krishna-vaibhav-yadlapalli/",
+    href: "https://www.linkedin.com/in/krishna-vaibhav-y/",
     color: "hover:text-primary",
   },
   {
