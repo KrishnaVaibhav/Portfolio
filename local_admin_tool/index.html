@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillArch Analytics - Local</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: #020617;
+            color: white;
+            font-family: sans-serif;
+        }
+
+        [x-cloak] {
+            display: none !important;
+        }
+
+        .glass {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 10px;
+        }
+
+        .scale-up {
+            animation: scaleUp 0.2s ease-out;
+        }
+
+        @keyframes scaleUp {
+            from {
+                transform: scale(0.95);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body x-data="adminApp" class="min-h-screen text-slate-200">
+
+    <!-- LOGIN SECTION -->
+    <div x-show="!isAuthenticated"
+        class="flex items-center justify-center min-h-screen bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-900/10 via-slate-950 to-black">
+        <div class="glass p-10 rounded-3xl w-full max-w-sm shadow-2xl space-y-8">
+            <div class="text-center">
+                <div
+                    class="bg-blue-600 w-12 h-12 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-lg shadow-blue-500/20">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 00-2 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <h1 class="text-3xl font-bold text-white tracking-tight">Admin Portal</h1>
+                <p class="text-slate-500 text-sm mt-2">Local Analytics Terminal</p>
+            </div>
+            <form @submit.prevent="login" class="space-y-4">
+                <input type="password" x-model="pass" placeholder="Primary Access Key"
+                    class="w-full bg-slate-950/50 border border-slate-800 rounded-2xl px-5 py-4 focus:ring-2 focus:ring-blue-500 outline-none transition-all placeholder:text-slate-600">
+                <button type="submit"
+                    class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 rounded-2xl transition-all active:scale-95 shadow-lg shadow-blue-900/20">
+                    Unlock Live Data
+                </button>
+                <p x-show="error" x-text="error"
+                    class="text-red-400 text-xs text-center font-medium bg-red-950/20 py-2 rounded-lg"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD SECTION -->
+    <div x-show="isAuthenticated" x-cloak class="h-screen flex flex-col overflow-hidden">
+
+        <!-- HEADER -->
+        <header class="bg-slate-950/80 border-b border-slate-800 p-6 space-y-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <h2 class="text-2xl font-black text-white italic tracking-tighter">SKILLARCH.LOGS</h2>
+                    <span
+                        class="bg-blue-500/10 text-blue-500 text-[10px] font-bold px-2 py-1 rounded border border-blue-500/20 tracking-widest">LIVE
+                        CONNECTION</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="flex bg-slate-950 rounded-xl border border-slate-800 p-1">
+                        <button @click="viewMode = 'list'"
+                            :class="viewMode === 'list' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:text-slate-400'"
+                            class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all uppercase tracking-widest">List</button>
+                        <button @click="viewMode = 'device'"
+                            :class="viewMode === 'device' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:text-slate-400'"
+                            class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all uppercase tracking-widest">Visitors</button>
+                        <button @click="viewMode = 'fingerprint'"
+                            :class="viewMode === 'fingerprint' ? 'bg-slate-800 text-white' : 'text-slate-600 hover:text-slate-400'"
+                            class="px-4 py-1.5 rounded-lg text-xs font-bold transition-all uppercase tracking-widest">Hardware</button>
+                    </div>
+                    <button @click="fetchLogs"
+                        class="p-2.5 bg-slate-900 border border-slate-800 rounded-xl hover:bg-slate-800 transition-all text-slate-400">
+                        <svg :class="loading ? 'animate-spin' : ''" class="w-5 h-5" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.28l5 5h9l5-5V4a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 00-2 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </button>
+                    <button @click="logout"
+                        class="text-slate-600 hover:text-white text-xs font-bold uppercase tracking-widest">Logout</button>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between">
+                <div class="flex-1 max-w-md relative">
+                    <input type="text" x-model="search" placeholder="Filter by Path, IP, City, OS..."
+                        class="w-full bg-slate-900 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-sm focus:ring-1 focus:ring-blue-500 outline-none">
+                    <svg class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-600" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                <div x-show="viewMode === 'list'">
+                    <button @click="clearAll"
+                        class="text-red-500/50 hover:text-red-500 font-bold text-[11px] uppercase tracking-widest transition-all">Format
+                        All Tables</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN TABLE -->
+        <main class="flex-1 overflow-auto p-6 bg-slate-950">
+            <div class="bg-slate-900/20 border border-slate-800/60 rounded-2xl overflow-hidden shadow-2xl">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                        <tr
+                            class="bg-slate-950/50 text-slate-600 text-[10px] font-bold uppercase tracking-[0.2em] border-b border-slate-800">
+                            <th class="px-6 py-4">TIMESTAMP</th>
+                            <th class="px-6 py-4">LOCATION DATA</th>
+                            <th x-show="viewMode !== 'list'" class="px-6 py-4 text-center">TOTAL HITS</th>
+                            <th x-show="viewMode === 'list'" class="px-6 py-4">REQUEST PATH</th>
+                            <th class="px-6 py-4">PLATFORM INFO</th>
+                            <th class="px-6 py-4">FINGERPRINT MATCH</th>
+                            <th class="px-6 py-4 text-right">ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/30">
+                        <template x-for="log in processedData" :key="log.id || log.group_key">
+                            <tr class="hover:bg-blue-600/[0.03] transition-colors group">
+                                <td class="px-6 py-4 text-slate-500 font-mono whitespace-nowrap"
+                                    x-text="formatDate(log.last_seen || log.created_at)"></td>
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="text-xl" x-text="getFlag(log.country)"></div>
+                                        <div>
+                                            <div class="text-slate-100 font-bold" x-text="log.city || 'Unknown'"></div>
+                                            <div class="text-slate-600 text-[10px]" x-text="log.country"></div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td x-show="viewMode !== 'list'" class="px-6 py-4 text-center">
+                                    <span class="text-blue-500 font-black text-2xl" x-text="log.visit_count"></span>
+                                </td>
+
+                                <td x-show="viewMode === 'list'"
+                                    class="px-6 py-4 font-mono text-blue-400 group-hover:text-blue-300 transition-colors truncate max-w-[200px]"
+                                    x-text="log.page_path"></td>
+
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-col">
+                                        <span class="text-slate-300 font-bold capitalize"
+                                            x-text="log.device_type"></span>
+                                        <span class="text-[9px] text-slate-600 uppercase"
+                                            x-text="log.meta?.platform || 'Web-Client'"></span>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="font-mono text-[9px] text-slate-600"
+                                            x-text="(log.meta?.visitor_id || 'UNKNOWN').substring(0,10) + '...'"></div>
+                                        <template x-if="viewMode === 'fingerprint' && log.visitor_ids.size > 1">
+                                            <span
+                                                class="bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded-full border border-amber-500/20 font-black text-[9px]"
+                                                x-text="log.visitor_ids.size + ' IDS'"></span>
+                                        </template>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4 text-right">
+                                    <div
+                                        class="flex items-center justify-end gap-3 opacity-20 group-hover:opacity-100 transition-opacity">
+                                        <button @click="openModal(log)"
+                                            class="bg-blue-600/10 hover:bg-blue-600 text-blue-500 hover:text-white px-3 py-1.5 rounded-lg font-bold text-[10px] transition-all border border-blue-500/20">VIEW</button>
+                                        <button @click="deleteEntry(log)"
+                                            class="text-rose-600 hover:bg-rose-600 hover:text-white p-1.5 rounded-lg transition-all">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+            <div x-show="!loading && logs.length === 0" class="text-center py-40">
+                <p class="text-slate-600 uppercase tracking-widest text-sm animate-pulse">Waiting for network
+                    interaction...</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- ADVANCED DETAIL MODAL -->
+    <div x-show="detail" x-cloak
+        class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/90 backdrop-blur-md"
+        @click.self="detail = null">
+        <div
+            class="bg-[#0f172a] border border-slate-800 rounded-[2rem] w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-[0_0_100px_rgba(37,99,235,0.15)] scale-up">
+
+            <header class="p-8 border-b border-white/5 flex justify-between items-start bg-slate-950/50">
+                <div>
+                    <h2 class="text-3xl font-black italic tracking-tighter text-blue-500">SESSION_INTEL</h2>
+                    <p class="text-slate-500 text-xs font-mono mt-1"
+                        x-text="'REFERENCE: ' + (detail?.id || detail?.group_key)"></p>
+                </div>
+                <button @click="detail = null"
+                    class="bg-slate-900 border border-slate-800 p-2.5 rounded-xl text-slate-500 hover:text-white transition-all">✕</button>
+            </header>
+
+            <div
+                class="flex-1 overflow-auto p-8 space-y-8 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-blue-900/5 via-transparent to-transparent">
+
+                <!-- TOP CARDS -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-white/5 space-y-4">
+                        <div class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">ENGAGEMENT</div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-end">
+                                <span class="text-xs text-slate-400">Total Interactions</span>
+                                <span class="text-2xl font-black" x-text="getInteractionStat('total_clicks')"></span>
+                            </div>
+                            <div class="flex justify-between items-end">
+                                <span class="text-xs text-slate-400">Avg Progress</span>
+                                <span class="text-lg font-bold text-blue-500"
+                                    x-text="getInteractionStat('avg_scroll') + '%'"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-white/5 space-y-4">
+                        <div class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">NETWORK_PERF</div>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-end">
+                                <span class="text-xs text-slate-400">Avg LoadTime</span>
+                                <span class="text-lg font-bold" x-text="getPerformanceStat('avg_load') + 'ms'"></span>
+                            </div>
+                            <div class="flex justify-between items-end">
+                                <span class="text-xs text-slate-400">Response (TTFB)</span>
+                                <span class="text-lg font-bold text-emerald-500"
+                                    x-text="getPerformanceStat('avg_ttfb') + 'ms'"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-900/50 p-6 rounded-2xl border border-white/5 space-y-4">
+                        <div class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">IDENTITY</div>
+                        <div class="space-y-3">
+                            <div class="text-xs text-slate-400">Platform Origin</div>
+                            <div class="text-lg font-bold"
+                                x-text="(detail?.latest_log || detail)?.meta?.platform || 'Generic SDK'"></div>
+                            <div class="text-[10px] text-slate-600 font-mono break-all"
+                                x-text="(detail?.latest_log || detail)?.user_agent"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- JOURNEY & FINGERPRINTS -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Path History -->
+                    <div class="space-y-4">
+                        <h4 class="text-sm font-bold flex items-center gap-2">
+                            <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div> PAGE_JOURNEY
+                        </h4>
+                        <div
+                            class="bg-slate-950/50 rounded-2xl border border-white/5 p-4 max-h-60 overflow-auto space-y-2">
+                            <template x-if="viewMode === 'list'">
+                                <div class="p-3 bg-white/5 rounded-xl text-xs font-mono text-blue-400"
+                                    x-text="detail?.page_path"></div>
+                            </template>
+                            <template x-if="viewMode !== 'list'">
+                                <template x-for="p in Array.from(detail.paths || [])">
+                                    <div class="p-3 bg-white/5 hover:bg-white/10 rounded-xl text-xs font-mono transition-colors"
+                                        x-text="p"></div>
+                                </template>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Hardware Stats -->
+                    <div class="space-y-4">
+                        <h4 class="text-sm font-bold flex items-center gap-2">
+                            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> HARDWARE_HASHES
+                        </h4>
+                        <div class="bg-slate-950/50 rounded-2xl border border-white/5 p-6 space-y-4">
+                            <div>
+                                <label class="text-[9px] text-slate-600 block mb-1">CANVAS_CORE</label>
+                                <div class="text-[10px] font-mono text-slate-400 break-all bg-black/30 p-2 rounded"
+                                    x-text="(detail?.latest_log || detail).meta?.fingerprints?.canvas || 'N/A'"></div>
+                            </div>
+                            <div>
+                                <label class="text-[9px] text-slate-600 block mb-1">AUDIO_ENGINE</label>
+                                <div class="text-[10px] font-mono text-slate-400 break-all bg-black/30 p-2 rounded"
+                                    x-text="(detail?.latest_log || detail).meta?.fingerprints?.audio || 'N/A'"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RAW DATA -->
+                <div class="space-y-4">
+                    <h4 class="text-sm font-bold text-slate-500 italic">SYSTEM_ROOT_METADATA</h4>
+                    <pre class="bg-black/80 p-6 rounded-2xl border border-white/5 text-[10px] font-mono text-blue-400/80 overflow-auto max-h-80"
+                        x-text="JSON.stringify(detail?.latest_log?.meta || detail?.meta, null, 2)"></pre>
+                </div>
+            </div>
+
+            <footer class="p-6 bg-slate-950/50 border-t border-white/5 flex justify-end">
+                <button @click="detail = null"
+                    class="bg-blue-600 text-white px-10 py-3 rounded-2xl font-bold transition-all hover:bg-blue-500 shadow-xl shadow-blue-500/10">CLOSE_INSPECTOR</button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- CORE LOGIC scripts -->
+    <script crossorigin="anonymous" src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script crossorigin="anonymous" src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+    <script>
+        const CRED = {
+            U: 'https://yiywaenrevgicnxhzslx.supabase.co',
+            K: 'sb_publishable_V8DpAowrZwohCJ6DR-pQnw_pPUMnk8V',
+            P: 'gotyou66'
+        };
+
+        document.addEventListener('alpine:init', () => {
+            if (!window.supabase) {
+                alert("CDN Blocked: This tool requires internet to load libraries.");
+                return;
+            }
+            const sb = window.supabase.createClient(CRED.U, CRED.K);
+
+            Alpine.data('adminApp', () => ({
+                isAuthenticated: false,
+                pass: '',
+                error: '',
+                loading: false,
+                logs: [],
+                search: '',
+                viewMode: 'list',
+                detail: null,
+
+                init() {
+                    if (sessionStorage.getItem('local_v4_auth') === 'true') {
+                        this.isAuthenticated = true;
+                        this.fetchLogs();
+                    }
+                },
+
+                login() {
+                    if (this.pass === CRED.P) {
+                        this.isAuthenticated = true;
+                        sessionStorage.setItem('local_v4_auth', 'true');
+                        this.fetchLogs();
+                    } else {
+                        this.error = "AUTHENTICATION_FAILED. KEY REJECTED.";
+                    }
+                },
+
+                logout() {
+                    this.isAuthenticated = false;
+                    sessionStorage.removeItem('local_v4_auth');
+                },
+
+                async fetchLogs() {
+                    this.loading = true;
+                    try {
+                        const { data, error } = await sb.from('user_visits').select('*').order('created_at', { ascending: false }).limit(1000);
+                        if (error) throw error;
+                        this.logs = data || [];
+                    } catch (e) { console.error(e); }
+                    this.loading = false;
+                },
+
+                async deleteEntry(log) {
+                    if (!confirm("Wipe this record from live database?")) return;
+                    const id = log.id;
+                    if (!id) return alert("Must be in LIST view to delete individual entries.");
+                    await sb.from('user_visits').delete().eq('id', id);
+                    this.fetchLogs();
+                },
+
+                async clearAll() {
+                    if (!confirm("CRITICAL: DESTROY ALL HISTORY?")) return;
+                    this.loading = true;
+                    await sb.from('user_visits').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+                    this.fetchLogs();
+                },
+
+                openModal(log) {
+                    this.detail = log;
+                },
+
+                get processedData() {
+                    const filtered = this.logs.filter(l =>
+                        (l.page_path + l.city + l.country + l.user_agent + l.ip_address).toLowerCase().includes(this.search.toLowerCase())
+                    );
+
+                    if (this.viewMode === 'list') return filtered;
+
+                    const groups = filtered.reduce((acc, log) => {
+                        let key = log.meta?.visitor_id || 'UNKNOWN';
+                        if (this.viewMode === 'fingerprint') {
+                            const fp = log.meta?.fingerprints;
+                            if (fp?.canvas && fp?.audio) key = `${fp.canvas.slice(0, 16)}_${fp.audio.slice(0, 8)}`;
+                            else return acc;
+                        }
+
+                        if (!acc[key]) {
+                            acc[key] = {
+                                ...log,
+                                group_key: key,
+                                visit_count: 0,
+                                last_seen: log.created_at,
+                                paths: new Set(),
+                                visitor_ids: new Set(),
+                                stats: {
+                                    scroll: [],
+                                    clicks: 0,
+                                    load: [],
+                                    ttfb: []
+                                },
+                                latest_log: log
+                            };
+                        }
+
+                        acc[key].visit_count++;
+                        acc[key].paths.add(log.page_path);
+                        acc[key].visitor_ids.add(log.meta?.visitor_id || 'UNKNOWN');
+
+                        // Interaction/Perf Gathering
+                        const inter = log.meta?.interaction;
+                        if (inter) {
+                            if (inter.scroll_depth_percent) acc[key].stats.scroll.push(inter.scroll_depth_percent);
+                            if (inter.click_count) acc[key].stats.clicks += inter.click_count;
+                        }
+                        const perf = log.meta?.performance;
+                        if (perf) {
+                            if (perf.loadTime) acc[key].stats.load.push(perf.loadTime);
+                            if (perf.ttfb) acc[key].stats.ttfb.push(perf.ttfb);
+                        }
+
+                        if (new Date(log.created_at) > new Date(acc[key].last_seen)) {
+                            acc[key].last_seen = log.created_at;
+                            acc[key].latest_log = log;
+                        }
+                        return acc;
+                    }, {});
+
+                    return Object.values(groups).sort((a, b) => new Date(b.last_seen) - new Date(a.last_seen));
+                },
+
+                formatDate(d) {
+                    if (!d) return '--';
+                    return new Date(d).toLocaleDateString() + ' ' + new Date(d).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                },
+
+                getFlag(country) {
+                    if (country === 'United States') return '🇺🇸';
+                    if (country === 'India') return '🇮🇳';
+                    if (country === 'United Kingdom') return '🇬🇧';
+                    return '🌍';
+                },
+
+                getInteractionStat(type) {
+                    if (!this.detail) return '0';
+                    const data = this.viewMode === 'list' ? this.detail : this.detail;
+
+                    if (this.viewMode === 'list') {
+                        const inter = data.meta?.interaction;
+                        if (type === 'total_clicks') return inter?.click_count || '0';
+                        if (type === 'avg_scroll') return inter?.scroll_depth_percent || '0';
+                    } else {
+                        // Aggregate
+                        if (type === 'total_clicks') return this.detail.stats?.clicks || '0';
+                        if (type === 'avg_scroll') {
+                            const entries = this.detail.stats?.scroll || [];
+                            if (entries.length === 0) return '0';
+                            return Math.round(entries.reduce((a, b) => a + b, 0) / entries.length);
+                        }
+                    }
+                    return '0';
+                },
+
+                getPerformanceStat(type) {
+                    if (!this.detail) return '0';
+                    if (this.viewMode === 'list') {
+                        const p = this.detail.meta?.performance;
+                        if (type === 'avg_load') return Math.round(p?.loadTime) || '0';
+                        if (type === 'avg_ttfb') return Math.round(p?.ttfb) || '0';
+                    } else {
+                        const entries = this.detail.stats?.[type === 'avg_load' ? 'load' : 'ttfb'] || [];
+                        if (entries.length === 0) return '0';
+                        return Math.round(entries.reduce((a, b) => a + b, 0) / entries.length);
+                    }
+                    return '0';
+                }
+            }));
+        });
+    </script>
+</body>
+
+</html>
