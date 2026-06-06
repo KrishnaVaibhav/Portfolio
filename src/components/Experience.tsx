@@ -1,14 +1,31 @@
-import { Briefcase, GraduationCap, Code2 } from "lucide-react";
+import { Briefcase, GraduationCap, Code2, Building2, Hospital } from "lucide-react";
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
 
 const experiences = [
   {
     type: "work",
-    icon: Briefcase,
+    icon: Building2,
+    title: "Cloud Developer",
+    company: "BMO Financial Group",
+    period: "Mar 2026 - Present",
+    location: "Toronto, ON",
+    description: "Design and implement cloud-native solutions on Azure and AWS for banking applications.",
+    highlights: [
+      "Architected serverless microservices on AWS Lambda, AWS Fargate, and Azure Functions...",
+      "Implemented CI/CD pipelines GitHub Actions",
+      "Optimized cloud costs by 25% through resource right-sizing and reserved instances",
+      "Enhanced security posture with AWS GuardDuty",
+      "Collaborated with cross-functional teams using Agile methodologies",
+    ],
+    tags: ["AWS", "Serverless", "CI/CD", "Cloud Security", "Kafka", "Redis", "React", "Node.js", "TypeScript", "Javascript"],
+  },
+  {
+    type: "work",
+    icon: Hospital,
     title: "OPOR Support Consultant",
     company: "Nova Scotia Health",
-    period: "Nov 2025 - Present",
+    period: "Nov 2025 - Mar 2026",
     location: "Halifax, NS",
     description: "Provide operational support for OPOR (One Person One Record) systems, ensuring seamless integration and performance across healthcare applications.",
     highlights: [
