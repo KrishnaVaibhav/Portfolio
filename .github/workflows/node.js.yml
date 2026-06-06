@@ -105,8 +105,11 @@ jobs:
       - name: Commit and push build files
         working-directory: deploy-repo
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "Krishna Vaibhav"
+          git config user.email "krishvaibav@gmail.com"
           git add -A
-          git commit -m "Deploy build artifacts" || exit 0
+          # Use the commit message from the triggering push for the deploy commit
+          git commit -F - || exit 0 <<'MSG'
+${{ github.event.head_commit.message }}
+MSG
           git push origin HEAD:${{ env.DEPLOY_BRANCH }}
