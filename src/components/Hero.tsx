@@ -97,7 +97,7 @@ export const Hero = () => {
               <div className="w-1 h-1 rounded-full bg-muted-foreground/50" />
               <div className="flex items-center gap-2">
                 <Code2 className="w-4 h-4 text-accent" />
-                <span>React • Java • Mobile</span>
+                <span>AWS •React • Java • Mobile</span>
               </div>
             </div>
           </div>
