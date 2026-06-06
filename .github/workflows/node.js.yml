@@ -104,12 +104,12 @@ jobs:
 
       - name: Commit and push build files
         working-directory: deploy-repo
+        env:
+          TRIGGER_COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
           git config user.name "Krishna Vaibhav"
           git config user.email "krishvaibav@gmail.com"
           git add -A
           # Use the commit message from the triggering push for the deploy commit
-          git commit -F - || exit 0 <<'MSG'
-${{ github.event.head_commit.message }}
-MSG
+          printf '%s\n' "$TRIGGER_COMMIT_MSG" | git commit -F - || exit 0
           git push origin HEAD:${{ env.DEPLOY_BRANCH }}
