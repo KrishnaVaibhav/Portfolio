@@ -6,9 +6,10 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
   // Apply a subtle glassmorphism effect by default: semi-transparent background, backdrop blur, soft border and shadow.
   <div
     ref={ref}
+    // Place defaults after user className so glassmorphism is enforced project-wide.
     className={cn(
-      "rounded-lg border bg-card/60 text-card-foreground backdrop-blur-md shadow-lg ring-1 ring-primary/5",
       className,
+      "rounded-lg border bg-card/60 text-card-foreground backdrop-blur-md shadow-lg ring-1 ring-primary/5",
     )}
     {...props}
   />
