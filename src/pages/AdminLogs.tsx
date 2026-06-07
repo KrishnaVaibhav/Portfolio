@@ -541,7 +541,7 @@ const AdminLogs = () => {
                                         ))}
                                     </TableBody>
                                 </Table>
-                            </div>
+                            </Card>
                         )}
                     </CardContent>
                 </Card>
