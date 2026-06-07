@@ -126,7 +126,6 @@ export const Experience = () => {
                   {/* Content Card */}
                   <Card
                     className={`flex-1 p-6 ${bgClass} backdrop-blur-sm border-2 ${borderClass} hover:border-primary/70 transition-all duration-300 ${elevationClass} animate-fade-in ${isLeft ? "md:mr-auto md:pr-8" : "md:ml-auto md:pl-8"} w-full md:max-w-[calc(50%-3rem)]`}>
-                  >
                     <div className="flex items-start gap-4 mb-4">
                       <div className="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 border-2 border-primary">
                         <Icon className="w-5 h-5 text-primary" />
