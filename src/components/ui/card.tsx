@@ -9,7 +9,7 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
     // Place defaults after user className so glassmorphism is enforced project-wide.
     className={cn(
       className,
-      "rounded-lg border bg-card/60 text-card-foreground backdrop-blur-md shadow-lg ring-1 ring-primary/5",
+      "rounded-lg border bg-card/35 text-card-foreground backdrop-blur-md shadow-lg ring-1 ring-primary/5",
     )}
     {...props}
   />
