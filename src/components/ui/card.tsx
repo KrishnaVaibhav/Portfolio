@@ -3,7 +3,15 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("rounded-lg border bg-card text-card-foreground shadow-sm", className)} {...props} />
+  // Apply a subtle glassmorphism effect by default: semi-transparent background, backdrop blur, soft border and shadow.
+  <div
+    ref={ref}
+    className={cn(
+      "rounded-lg border bg-card/60 text-card-foreground backdrop-blur-md shadow-lg ring-1 ring-primary/5",
+      className,
+    )}
+    {...props}
+  />
 ));
 Card.displayName = "Card";
 
