@@ -278,7 +278,7 @@ const AdminLogs = () => {
                                 <p>Loading Analytics...</p>
                             </div>
                         ) : (
-                            <div className="rounded-xl border bg-card text-card-foreground shadow-sm overflow-hidden">
+                            <Card className="rounded-xl border text-card-foreground shadow-sm overflow-hidden">
                                 <Table>
                                     <TableHeader className="bg-muted/50">
                                         <TableRow>
@@ -377,7 +377,7 @@ const AdminLogs = () => {
                                                                 {log.meta?.interaction && (
                                                                     <div className="space-y-2">
                                                                         <h3 className="font-semibold text-sm text-foreground flex items-center gap-2"><Monitor className="h-4 w-4" /> Engagement</h3>
-                                                                        <div className="grid grid-cols-3 gap-2 text-sm border p-3 rounded-lg bg-card">
+                                                                <div className="grid grid-cols-3 gap-2 text-sm border p-3 rounded-lg bg-card">
                                                                             <div className="flex flex-col items-center justify-center p-2 text-center">
                                                                                 <span className="text-xs text-muted-foreground mb-1">Time</span>
                                                                                 <span className="font-bold text-lg text-primary">{(log.meta.interaction.time_on_page_ms / 1000).toFixed(1)}s</span>
