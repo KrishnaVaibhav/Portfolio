@@ -109,12 +109,14 @@ export const Experience = () => {
             {experiences.map((exp, idx) => {
               const Icon = exp.icon;
               const isLeft = idx % 2 === 0;
+              const borderClass = isLeft ? "border-primary/60" : "border-secondary/60";
+              const bgClass = "bg-card/95"; // slightly more prominent than background
+              const elevationClass = "shadow-lg hover:shadow-2xl ring-1 ring-primary/5";
 
               return (
                 <div
                   key={idx}
-                  className={`relative flex items-center ${isLeft ? "md:flex-row" : "md:flex-row-reverse"
-                    } gap-8`}
+                  className={`relative flex items-center ${isLeft ? "md:flex-row" : "md:flex-row-reverse"} gap-8`}
                 >
                   {/* Timeline Node */}
                   <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-card border-4 border-primary items-center justify-center z-10 animate-glow">
@@ -123,8 +125,7 @@ export const Experience = () => {
 
                   {/* Content Card */}
                   <Card
-                    className={`flex-1 p-6 bg-card/80 backdrop-blur-sm border-2 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 animate-fade-in ${isLeft ? "md:mr-auto md:pr-8" : "md:ml-auto md:pl-8"
-                      } w-full md:max-w-[calc(50%-3rem)]`}
+                    className={`flex-1 p-6 ${bgClass} backdrop-blur-sm border-2 ${borderClass} hover:border-primary/70 transition-all duration-300 ${elevationClass} animate-fade-in ${isLeft ? "md:mr-auto md:pr-8" : "md:ml-auto md:pl-8"} w-full md:max-w-[calc(50%-3rem)]`}>
                   >
                     <div className="flex items-start gap-4 mb-4">
                       <div className="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 border-2 border-primary">
