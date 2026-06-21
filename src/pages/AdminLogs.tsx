@@ -4,10 +4,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2, Search, ShieldCheck, Eye, Battery, Wifi, Cpu, MapPin, Smartphone, List, Monitor, Trash2, RefreshCw, X } from "lucide-react";
+import { Loader2, Search, ShieldCheck, Eye, Smartphone, List, Monitor, Trash2, RefreshCw, X } from "lucide-react";
 import { toast } from "sonner";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
     AlertDialog,
@@ -57,18 +56,19 @@ const AdminLogs = () => {
 
     const fetchLogs = async () => {
         setLoading(true);
-        // Fetch more logs for "fullest" view
-        const { data, error } = await supabase
-            .from("user_visits")
-            .select("*")
-            .order("created_at", { ascending: false })
-            .limit(1000);
+        try {
+            const { data, error } = await supabase
+                .from("user_visits")
+                .select("*")
+                .order("created_at", { ascending: false })
+                .limit(1000);
 
-        if (error) toast.error("Failed to fetch logs: " + error.message);
-        else setLogs(data || []);
-
-        setLoading(false);
-        setSelectedIds(new Set()); // Reset selection
+            if (error) toast.error("Failed to fetch logs: " + error.message);
+            else setLogs(data || []);
+        } finally {
+            setLoading(false);
+            setSelectedIds(new Set());
+        }
     };
 
     const filteredLogs = logs.filter((log) =>
@@ -117,27 +117,34 @@ const AdminLogs = () => {
     // Delete Handlers
     const deleteLogs = async (ids: string[]) => {
         setIsDeleting(true);
-        const { error } = await supabase.from('user_visits').delete().in('id', ids);
-        if (error) {
-            toast.error("Delete failed: " + error.message);
-        } else {
-            toast.success(`Deleted ${ids.length} logs.`);
-            setLogs(logs.filter(l => !ids.includes(l.id)));
-            setSelectedIds(new Set());
+        try {
+            const { error } = await supabase.from('user_visits').delete().in('id', ids);
+            if (error) {
+                toast.error("Delete failed: " + error.message);
+            } else {
+                toast.success(`Deleted ${ids.length} logs.`);
+                setLogs(logs.filter(l => !ids.includes(l.id)));
+                setSelectedIds(new Set());
+            }
+        } finally {
+            setIsDeleting(false);
         }
-        setIsDeleting(false);
     };
 
     const clearAllLogs = async () => {
-        setIsDeleting(true);
         const ids = logs.map(l => l.id);
-        const { error } = await supabase.from('user_visits').delete().in('id', ids);
-        if (error) toast.error("Clear failed: " + error.message);
-        else {
-            toast.success("All logs cleared.");
-            setLogs([]);
+        if (ids.length === 0) return;
+        setIsDeleting(true);
+        try {
+            const { error } = await supabase.from('user_visits').delete().in('id', ids);
+            if (error) toast.error("Clear failed: " + error.message);
+            else {
+                toast.success("All logs cleared.");
+                setLogs([]);
+            }
+        } finally {
+            setIsDeleting(false);
         }
-        setIsDeleting(false);
     };
 
     // Selection Handlers
@@ -404,7 +411,7 @@ const AdminLogs = () => {
                                                                             </div>
                                                                             <div>
                                                                                 <span className="text-muted-foreground block text-xs">User Agent</span>
-                                                                                <span className="truncate block" title={log.user_agent}>{log.user_agent.substring(0, 20)}...</span>
+                                                                                <span className="truncate block" title={log.user_agent ?? ''}>{(log.user_agent ?? 'Unknown').substring(0, 20)}...</span>
                                                                             </div>
                                                                             <div>
                                                                                 <span className="text-muted-foreground block text-xs">Performance (Load)</span>
@@ -420,9 +427,9 @@ const AdminLogs = () => {
                                                                     {log.meta?.fingerprints && (
                                                                         <div className="p-3 bg-muted rounded text-xs font-mono break-all">
                                                                             <div className="opacity-50 mb-1">Canvas Hash</div>
-                                                                            {log.meta.fingerprints.canvas.substring(0, 50)}...
+                                                                            {(log.meta?.fingerprints?.canvas ?? 'N/A').substring(0, 50)}...
                                                                             <div className="opacity-50 mt-2 mb-1">Audio Hash</div>
-                                                                            {log.meta.fingerprints.audio.substring(0, 50)}...
+                                                                            {(log.meta?.fingerprints?.audio ?? 'N/A').substring(0, 50)}...
                                                                         </div>
                                                                     )}
                                                                 </div>

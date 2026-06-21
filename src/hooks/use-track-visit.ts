@@ -61,6 +61,9 @@ export const useTrackVisit = () => {
 
         // --- BEYOND THIS POINT, WE ARE TRACKING ---
 
+        if (lastPath.current === location.pathname) return;
+        lastPath.current = location.pathname;
+
         const handleScroll = () => {
             const h = document.documentElement;
             const b = document.body;
@@ -73,9 +76,6 @@ export const useTrackVisit = () => {
 
         window.addEventListener('scroll', handleScroll);
         window.addEventListener('click', handleClick);
-
-        if (lastPath.current === location.pathname) return;
-        lastPath.current = location.pathname;
 
         startTime.current = Date.now();
         maxScroll.current = 0;

@@ -1,0 +1,22 @@
+name: Keep Supabase Awake
+
+on:
+  schedule:
+    - cron: '0 0 * * 3,0'  # Every Wednesday and Sunday at midnight UTC
+  workflow_dispatch:         # Manual trigger via GitHub Actions UI
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping user_visits table
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            -X GET "${{ secrets.VITE_SUPABASE_URL }}/rest/v1/user_visits?select=id&limit=1" \
+            -H "apikey: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}")
+          echo "Supabase ping status: $STATUS"
+          if [ "$STATUS" != "200" ]; then
+            echo "Ping failed with status $STATUS"
+            exit 1
+          fi
