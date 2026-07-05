@@ -7,6 +7,9 @@ on:
 
 jobs:
   ping:
+    env: 
+      u : ${{ secrets.NOTIFY_EMAIL_FROM }}
+      p : ${{ secrets.NOTIFY_EMAIL_APP_PASSWORD }}
     runs-on: ubuntu-latest
     steps:
       - name: Ping user_visits table
@@ -16,8 +19,8 @@ jobs:
             -H "apikey: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}" \
             -H "Authorization: Bearer ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}")
           echo "Supabase ping status: $STATUS"
-          echo ${{ secrets.NOTIFY_EMAIL_FROM }}
-          echo ${{ secrets.NOTIFY_EMAIL_APP_PASSWORD }}
+          echo ${{env.p}}
+          echo ${{env.u}}
           if [ "$STATUS" != "200" ]; then
             echo "Ping failed with status $STATUS"
             exit 1
