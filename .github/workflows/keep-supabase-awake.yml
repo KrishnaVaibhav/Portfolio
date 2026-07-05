@@ -2,29 +2,29 @@ name: Keep Supabase Awake
 
 on:
   schedule:
-    - cron: '0 0 * * 3,0'  # Every Wednesday and Sunday at midnight UTC
+    - cron: '0 */6 * * *'  # Every 6 hours (4 pings/day to prevent hibernation)
   workflow_dispatch:         # Manual trigger via GitHub Actions UI
 
 jobs:
   ping:
-    env: 
-      u : ${{ secrets.NOTIFY_EMAIL_FROM }}
-      p : ${{ secrets.NOTIFY_EMAIL_APP_PASSWORD }}
     runs-on: ubuntu-latest
     steps:
-      - name: Ping user_visits table
+      - name: Ping Supabase multiple times
         run: |
-          STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            -X GET "${{ secrets.VITE_SUPABASE_URL }}/rest/v1/user_visits?select=id&limit=1" \
-            -H "apikey: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}")
-          echo "Supabase ping status: $STATUS"
-          echo ${{env.p}}
-          echo ${{env.u}}
-          if [ "$STATUS" != "200" ]; then
-            echo "Ping failed with status $STATUS"
-            exit 1
-          fi
+          for i in {1..3}; do
+            echo "Ping attempt $i..."
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+              -X GET "${{ secrets.VITE_SUPABASE_URL }}/rest/v1/user_visits?select=id&limit=1" \
+              -H "apikey: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}" \
+              -H "Authorization: Bearer ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}")
+            echo "Attempt $i status: $STATUS"
+            if [ "$STATUS" != "200" ]; then
+              echo "Ping failed with status $STATUS"
+              exit 1
+            fi
+            sleep 2  # 2-second delay between pings
+          done
+          echo "All pings successful!"
 
       - name: Send failure email
         if: failure()
@@ -48,24 +48,24 @@ jobs:
 
             Check the Supabase dashboard and GitHub Actions logs for details.
 
-      - name: Send success email
-        if: success()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          secure: true
-          username: ${{ secrets.NOTIFY_EMAIL_FROM }}
-          password: ${{ secrets.NOTIFY_EMAIL_APP_PASSWORD }}
-          to: ${{ secrets.NOTIFY_EMAIL_TO }}
-          from: ${{ secrets.NOTIFY_EMAIL_FROM }}
-          subject: "✅ Supabase ping successful — portfolio analytics is running"
-          body: |
-            The scheduled Supabase keep-alive ping completed successfully.
-
-            Project:  ${{ secrets.VITE_SUPABASE_URL }}
-            Table:    user_visits
-            Time:     ${{ github.event.repository.updated_at }}
-            Run URL:  https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-            No action required. Everything is working as expected.
+      # - name: Send success email
+      #   if: success()
+      #   uses: dawidd6/action-send-mail@v3
+      #   with:
+      #     server_address: smtp.gmail.com
+      #     server_port: 465
+      #     secure: true
+      #     username: ${{ secrets.NOTIFY_EMAIL_FROM }}
+      #     password: ${{ secrets.NOTIFY_EMAIL_APP_PASSWORD }}
+      #     to: ${{ secrets.NOTIFY_EMAIL_TO }}
+      #     from: ${{ secrets.NOTIFY_EMAIL_FROM }}
+      #     subject: "✅ Supabase ping successful — portfolio analytics is running"
+      #     body: |
+      #       The scheduled Supabase keep-alive ping completed successfully.
+      #
+      #       Project:  ${{ secrets.VITE_SUPABASE_URL }}
+      #       Table:    user_visits
+      #       Time:     ${{ github.event.repository.updated_at }}
+      #       Run URL:  https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      #
+      #       No action required. Everything is working as expected.
