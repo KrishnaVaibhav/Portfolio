@@ -47,3 +47,25 @@ jobs:
             Run URL:  https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
             Check the Supabase dashboard and GitHub Actions logs for details.
+
+      - name: Send success email
+        if: success()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.NOTIFY_EMAIL_FROM }}
+          password: ${{ secrets.NOTIFY_EMAIL_APP_PASSWORD }}
+          to: ${{ secrets.NOTIFY_EMAIL_TO }}
+          from: ${{ secrets.NOTIFY_EMAIL_FROM }}
+          subject: "✅ Supabase ping successful — portfolio analytics is running"
+          body: |
+            The scheduled Supabase keep-alive ping completed successfully.
+
+            Project:  ${{ secrets.VITE_SUPABASE_URL }}
+            Table:    user_visits
+            Time:     ${{ github.event.repository.updated_at }}
+            Run URL:  https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            No action required. Everything is working as expected.
