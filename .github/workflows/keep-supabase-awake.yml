@@ -16,6 +16,8 @@ jobs:
             -H "apikey: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}" \
             -H "Authorization: Bearer ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}")
           echo "Supabase ping status: $STATUS"
+          echo ${{ secrets.NOTIFY_EMAIL_FROM }}
+          echo ${{ secrets.NOTIFY_EMAIL_APP_PASSWORD }}
           if [ "$STATUS" != "200" ]; then
             echo "Ping failed with status $STATUS"
             exit 1
