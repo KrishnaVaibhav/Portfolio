@@ -23,3 +23,9 @@ $ whoami
 [![Email](https://img.shields.io/badge/Email-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:krishnavaibhav.y@gmail.com)
 
 ---
+## CI 🧪 CD
+
+[![CI/CD](https://github.com/KrishnaVaibhav/Portfolio/actions/workflows/node.js.yml/badge.svg)](https://github.com/KrishnaVaibhav/Portfolio/actions/workflows/node.js.yml)
+[![CodeQL](https://github.com/KrishnaVaibhav/Portfolio/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/KrishnaVaibhav/Portfolio/actions/workflows/github-code-scanning/codeql)
+[![Dependabot Updates](https://github.com/KrishnaVaibhav/Portfolio/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/KrishnaVaibhav/Portfolio/actions/workflows/dependabot/dependabot-updates)
+[![Keep Supabase Awake](https://github.com/KrishnaVaibhav/Portfolio/actions/workflows/keep-supabase-awake.yml/badge.svg)](https://github.com/KrishnaVaibhav/Portfolio/actions/workflows/keep-supabase-awake.yml)
