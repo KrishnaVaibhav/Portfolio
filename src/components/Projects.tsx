@@ -1,13 +1,47 @@
-import { Github, ExternalLink, Cloud, Lock, Users } from "lucide-react";
+import { Github, ExternalLink, Cloud, Lock, Users, ChartNoAxesCombined } from "lucide-react";
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 
 const projects = [
   {
+    icon: ChartNoAxesCombined,
+    title: "Daily Signals",
+    subtitle: "AI-Driven Stock Forecast Pipeline",
+    githubUrl: "https://github.com/",
+    projectUrl: "https://github.com/",
+    description:
+      "Automated daily pipeline that scans financial news, ranks S&P 500 tickers by mention volume, and generates confidence-scored AI forecasts cross-checked against technical indicators, with a self-scoring accuracy track record and live Supabase-backed dashboard.",
+    highlights: [
+    "3-provider AI fallback chain (Gemini → Groq → OpenAI) so a single dead provider never blocks a run",
+    "Scans 9 financial news sources concurrently, isolating failures per-source",
+    "Batches tickers per AI call and uses one batched market-data call per run to minimize API usage and runtime",
+    "Self-scoring accuracy track record (hit rate by provider and confidence band) computed automatically over time",
+    "ATR-based stop-loss and sector-concentration risk sizing on every actionable pick",
+    "Runs unattended on GitHub Actions cron, syncs daily results to Supabase for live display",
+  ],
+  technologies: [
+    "Python",
+    "GitHub Actions",
+    "Gemini API",
+    "Groq API",
+    "OpenAI API",
+    "yfinance",
+    "Supabase",
+    "pandas",
+  ],
+  metrics: [
+    { label: "AI Providers", value: "3" },
+    { label: "News Sources", value: "9" },
+  ],
+  gradient: "from-green-500 to-red-600",
+},
+  {
     icon: Lock,
     title: "File Share Platform",
     subtitle: "Secure Cloud Sharing System",
+    githubUrl: "https://github.com/KrishnaVaibhav/File-Share",
+    projectUrl: "https://github.com/KrishnaVaibhav/File-Share",
     description: "Enterprise-grade secure file transfer system with 99% uptime, implementing OAuth2 authentication and automated infrastructure provisioning.",
     highlights: [
       "Built with AWS Lambda, EC2, S3, and API Gateway",
@@ -36,6 +70,8 @@ const projects = [
     icon: Users,
     title: "ActicClass",
     subtitle: "Cross-Platform Classroom Management",
+    githubUrl: "https://github.com/KrishnaVaibhav/Acticlass",
+    projectUrl: "https://github.com/KrishnaVaibhav/Acticlass",
     description: "Scalable classroom management platform with real-time collaboration features, deployed on Azure Kubernetes Service with automated CI/CD.",
     highlights: [
       "Backend APIs deployed to Azure Kubernetes Service (AKS)",
@@ -96,13 +132,15 @@ export const Projects = () => {
                       <p className="text-sm text-muted-foreground">{project.subtitle}</p>
                     </div>
                   </div>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="hover:bg-primary/10 hover:text-primary"
-                  >
-                    <Github className="w-5 h-5" />
-                  </Button>
+                  <a href={project.githubUrl} target="_blank" rel="noreferrer">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="hover:bg-primary/10 hover:text-primary"
+                    >
+                      <Github className="w-5 h-5" />
+                    </Button>
+                  </a>
                 </div>
 
                 {/* Description */}
@@ -157,12 +195,14 @@ export const Projects = () => {
                 </div>
 
                 {/* CTA Button */}
-                <Button
-                  className="w-full group/btn bg-gradient-to-r from-primary to-accent hover:opacity-90"
-                >
-                  View Project Details
-                  <ExternalLink className="ml-2 w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                </Button>
+                <a href={project.projectUrl} target="_blank" rel="noreferrer">
+                  <Button
+                    className="w-full group/btn bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                  >
+                    View Project Details
+                    <ExternalLink className="ml-2 w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                  </Button>
+                </a>
               </Card>
             );
           })}
