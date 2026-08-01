@@ -14,6 +14,81 @@ export type Database = {
   }
   public: {
     Tables: {
+      forecasts: {
+        Row: {
+          date: string
+          ticker: string
+          company_name: string
+          direction: string
+          confidence: number
+          provider: string
+          price_at_forecast: number
+          price_1d: number | null
+          hit_1d: boolean | null
+          price_7d: number | null
+          hit_7d: boolean | null
+          reasoning: string | null
+          sources: Json | null
+          week_closes: Json | null
+          rsi14: number | null
+          technical_direction: string | null
+          actionable: boolean | null
+          earnings_date: string | null
+          atr14: number | null
+          stop_loss_price: number | null
+          risk_per_share_pct: number | null
+          sector: string | null
+        }
+        Insert: {
+          date: string
+          ticker: string
+          company_name: string
+          direction: string
+          confidence: number
+          provider: string
+          price_at_forecast: number
+          price_1d?: number | null
+          hit_1d?: boolean | null
+          price_7d?: number | null
+          hit_7d?: boolean | null
+          reasoning?: string | null
+          sources?: Json | null
+          week_closes?: Json | null
+          rsi14?: number | null
+          technical_direction?: string | null
+          actionable?: boolean | null
+          earnings_date?: string | null
+          atr14?: number | null
+          stop_loss_price?: number | null
+          risk_per_share_pct?: number | null
+          sector?: string | null
+        }
+        Update: {
+          date?: string
+          ticker?: string
+          company_name?: string
+          direction?: string
+          confidence?: number
+          provider?: string
+          price_at_forecast?: number
+          price_1d?: number | null
+          hit_1d?: boolean | null
+          price_7d?: number | null
+          hit_7d?: boolean | null
+          reasoning?: string | null
+          sources?: Json | null
+          week_closes?: Json | null
+          rsi14?: number | null
+          technical_direction?: string | null
+          actionable?: boolean | null
+          earnings_date?: string | null
+          atr14?: number | null
+          stop_loss_price?: number | null
+          risk_per_share_pct?: number | null
+          sector?: string | null
+        }
+        Relationships: []
+      }
       user_visits: {
         Row: {
           id: string

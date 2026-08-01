@@ -1,4 +1,5 @@
-import { Github, ExternalLink, Cloud, Lock, Users, ChartNoAxesCombined } from "lucide-react";
+import { Github, ExternalLink, Cloud, Lock, Users, ChartNoAxesCombined, Radio } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Card } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -10,6 +11,7 @@ const projects = [
     subtitle: "AI-Driven Stock Forecast Pipeline",
     githubUrl: "https://github.com/",
     projectUrl: "https://github.com/",
+    liveUrl: "/signals",
     description:
       "Automated daily pipeline that scans financial news, ranks S&P 500 tickers by mention volume, and generates confidence-scored AI forecasts cross-checked against technical indicators, with a self-scoring accuracy track record and live Supabase-backed dashboard.",
     highlights: [
@@ -42,6 +44,7 @@ const projects = [
     subtitle: "Secure Cloud Sharing System",
     githubUrl: "https://github.com/KrishnaVaibhav/File-Share",
     projectUrl: "https://github.com/KrishnaVaibhav/File-Share",
+    liveUrl: undefined as string | undefined,
     description: "Enterprise-grade secure file transfer system with 99% uptime, implementing OAuth2 authentication and automated infrastructure provisioning.",
     highlights: [
       "Built with AWS Lambda, EC2, S3, and API Gateway",
@@ -194,15 +197,28 @@ export const Projects = () => {
                   </div>
                 </div>
 
-                {/* CTA Button */}
-                <a href={project.projectUrl} target="_blank" rel="noreferrer">
-                  <Button
-                    className="w-full group/btn bg-gradient-to-r from-primary to-accent hover:opacity-90"
-                  >
-                    View Project Details
-                    <ExternalLink className="ml-2 w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </Button>
-                </a>
+                {/* CTA Buttons */}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <a href={project.projectUrl} target="_blank" rel="noreferrer" className="flex-1">
+                    <Button
+                      className="w-full group/btn bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                    >
+                      View Project Details
+                      <ExternalLink className="ml-2 w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
+                    </Button>
+                  </a>
+                  {project.liveUrl && (
+                    <Link to={project.liveUrl} className="flex-1">
+                      <Button
+                        variant="outline"
+                        className="w-full group/btn border-primary/30 hover:bg-primary/10 hover:text-primary"
+                      >
+                        <Radio className="mr-2 w-4 h-4 text-emerald-500 group-hover/btn:animate-pulse" />
+                        View Live Data
+                      </Button>
+                    </Link>
+                  )}
+                </div>
               </Card>
             );
           })}
