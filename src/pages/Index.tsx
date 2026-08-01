@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Navigation } from "@/components/Navigation";
 import { Hero } from "@/components/Hero";
 import { Skills } from "@/components/Skills";
@@ -9,6 +11,24 @@ import { Contact } from "@/components/Contact";
 import { SubtleSkillIcons } from "@/components/SubtleSkillIcons";
 
 const Index = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Navigation sets this when a header link is clicked from another route
+  // (e.g. /signals), since the section anchors only exist on this page.
+  useEffect(() => {
+    const scrollTo = (location.state as { scrollTo?: string } | null)?.scrollTo;
+    if (!scrollTo) return;
+
+    const frame = requestAnimationFrame(() => {
+      document.querySelector(scrollTo)?.scrollIntoView({ behavior: "smooth" });
+    });
+    // Clear the state so refreshing or navigating back doesn't re-trigger it.
+    navigate(location.pathname, { replace: true, state: {} });
+    return () => cancelAnimationFrame(frame);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="min-h-screen bg-background text-foreground relative">
       <SubtleSkillIcons />
