@@ -76,6 +76,7 @@ export const useTrackVisit = () => {
             console.log('🚫 Analytics tracking disabled for this device.');
         }
         if (safeGetItem(localStorage, 'ignore_analytics') === 'true') return;
+        if (location.pathname.startsWith('/admin')) return; // don't track visits to the admin dashboard itself
         if (lastPath.current === location.pathname) return;
         lastPath.current = location.pathname;
 
