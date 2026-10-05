@@ -3,13 +3,13 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  // Apply a subtle glassmorphism effect by default: semi-transparent background, backdrop blur, soft border and shadow.
+  // Default surface: hairline border, solid card fill and a soft tinted shadow lit from above.
   <div
     ref={ref}
     // Place defaults after user className so glassmorphism is enforced project-wide.
     className={cn(
       className,
-      "rounded-lg border bg-card/35 text-card-foreground backdrop-blur-md shadow-lg ring-1 ring-primary/5",
+      "rounded-[var(--radius)] border bg-card/80 text-card-foreground backdrop-blur-xl shadow-[0_1px_2px_hsl(var(--shadow-color)/0.06),0_12px_32px_-16px_hsl(var(--shadow-color)/0.2)]",
     )}
     {...props}
   />

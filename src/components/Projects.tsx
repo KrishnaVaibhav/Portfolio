@@ -1,51 +1,45 @@
-import { Github, ExternalLink, Cloud, Lock, Users, ChartNoAxesCombined, Radio } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import { Github, Lock, Users, ChartNoAxesCombined, Radio, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Card } from "./ui/card";
-import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
+import { Reveal } from "./Reveal";
+import { TiltCard } from "./TiltCard";
+import { cn } from "@/lib/utils";
 
 const projects = [
   {
     icon: ChartNoAxesCombined,
     title: "Daily Signals",
     subtitle: "AI-Driven Stock Forecast Pipeline",
-    githubUrl: "https://github.com/",
-    projectUrl: "https://github.com/",
+    githubUrl: "https://github.com/KrishnaVaibhav/PipeLines/tree/main/daily-signals/stock-forecast",
     liveUrl: "/signals",
     description:
       "Automated daily pipeline that scans financial news, ranks S&P 500 tickers by mention volume, and generates confidence-scored AI forecasts cross-checked against technical indicators, with a self-scoring accuracy track record and live Supabase-backed dashboard.",
     highlights: [
-    "3-provider AI fallback chain (Gemini → Groq → OpenAI) so a single dead provider never blocks a run",
-    "Scans 9 financial news sources concurrently, isolating failures per-source",
-    "Batches tickers per AI call and uses one batched market-data call per run to minimize API usage and runtime",
-    "Self-scoring accuracy track record (hit rate by provider and confidence band) computed automatically over time",
-    "ATR-based stop-loss and sector-concentration risk sizing on every actionable pick",
-    "Runs unattended on GitHub Actions cron, syncs daily results to Supabase for live display",
-  ],
-  technologies: [
-    "Python",
-    "GitHub Actions",
-    "Gemini API",
-    "Groq API",
-    "OpenAI API",
-    "yfinance",
-    "Supabase",
-    "pandas",
-  ],
-  metrics: [
-    { label: "AI Providers", value: "3" },
-    { label: "News Sources", value: "9" },
-  ],
-  gradient: "from-green-500 to-red-600",
-},
+      "3-provider AI fallback chain (Gemini → Groq → OpenAI) so a single dead provider never blocks a run",
+      "Scans 9 financial news sources concurrently, isolating failures per-source",
+      "Batches tickers per AI call and uses one batched market-data call per run to minimize API usage and runtime",
+      "Self-scoring accuracy track record (hit rate by provider and confidence band) computed automatically over time",
+      "ATR-based stop-loss and sector-concentration risk sizing on every actionable pick",
+      "Runs unattended on GitHub Actions cron, syncs daily results to Supabase for live display",
+    ],
+    technologies: ["Python", "GitHub Actions", "Gemini API", "Groq API", "OpenAI API", "yfinance", "Supabase", "pandas"],
+    metrics: [
+      { label: "AI Providers", value: "3" },
+      { label: "News Sources", value: "9" },
+    ],
+    // Icon tint: rise / fall, matching the Signals dashboard.
+    iconClass: "from-emerald-400 via-emerald-600 to-rose-600",
+    washClass: "bg-[radial-gradient(60%_80%_at_85%_20%,rgba(16,185,129,0.12),transparent_70%)]",
+  },
   {
     icon: Lock,
     title: "File Share Platform",
     subtitle: "Secure Cloud Sharing System",
     githubUrl: "https://github.com/KrishnaVaibhav/File-Share",
-    projectUrl: "https://github.com/KrishnaVaibhav/File-Share",
     liveUrl: undefined as string | undefined,
-    description: "Enterprise-grade secure file transfer system with 99% uptime, implementing OAuth2 authentication and automated infrastructure provisioning.",
+    description:
+      "Enterprise-grade secure file transfer system with 99% uptime, implementing OAuth2 authentication and automated infrastructure provisioning.",
     highlights: [
       "Built with AWS Lambda, EC2, S3, and API Gateway",
       "Automated infrastructure using CloudFormation templates",
@@ -53,29 +47,22 @@ const projects = [
       "Zero-downtime deployments with CI/CD pipelines",
       "Reduced environment setup time by 50%",
     ],
-    technologies: [
-      "AWS Lambda",
-      "EC2",
-      "S3",
-      "API Gateway",
-      "CloudFormation",
-      "OAuth2",
-      "JWT",
-      "Docker",
-    ],
+    technologies: ["AWS Lambda", "EC2", "S3", "API Gateway", "CloudFormation", "OAuth2", "JWT", "Docker"],
     metrics: [
       { label: "Uptime", value: "99%" },
       { label: "Setup Time", value: "-50%" },
     ],
-    gradient: "from-primary to-accent",
+    iconClass: "from-sky-400 via-blue-600 to-blue-800",
+    washClass: "bg-[radial-gradient(70%_70%_at_100%_0%,hsl(var(--primary)/0.10),transparent_70%)]",
   },
   {
     icon: Users,
     title: "ActicClass",
     subtitle: "Cross-Platform Classroom Management",
     githubUrl: "https://github.com/KrishnaVaibhav/Acticlass",
-    projectUrl: "https://github.com/KrishnaVaibhav/Acticlass",
-    description: "Scalable classroom management platform with real-time collaboration features, deployed on Azure Kubernetes Service with automated CI/CD.",
+    liveUrl: undefined as string | undefined,
+    description:
+      "Scalable classroom management platform with real-time collaboration features, deployed on Azure Kubernetes Service with automated CI/CD.",
     highlights: [
       "Backend APIs deployed to Azure Kubernetes Service (AKS)",
       "Real-time updates using WebSockets",
@@ -83,145 +70,183 @@ const projects = [
       "Achieved 85%+ code coverage with JUnit and Mockito",
       "Implemented retry patterns and load balancing for resilience",
     ],
-    technologies: [
-      "Spring Boot",
-      "React",
-      "MongoDB",
-      "Docker",
-      "Azure AKS",
-      "ACR",
-      "WebSockets",
-      "JUnit",
-    ],
+    technologies: ["Spring Boot", "React", "MongoDB", "Docker", "Azure AKS", "ACR", "WebSockets", "JUnit"],
     metrics: [
       { label: "Code Coverage", value: "85%" },
       { label: "Deploy Time", value: "-70%" },
     ],
-    gradient: "from-accent to-secondary",
+    iconClass: "from-zinc-500 via-zinc-700 to-zinc-900",
+    washClass: "bg-[radial-gradient(70%_70%_at_0%_100%,hsl(var(--foreground)/0.06),transparent_70%)]",
   },
 ];
 
-export const Projects = () => {
+type Project = (typeof projects)[number];
+
+// Glossy squircle in the style of an app icon, lifted off the tile in 3D.
+const AppIcon = ({ icon: Icon, className, size = "md" }: { icon: LucideIcon; className: string; size?: "md" | "lg" }) => (
+  <div
+    aria-hidden
+    className={cn(
+      "relative grid shrink-0 place-items-center bg-gradient-to-br text-white",
+      "shadow-[inset_0_1px_0_rgba(255,255,255,0.45),inset_0_-8px_16px_rgba(0,0,0,0.18),0_20px_40px_-16px_rgba(0,0,0,0.45)]",
+      size === "lg" ? "h-36 w-36 rounded-[36px] md:h-44 md:w-44 md:rounded-[44px]" : "h-16 w-16 rounded-[18px]",
+      className,
+    )}
+    style={{ transform: `translateZ(${size === "lg" ? 60 : 30}px)` }}
+  >
+    <span className="absolute inset-0 rounded-[inherit] bg-[linear-gradient(180deg,rgba(255,255,255,0.28),transparent_48%)]" />
+    <Icon className={size === "lg" ? "relative h-16 w-16 md:h-20 md:w-20" : "relative h-7 w-7"} strokeWidth={1.5} />
+  </div>
+);
+
+const Metrics = ({ metrics, large }: { metrics: Project["metrics"]; large?: boolean }) => (
+  <dl className="grid grid-cols-2 gap-6">
+    {metrics.map((metric) => (
+      <div key={metric.label}>
+        <dt className="text-sm text-muted-foreground">{metric.label}</dt>
+        <dd
+          className={cn(
+            "mt-1 font-display font-semibold tracking-[-0.04em] tabular",
+            large ? "text-6xl md:text-7xl" : "text-5xl",
+          )}
+        >
+          {metric.value}
+        </dd>
+      </div>
+    ))}
+  </dl>
+);
+
+const Highlights = ({ items, visible }: { items: string[]; visible: number }) => {
+  const shown = items.slice(0, visible);
+  const rest = items.slice(visible);
+  const row = (h: string) => (
+    <li key={h} className="flex gap-3 text-[0.9375rem] leading-relaxed">
+      <span aria-hidden className="mt-[0.7em] h-px w-3 shrink-0 bg-link" />
+      <span className="text-foreground/85">{h}</span>
+    </li>
+  );
   return (
-    <section id="projects" className="py-20 px-4 relative">
-      <div className="container mx-auto max-w-7xl">
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-            Featured Projects
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Production-grade cloud applications with enterprise architecture
-          </p>
+    <div>
+      <ul className="grid gap-2.5">{shown.map(row)}</ul>
+      {rest.length > 0 && (
+        <details className="group mt-2.5">
+          <summary className="-my-1.5 inline-flex cursor-pointer list-none items-center gap-1 py-1.5 text-sm font-medium text-link touch:-my-3 touch:py-3 [&::-webkit-details-marker]:hidden">
+            {rest.length} more
+            <ChevronDown className="h-4 w-4 transition-transform duration-300 group-open:rotate-180" />
+          </summary>
+          <ul className="mt-2.5 grid gap-2.5">{rest.map(row)}</ul>
+        </details>
+      )}
+    </div>
+  );
+};
+
+const TechList = ({ items }: { items: string[] }) => (
+  <ul className="flex flex-wrap gap-1.5" aria-label="Tech stack">
+    {items.map((tech) => (
+      <li key={tech} data-tech={tech} className="cursor-default rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground transition-colors duration-300 hover:bg-link/15 hover:text-link">
+        {tech}
+      </li>
+    ))}
+  </ul>
+);
+
+const Actions = ({ project }: { project: Project }) => (
+  <div className="flex flex-wrap gap-3">
+    {project.liveUrl && (
+      <Button asChild className="group">
+        <Link to={project.liveUrl}>
+          <Radio className="text-emerald-300 group-hover:animate-pulse" />
+          View live data
+        </Link>
+      </Button>
+    )}
+    <Button asChild variant={project.liveUrl ? "outline" : "default"}>
+      <a href={project.githubUrl} target="_blank" rel="noreferrer">
+        <Github />
+        View on GitHub
+      </a>
+    </Button>
+  </div>
+);
+
+// Wide tile for the lead project: story on the left, icon and numbers on the right.
+const FeatureTile = ({ project }: { project: Project }) => (
+  <TiltCard tilt={2} as="article" className="surface relative overflow-hidden p-7 md:p-12">
+    <div aria-hidden className={cn("pointer-events-none absolute inset-0", project.washClass)} />
+    <div className="relative grid gap-10 preserve-3d lg:grid-cols-12 lg:gap-14">
+      <div className="flex flex-col lg:col-span-7">
+        <p className="text-sm font-medium text-link">{project.subtitle}</p>
+        <h3 className="mt-2 font-display text-4xl font-semibold tracking-[-0.04em] md:text-6xl">{project.title}</h3>
+        <p className="mt-5 max-w-[58ch] text-[1.0625rem] leading-relaxed text-muted-foreground">{project.description}</p>
+        <div className="mt-8">
+          <Highlights items={project.highlights} visible={4} />
         </div>
+        <div className="mt-8">
+          <TechList items={project.technologies} />
+        </div>
+        <div className="mt-10">
+          <Actions project={project} />
+        </div>
+      </div>
+      <div className="flex flex-col justify-between gap-10 preserve-3d lg:col-span-5 lg:items-end">
+        <AppIcon icon={project.icon} className={project.iconClass} size="lg" />
+        <div className="w-full lg:max-w-[340px]">
+          <Metrics metrics={project.metrics} large />
+        </div>
+      </div>
+    </div>
+  </TiltCard>
+);
 
-        <div className="grid lg:grid-cols-2 gap-8">
-          {projects.map((project, idx) => {
-            const Icon = project.icon;
-            return (
-              <Card
-                key={idx}
-                className="group p-8 bg-card/80 backdrop-blur-sm border-2 border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/20 animate-fade-in"
-              >
-                {/* Header */}
-                <div className="flex items-start justify-between mb-6">
-                  <div className="flex items-center gap-4">
-                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${project.gradient} flex items-center justify-center shadow-lg`}>
-                      <Icon className="w-7 h-7 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">
-                        {project.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground">{project.subtitle}</p>
-                    </div>
-                  </div>
-                  <a href={project.githubUrl} target="_blank" rel="noreferrer">
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      className="hover:bg-primary/10 hover:text-primary"
-                    >
-                      <Github className="w-5 h-5" />
-                    </Button>
-                  </a>
-                </div>
+// Companion tile: icon and title up top, numbers, then detail; actions pinned to the bottom.
+const ProjectTile = ({ project }: { project: Project }) => (
+  <TiltCard tilt={3} as="article" className="surface relative flex h-full flex-col overflow-hidden p-7 md:p-10">
+    <div aria-hidden className={cn("pointer-events-none absolute inset-0", project.washClass)} />
+    <div className="relative flex items-start gap-5 preserve-3d">
+      <AppIcon icon={project.icon} className={project.iconClass} />
+      <div>
+        <p className="text-sm font-medium text-link">{project.subtitle}</p>
+        <h3 className="mt-1 font-display text-3xl font-semibold tracking-[-0.035em]">{project.title}</h3>
+      </div>
+    </div>
+    <p className="relative mt-6 text-[1.0625rem] leading-relaxed text-muted-foreground">{project.description}</p>
+    <div className="relative mt-8 border-y py-6">
+      <Metrics metrics={project.metrics} />
+    </div>
+    <div className="relative mt-8">
+      <Highlights items={project.highlights} visible={3} />
+    </div>
+    <div className="relative mt-8">
+      <TechList items={project.technologies} />
+    </div>
+    <div className="relative mt-auto pt-10">
+      <Actions project={project} />
+    </div>
+  </TiltCard>
+);
 
-                {/* Description */}
-                <p className="text-muted-foreground mb-6 leading-relaxed">
-                  {project.description}
-                </p>
+export const Projects = () => {
+  const [featured, ...rest] = projects;
 
-                {/* Highlights */}
-                <div className="mb-6">
-                  <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
-                    <Cloud className="w-4 h-4 text-primary" />
-                    Key Achievements
-                  </h4>
-                  <ul className="space-y-2">
-                    {project.highlights.map((highlight, hIdx) => (
-                      <li key={hIdx} className="flex items-start gap-2 text-sm">
-                        <div className="w-1.5 h-1.5 rounded-full bg-accent mt-2 flex-shrink-0" />
-                        <span className="text-muted-foreground">{highlight}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+  return (
+    <section id="projects" className="section">
+      <div className="section-inner">
+        <Reveal className="max-w-3xl">
+          <h2 className="headline">Featured projects.</h2>
+          <p className="lede">Production-grade cloud applications, built end to end.</p>
+        </Reveal>
 
-                {/* Metrics */}
-                <div className="grid grid-cols-2 gap-4 mb-6 p-4 rounded-lg bg-muted/50">
-                  {project.metrics.map((metric, mIdx) => (
-                    <div key={mIdx} className="text-center">
-                      <div className="text-2xl font-bold text-primary mb-1">
-                        {metric.value}
-                      </div>
-                      <div className="text-xs text-muted-foreground">{metric.label}</div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Technologies */}
-                <div className="mb-6">
-                  <h4 className="text-sm font-semibold text-foreground mb-3">
-                    Tech Stack
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {project.technologies.map((tech, tIdx) => (
-                      <Badge
-                        key={tIdx}
-                        variant="secondary"
-                        className="bg-primary/10 text-primary hover:bg-primary/20 text-xs"
-                      >
-                        {tech}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                {/* CTA Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <a href={project.projectUrl} target="_blank" rel="noreferrer" className="flex-1">
-                    <Button
-                      className="w-full group/btn bg-gradient-to-r from-primary to-accent hover:opacity-90"
-                    >
-                      View Project Details
-                      <ExternalLink className="ml-2 w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                    </Button>
-                  </a>
-                  {project.liveUrl && (
-                    <Link to={project.liveUrl} className="flex-1">
-                      <Button
-                        variant="outline"
-                        className="w-full group/btn border-primary/30 hover:bg-primary/10 hover:text-primary"
-                      >
-                        <Radio className="mr-2 w-4 h-4 text-emerald-500 group-hover/btn:animate-pulse" />
-                        View Live Data
-                      </Button>
-                    </Link>
-                  )}
-                </div>
-              </Card>
-            );
-          })}
+        <div className="mt-14 grid gap-5 md:grid-cols-2">
+          <Reveal className="md:col-span-2">
+            <FeatureTile project={featured} />
+          </Reveal>
+          {rest.map((project, idx) => (
+            <Reveal key={project.title} index={idx + 1}>
+              <ProjectTile project={project} />
+            </Reveal>
+          ))}
         </div>
       </div>
     </section>

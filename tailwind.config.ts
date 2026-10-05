@@ -1,7 +1,8 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 export default {
-  darkMode: ["class"],
+  darkMode: "media",
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   prefix: "",
   theme: {
@@ -13,7 +14,23 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"Geist Variable"', "system-ui", "sans-serif"],
+        display: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"Geist Variable"', "system-ui", "sans-serif"],
+        mono: ['"SF Mono"', '"Geist Mono Variable"', "ui-monospace", "Menlo", "monospace"],
+      },
+      transitionTimingFunction: {
+        apple: "cubic-bezier(0.16, 1, 0.3, 1)",
+      },
+      zIndex: {
+        base: "0",
+        content: "10",
+        nav: "50",
+        grain: "60",
+        overlay: "70",
+      },
       colors: {
+        link: "hsl(var(--link))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -102,6 +119,14 @@ export default {
           "0%": { width: "0%" },
           "100%": { width: "var(--skill-width)" },
         },
+        drift: {
+          "0%, 100%": { transform: "translate3d(0, 0, 0) scale(1)" },
+          "50%": { transform: "translate3d(6vw, 4vh, 0) scale(1.08)" },
+        },
+        "rise-in": {
+          "0%": { opacity: "0", transform: "translateY(24px)", filter: "blur(8px)" },
+          "100%": { opacity: "1", transform: "translateY(0)", filter: "blur(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -112,8 +137,14 @@ export default {
         "slide-in-right": "slide-in-right 0.6s ease-out",
         "glow": "glow 2s ease-in-out infinite",
         "skill-bar": "skill-bar 1.5s ease-out forwards",
+        "rise-in": "rise-in 1s cubic-bezier(0.16, 1, 0.3, 1) both",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    // `touch:` applies on coarse pointers (phones, tablets) so controls can meet
+    // the 44pt minimum hit target there while staying compact with a mouse.
+    plugin(({ addVariant }) => addVariant("touch", "@media (pointer: coarse)")),
+  ],
 } satisfies Config;

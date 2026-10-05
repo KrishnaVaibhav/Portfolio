@@ -2,50 +2,107 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/*
+  Design system. All colors are HSL triplets consumed by tailwind.config.ts.
+  The page follows the OS appearance (light / dark), the way Apple's own sites do.
+  One accent: Apple-style blue. --primary is the fill (white text, 4.7:1);
+  --link is the text-on-surface variant tuned per mode (5.4:1 light, 6:1 dark).
 */
 
 @layer base {
   :root {
-    --background: 220 25% 8%;
-    --foreground: 210 40% 98%;
+    color-scheme: light;
 
-    --card: 220 20% 12%;
-    --card-foreground: 210 40% 98%;
+    --background: 240 33% 99%;
+    --foreground: 240 3% 12%;
 
-    --popover: 220 20% 12%;
-    --popover-foreground: 210 40% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 3% 12%;
 
-    --primary: 207 90% 54%;
-    --primary-foreground: 210 40% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 3% 12%;
 
-    --secondary: 38 92% 50%;
-    --secondary-foreground: 220 25% 8%;
+    --primary: 210 100% 45%;
+    --primary-foreground: 0 0% 100%;
 
-    --muted: 220 15% 20%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --link: 210 100% 40%;
 
-    --accent: 187 100% 50%;
-    --accent-foreground: 220 25% 8%;
+    --secondary: 240 11% 93%;
+    --secondary-foreground: 240 3% 12%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --muted: 240 11% 96%;
+    --muted-foreground: 240 2% 44%;
 
-    --border: 220 15% 20%;
-    --input: 220 15% 20%;
-    --ring: 207 90% 54%;
+    --accent: 240 9% 94%;
+    --accent-foreground: 240 3% 12%;
 
-    --radius: 0.75rem;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    /* Custom gradient colors */
-    --gradient-from: 207 90% 54%;
-    --gradient-via: 187 100% 50%;
-    --gradient-to: 38 92% 50%;
-    
-    /* Glass effect */
-    --glass-bg: 220 20% 12% / 0.7;
-    --glass-border: 210 40% 98% / 0.1;
+    --border: 240 6% 88%;
+    --input: 240 6% 84%;
+    --ring: 210 100% 45%;
+
+    --radius: 1.125rem;
+
+    /* Liquid Glass (web approximation) */
+    --glass-tint: 0 0% 100% / 0.8;
+    --glass-edge: 0 0% 100% / 0.75;
+    --glass-rim: 240 6% 20% / 0.08;
+    --glass-shadow: 240 30% 20% / 0.12;
+
+    /* Tinted elevation, lit from above */
+    --shadow-color: 230 25% 30%;
+
+    /* 3D scene palette, read by the hero canvas */
+    --scene-node: 210 100% 45%;
+    --scene-line: 240 6% 60%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      color-scheme: dark;
+
+      --background: 240 11% 4%;
+      --foreground: 240 11% 96%;
+
+      --card: 240 5% 8%;
+      --card-foreground: 240 11% 96%;
+
+      --popover: 240 5% 9%;
+      --popover-foreground: 240 11% 96%;
+
+      --primary: 210 100% 45%;
+      --primary-foreground: 0 0% 100%;
+
+      --link: 211 100% 58%;
+
+      --secondary: 240 3% 17%;
+      --secondary-foreground: 240 11% 96%;
+
+      --muted: 240 3% 11%;
+      --muted-foreground: 240 2% 64%;
+
+      --accent: 240 3% 14%;
+      --accent-foreground: 240 11% 96%;
+
+      --destructive: 0 72% 55%;
+      --destructive-foreground: 0 0% 100%;
+
+      --border: 240 4% 17%;
+      --input: 240 4% 22%;
+      --ring: 211 100% 58%;
+
+      --glass-tint: 240 6% 12% / 0.8;
+      --glass-edge: 0 0% 100% / 0.16;
+      --glass-rim: 0 0% 100% / 0.06;
+      --glass-shadow: 240 40% 2% / 0.5;
+
+      --shadow-color: 240 50% 1%;
+
+      --scene-node: 211 100% 62%;
+      --scene-line: 240 5% 40%;
+    }
   }
 }
 
@@ -54,7 +111,552 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground;
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
   }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    /* clip (not hidden) so position: sticky keeps working */
+    overflow-x: clip;
+    font-feature-settings: "ss01", "cv11";
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 {
+    text-wrap: balance;
+  }
+
+  p, li {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.22);
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Section rhythm: generous top, slightly larger bottom for optical balance. */
+  .section {
+    @apply relative px-5 py-20 md:px-8 md:pt-24 md:pb-28;
+  }
+
+  .section-inner {
+    @apply mx-auto w-full max-w-[1200px];
+  }
+
+  .headline {
+    @apply font-display text-[2.5rem] font-semibold leading-[1.05] tracking-[-0.035em] md:text-6xl lg:text-[4.25rem];
+  }
+
+  .lede {
+    @apply mt-5 max-w-[60ch] text-lg leading-relaxed text-muted-foreground md:text-xl;
+  }
+
+  /*
+    Liquid Glass, web approximation. Apple ships Liquid Glass for its native
+    platforms only; this is backdrop-filter + layered rims + a specular
+    highlight that follows the pointer (--mx / --my set by useSpecular).
+  */
+  .glass {
+    position: relative;
+    isolation: isolate;
+    background:
+      linear-gradient(135deg, hsl(0 0% 100% / 0.14), hsl(0 0% 100% / 0.02)),
+      hsl(var(--glass-tint));
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    border: 1px solid hsl(var(--glass-rim));
+    box-shadow:
+      inset 0 1px 0 hsl(var(--glass-edge)),
+      inset 0 -1px 0 hsl(0 0% 100% / 0.04),
+      0 10px 40px -12px hsl(var(--glass-shadow));
+  }
+
+  .glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(
+      140px circle at var(--mx, 30%) var(--my, 0%),
+      hsl(0 0% 100% / 0.22),
+      transparent 70%
+    );
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+  }
+
+  @media (prefers-reduced-transparency: reduce) {
+    .glass {
+      background: hsl(var(--card));
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+  }
+
+  /* Elevated surface used for tiles. Tinted, single top light source. */
+  .surface {
+    @apply rounded-[var(--radius)] border bg-card;
+    box-shadow:
+      0 1px 0 hsl(0 0% 100% / 0.04) inset,
+      0 1px 2px hsl(var(--shadow-color) / 0.06),
+      0 12px 32px -16px hsl(var(--shadow-color) / 0.18);
+  }
+
+  /* Pointer-tracked 3D tilt + spotlight rim (driven by TiltCard). */
+  .tilt {
+    transform-style: preserve-3d;
+    transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+  }
+
+  .tilt[data-active="true"] {
+    transition-duration: 0.12s;
+  }
+
+  .spotlight {
+    position: relative;
+  }
+
+  .spotlight::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: radial-gradient(
+      320px circle at var(--mx, 50%) var(--my, 50%),
+      hsl(var(--link) / 0.55),
+      transparent 60%
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+
+  .spotlight:hover::after {
+    opacity: 1;
+  }
+
+  /* Scroll reveal. Elements start settled when JS or motion is unavailable. */
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .js .reveal:not([data-shown="true"]) {
+      opacity: 0;
+      transform: translateY(28px) scale(0.985);
+    }
+
+    .js .reveal {
+      transition:
+        opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+        transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+      transition-delay: calc(var(--i, 0) * 70ms);
+    }
+  }
+
+  /* Fixed film grain. Lives on a fixed layer only, never on scrolling content. */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .grain {
+      opacity: 0.05;
+    }
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
+  /* Scroll-driven timeline fill (progressive enhancement, CSS scroll timelines). */
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .scroll-fill {
+        transform-origin: top;
+        animation: scroll-fill linear both;
+        animation-timeline: view();
+        animation-range: entry 20% cover 70%;
+      }
+
+      .view-zoom {
+        animation: view-zoom linear both;
+        animation-timeline: view();
+        animation-range: entry 0% exit 100%;
+      }
+
+      .scroll-ring {
+        animation: scroll-ring linear both;
+        animation-timeline: scroll(root);
+      }
+    }
+  }
+
+  @keyframes scroll-fill {
+    from { transform: scaleY(0); }
+    to { transform: scaleY(1); }
+  }
+
+  @keyframes view-zoom {
+    from { transform: scale(1.14); }
+    to { transform: scale(1); }
+  }
+
+  @keyframes scroll-ring {
+    from { stroke-dashoffset: 100; }
+    to { stroke-dashoffset: 0; }
+  }
+
+  /* Without scroll timelines the progress ring would sit empty; hide it. */
+  @supports not (animation-timeline: scroll()) {
+    .scroll-ring { display: none; }
+  }
+}
+
+/* Wallet-style credential passes: registered properties so the fan animates. */
+@property --fan {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@property --lift {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@layer components {
+  .pass {
+    --fan: var(--fan-base, 0deg);
+    --lift: var(--lift-base, 0px);
+    transform: perspective(1400px) rotateY(calc(var(--fan) + var(--ry, 0deg))) rotateX(var(--rx, 0deg))
+      translateZ(var(--lift));
+    transition:
+      --fan 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+      --lift 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.5s ease;
+    transform-style: preserve-3d;
+  }
+
+  .pass:hover,
+  .pass:focus-visible {
+    --fan: 0deg;
+    --lift: 70px;
+  }
+
+  @media (max-width: 767px) {
+    .pass {
+      --fan-base: 0deg !important;
+      --lift-base: 0px !important;
+    }
+  }
+}
+
+/* ── Hero: exploded view of the stack (pure CSS 3D) ───────────────────────── */
+@property --gap {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 88px;
+}
+
+@property --spread {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@layer components {
+  .stack-stage {
+    --plate: clamp(180px, 24vw, 360px);
+    perspective: 1800px;
+    perspective-origin: 50% 40%;
+  }
+
+  /* The stack rises from its base plate; drop it so the whole stack is centred. */
+  .stack-offset {
+    transform: translateY(calc(var(--plate) * 0.55));
+  }
+
+  .stack-scene {
+    --gap-open: calc(var(--plate) * 0.5);
+    --gap: var(--gap-open);
+    --spread: 1;
+    position: relative;
+    width: var(--plate);
+    height: var(--plate);
+    transform-style: preserve-3d;
+    transform: rotateX(calc(56deg + var(--ty, 0) * 1deg)) rotateZ(calc(-38deg + var(--tx, 0) * 1deg));
+    transition: --spread 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .stack-scene:hover {
+    --spread: 1.35;
+  }
+
+  .stack-layer {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transform: translateZ(calc(var(--gap) * var(--spread) * var(--i)));
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .stack-layer:hover {
+    transform: translateZ(calc(var(--gap) * var(--spread) * var(--i) + 22px));
+  }
+
+  /* Vertical link between two layers; children travel along it. */
+  .stack-via {
+    --via-len: calc(var(--gap) * var(--spread));
+    position: absolute;
+    width: 1px;
+    height: var(--via-len);
+    transform-origin: top center;
+    transform: rotateX(90deg);
+  }
+
+  .stack-packet {
+    position: absolute;
+    left: -3px;
+    top: 0;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .stack-packet {
+      animation: stack-packet 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+    }
+
+    .stack-float {
+      animation: stack-float 9s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes stack-packet {
+  0% { transform: translateY(0); opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translateY(var(--via-len)); opacity: 0; }
+}
+
+@keyframes stack-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+
+@keyframes stack-collapse {
+  from { --gap: var(--gap-open); }
+  to { --gap: calc(var(--gap-open) * 0.22); }
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .stack-scene {
+      animation: stack-collapse linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 75vh;
+    }
+  }
+}
+
+/* ── About artwork: layered "holographic" parallax ───────────────────────── */
+@layer components {
+  .holo {
+    --px: 0;
+    --py: 0;
+    --gx: 50%;
+    --gy: 30%;
+    isolation: isolate;
+  }
+
+  .holo-stage {
+    position: absolute;
+    inset: 0;
+    transform: perspective(1400px) rotateX(calc(var(--py) * -6deg)) rotateY(calc(var(--px) * 8deg));
+    clip-path: inset(0 0 0 0 round 32px);
+  }
+
+  .holo-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 35%;
+    will-change: transform;
+  }
+
+  /* Back plate trails the pointer; the figure leads it. */
+  .holo-back,
+  .holo-energy {
+    transform: scale(1.12) translate3d(calc(var(--px) * -16px), calc(var(--py) * -12px), 0);
+  }
+
+  .holo-figure {
+    transform: scale(1.12) translate3d(calc(var(--px) * 20px), calc(var(--py) * 14px), 0);
+    filter: drop-shadow(0 26px 34px rgba(4, 5, 20, 0.6));
+  }
+
+  /* Bright-pass copy of the artwork: only its glowing circuits and code survive,
+     and a moving mask lets a pulse of light run through them. */
+  .holo-energy {
+    mix-blend-mode: plus-lighter;
+    filter: brightness(1.35) contrast(5) saturate(1.6);
+    opacity: 0;
+    -webkit-mask-image: linear-gradient(100deg, transparent 0% 40%, #000 50%, transparent 60% 100%);
+    mask-image: linear-gradient(100deg, transparent 0% 40%, #000 50%, transparent 60% 100%);
+    -webkit-mask-size: 320% 100%;
+    mask-size: 320% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+
+  .holo-sheen {
+    background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, 0.1) 50%, transparent 62%);
+    background-size: 260% 100%;
+    background-position: calc(50% + var(--px) * 70%) 0;
+    mix-blend-mode: screen;
+  }
+
+  .holo-glare {
+    background: radial-gradient(560px circle at var(--gx) var(--gy), rgba(160, 200, 255, 0.18), transparent 55%);
+    mix-blend-mode: screen;
+  }
+
+  .holo-scan {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .holo[data-shown="true"] .holo-energy {
+      animation: holo-energy 6s cubic-bezier(0.45, 0, 0.25, 1) 1.8s infinite;
+    }
+
+    /* Boot-up: the portrait renders in behind a scan line the first time it is seen. */
+    .js .holo:not([data-shown="true"]) .holo-stage {
+      clip-path: inset(0 0 100% 0 round 32px);
+    }
+
+    .js .holo .holo-stage {
+      transition: clip-path 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.15s;
+    }
+
+    .holo[data-shown="true"] .holo-scan {
+      animation: holo-scan 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.15s both;
+    }
+  }
+}
+
+@keyframes holo-energy {
+  0% { -webkit-mask-position: 120% 0; mask-position: 120% 0; opacity: 0; }
+  8% { opacity: 1; }
+  55% { -webkit-mask-position: -20% 0; mask-position: -20% 0; opacity: 1; }
+  65%, 100% { -webkit-mask-position: -20% 0; mask-position: -20% 0; opacity: 0; }
+}
+
+@keyframes holo-scan {
+  0% { transform: translateY(0); opacity: 1; }
+  92% { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+/* ── Brand plates: university marks ──────────────────────────────────────── */
+@layer components {
+  .mark-plate {
+    transform-style: preserve-3d;
+  }
+
+  /* The logo floats on its own plane above the plate. */
+  .mark-logo {
+    transform: translateZ(18px);
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.25));
+  }
+
+  .mark-sheen {
+    background: linear-gradient(115deg, transparent 36%, rgba(255, 255, 255, 0.6) 50%, transparent 64%);
+    background-size: 280% 100%;
+    background-position: 140% 0;
+    mix-blend-mode: soft-light;
+  }
+
+  /* Gold foil: a moving metallic gradient masked to the shield's gold border. */
+  .mark-foil {
+    background: linear-gradient(105deg, #b8860b 0%, #ffd400 22%, #fff7c9 38%, #ffd400 52%, #c99a06 72%, #ffe36b 86%, #b8860b 100%);
+    background-size: 300% 100%;
+    -webkit-mask: var(--mask) center / contain no-repeat;
+    mask: var(--mask) center / contain no-repeat;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .mark-sheen {
+      animation: mark-sheen 7s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+    }
+
+    .mark-foil {
+      animation: mark-foil 5s ease-in-out infinite alternate;
+    }
+  }
+}
+
+@keyframes mark-sheen {
+  0%, 55% { background-position: 140% 0; }
+  85%, 100% { background-position: -40% 0; }
+}
+
+@keyframes mark-foil {
+  from { background-position: 0% 0; }
+  to { background-position: 100% 0; }
 }

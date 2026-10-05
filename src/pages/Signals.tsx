@@ -2,7 +2,9 @@ import { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
-import { SubtleSkillIcons } from "@/components/SubtleSkillIcons";
+import { AmbientBackground } from "@/components/AmbientBackground";
+import { Footer } from "@/components/Footer";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,8 +17,8 @@ import {
 } from "@/components/ui/table";
 import {
   TrendingUp, TrendingDown, CheckCircle2, XCircle, MinusCircle,
-  Loader2, AlertTriangle, Inbox, RefreshCw, ChartNoAxesCombined,
-  ChevronDown, ChevronUp, Github, ShieldAlert,
+  AlertTriangle, Inbox, RefreshCw, ChartNoAxesCombined,
+  ChevronDown, ChevronUp, Github, ShieldAlert, Star, CalendarDays, ArrowLeft,
 } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -26,7 +28,7 @@ const SOURCE_URL = "https://github.com/KrishnaVaibhav/PipeLines/tree/main/daily-
 const REASONING_TRUNCATE_LENGTH = 220;
 
 const fmtPrice = (value: number | null) =>
-  value == null ? "—" : `$${value.toFixed(2)}`;
+  value == null ? "-" : `$${value.toFixed(2)}`;
 
 const fmtDate = (iso: string) =>
   new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", {
@@ -72,7 +74,7 @@ const ResultCell = ({ hit1d, hit7d }: { hit1d: boolean | null; hit7d: boolean | 
     <div className="flex items-center gap-1.5 text-xs">
       <span className="text-muted-foreground w-6">{label}</span>
       <AgreementIcon status={hit} />
-      <span className={hit == null ? "text-muted-foreground/70" : ""}>
+      <span className={hit == null ? "text-muted-foreground" : ""}>
         {hit === true ? "Hit" : hit === false ? "Miss" : "Pending"}
       </span>
     </div>
@@ -86,7 +88,7 @@ const ResultCell = ({ hit1d, hit7d }: { hit1d: boolean | null; hit7d: boolean | 
 };
 
 const Sparkline = ({ closes }: { closes: number[] }) => {
-  if (closes.length < 2) return <span className="text-xs text-muted-foreground">—</span>;
+  if (closes.length < 2) return <span className="text-xs text-muted-foreground">-</span>;
   const w = 64, h = 22, pad = 2;
   const min = Math.min(...closes);
   const max = Math.max(...closes);
@@ -131,16 +133,16 @@ const RiskDetails = ({ forecast }: { forecast: Forecast }) => (
         <div>
           <p className="text-muted-foreground mb-0.5">Risk / Share</p>
           <p className="font-mono font-medium">
-            {forecast.risk_per_share_pct != null ? `${forecast.risk_per_share_pct.toFixed(2)}%` : "—"}
+            {forecast.risk_per_share_pct != null ? `${forecast.risk_per_share_pct.toFixed(2)}%` : "-"}
           </p>
         </div>
         <div>
           <p className="text-muted-foreground mb-0.5">Sector</p>
-          <p className="font-medium">{forecast.sector ?? "—"}</p>
+          <p className="font-medium">{forecast.sector ?? "-"}</p>
         </div>
         <div>
           <p className="text-muted-foreground mb-0.5">ATR (14)</p>
-          <p className="font-mono font-medium">{forecast.atr14 != null ? forecast.atr14.toFixed(2) : "—"}</p>
+          <p className="font-mono font-medium">{forecast.atr14 != null ? forecast.atr14.toFixed(2) : "-"}</p>
         </div>
       </div>
     </CollapsibleContent>
@@ -174,31 +176,31 @@ const Signals = () => {
   const COLUMN_COUNT = 8;
 
   return (
-    <div className="min-h-screen bg-background text-foreground relative">
-      <SubtleSkillIcons />
+    <div className="relative min-h-[100dvh] bg-background text-foreground">
+      <AmbientBackground />
       <Navigation />
 
-      <section className="pt-32 pb-20 px-4 relative z-10">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-12 animate-fade-in">
-            <div className="w-14 h-14 mx-auto rounded-xl bg-gradient-to-br from-green-500 to-red-600 flex items-center justify-center shadow-lg mb-4">
-              <ChartNoAxesCombined className="w-7 h-7 text-white" />
+      <main id="main" className="relative z-content px-5 pb-24 pt-32 md:px-8 md:pt-40">
+        <div className="mx-auto max-w-[1200px]">
+          <div className="mb-12 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+            <div className="animate-rise-in">
+              <div className="mb-6 grid h-16 w-16 place-items-center rounded-[18px] bg-gradient-to-br from-emerald-400 via-emerald-600 to-rose-600 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_20px_40px_-16px_rgba(0,0,0,0.45)]">
+                <ChartNoAxesCombined className="h-7 w-7" strokeWidth={1.5} />
+              </div>
+              <h1 className="font-display text-5xl font-semibold tracking-[-0.04em] md:text-7xl">Daily Signals.</h1>
+              <p className="mt-4 max-w-[52ch] text-lg text-muted-foreground md:text-xl">
+                Live AI-generated stock forecasts, refreshed daily from the Supabase pipeline.
+              </p>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-              Daily Signals
-            </h1>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-4">
-              Live AI-generated stock forecasts, refreshed daily from the Supabase pipeline.
-            </p>
-            <a href={SOURCE_URL} target="_blank" rel="noreferrer noopener">
-              <Button variant="outline" size="sm">
-                <Github className="w-3.5 h-3.5 mr-1.5" />
-                View Source
-              </Button>
-            </a>
+            <Button asChild variant="outline" className="self-start md:self-auto">
+              <a href={SOURCE_URL} target="_blank" rel="noreferrer noopener">
+                <Github />
+                View source
+              </a>
+            </Button>
           </div>
 
-          <Card className="p-4 md:p-6 border-2 border-border animate-fade-in">
+          <Card className="p-4 md:p-6 animate-rise-in" style={{ animationDelay: "120ms" }}>
             <div className="flex items-center justify-between mb-4">
               <p className="text-sm text-muted-foreground">
                 {loading ? "Loading…" : `${forecasts.length} forecast${forecasts.length === 1 ? "" : "s"} today`}
@@ -210,9 +212,20 @@ const Signals = () => {
             </div>
 
             {loading && (
-              <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-3">
-                <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                <p className="text-sm">Fetching today's forecasts…</p>
+              <div className="space-y-3 py-2" aria-busy="true" aria-label="Fetching today's forecasts">
+                {Array.from({ length: 6 }, (_, i) => (
+                  <div key={i} className="flex items-center gap-4 rounded-xl px-2 py-3">
+                    <div className="w-24 space-y-1.5">
+                      <Skeleton className="h-4 w-14" />
+                      <Skeleton className="h-3 w-20" />
+                    </div>
+                    <Skeleton className="h-5 w-16 rounded-full" />
+                    <Skeleton className="h-4 w-28" />
+                    <Skeleton className="h-1.5 flex-1 max-w-[140px]" />
+                    <Skeleton className="hidden h-5 w-14 rounded-full sm:block" />
+                    <Skeleton className="ml-auto h-8 w-16" />
+                  </div>
+                ))}
               </div>
             )}
 
@@ -227,7 +240,7 @@ const Signals = () => {
             {!loading && !error && forecasts.length === 0 && (
               <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-3">
                 <Inbox className="w-10 h-10 opacity-30" />
-                <p className="text-sm">No forecasts yet — the pipeline hasn't run today.</p>
+                <p className="text-sm">No forecasts yet. The pipeline hasn't run today.</p>
               </div>
             )}
 
@@ -268,7 +281,7 @@ const Signals = () => {
                               {f.actionable && (
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <span className="cursor-help text-xs" aria-label="Actionable signal">⭐</span>
+                                    <span className="cursor-help text-amber-500" aria-label="Actionable signal"><Star className="h-3.5 w-3.5 fill-current" /></span>
                                   </TooltipTrigger>
                                   <TooltipContent>Actionable: AI and technicals agree, confidence ≥ 70%</TooltipContent>
                                 </Tooltip>
@@ -276,7 +289,7 @@ const Signals = () => {
                               {f.earnings_date && (
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <span className="cursor-help text-xs" aria-label="Earnings date within window">📅</span>
+                                    <span className="cursor-help text-muted-foreground" aria-label="Earnings date within window"><CalendarDays className="h-3.5 w-3.5" /></span>
                                   </TooltipTrigger>
                                   <TooltipContent>Earnings: {fmtDate(f.earnings_date)}</TooltipContent>
                                 </Tooltip>
@@ -306,7 +319,7 @@ const Signals = () => {
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
                             <div className="flex items-center gap-2 text-xs">
-                              <span className="font-mono">{f.rsi14 != null ? `RSI ${f.rsi14.toFixed(0)}` : "—"}</span>
+                              <span className="font-mono">{f.rsi14 != null ? `RSI ${f.rsi14.toFixed(0)}` : "-"}</span>
                               <AgreementIcon status={technicalAgree} />
                             </div>
                           </TableCell>
@@ -396,21 +409,18 @@ const Signals = () => {
             Informational only, not financial advice.
           </p>
 
-          <div className="text-center mt-8">
-            <Link to="/">
-              <Button variant="ghost" size="sm">← Back to portfolio</Button>
-            </Link>
+          <div className="mt-10 text-center">
+            <Button asChild variant="ghost" size="sm" className="group">
+              <Link to="/">
+                <ArrowLeft className="transition-transform duration-300 group-hover:-translate-x-0.5" />
+                Back to portfolio
+              </Link>
+            </Button>
           </div>
         </div>
-      </section>
+      </main>
 
-      <footer className="py-8 px-4 border-t border-border bg-muted/30 relative z-10">
-        <div className="container mx-auto max-w-7xl text-center">
-          <p className="text-muted-foreground text-sm">
-            © 2026 Krishna Vaibhav Yadlapalli. Built with React, TypeScript & Tailwind CSS.
-          </p>
-        </div>
-      </footer>
+      <Footer showCredentials={false} />
     </div>
   );
 };
