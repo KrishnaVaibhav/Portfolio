@@ -1,69 +1,46 @@
-import { Component, Suspense, lazy, type ReactNode } from "react";
 import { ArrowRight, ChevronRight } from "lucide-react";
 import { Button } from "./ui/button";
-import profileImg from "@/assets/profile.jpg";
-
-const HeroScene = lazy(() => import("./three/HeroScene"));
-
-// Static stand-in shown while three.js loads, or if WebGL is unavailable.
-const SceneFallback = () => (
-  <div className="grid h-full w-full place-items-center">
-    <div className="h-[46%] aspect-square rounded-full bg-[radial-gradient(circle_at_35%_30%,hsl(0_0%_100%/0.5),hsl(var(--primary)/0.18)_45%,transparent_70%)] shadow-[inset_0_0_60px_hsl(var(--primary)/0.15)]" />
-  </div>
-);
-
-class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
-  state = { failed: false };
-  static getDerivedStateFromError() {
-    return { failed: true };
-  }
-  render() {
-    return this.state.failed ? <SceneFallback /> : this.props.children;
-  }
-}
+import { KineticName } from "./KineticName";
+import { StackHero } from "./StackHero";
 
 const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
 export const Hero = () => {
   return (
-    <section id="top" className="relative isolate flex min-h-[100dvh] items-center overflow-hidden px-5 pb-16 pt-24 md:px-8">
-      {/* 3D scene: bleeds off the right edge on desktop, sits behind the copy on mobile */}
+    <section
+      id="top"
+      aria-label="Introduction"
+      className="relative isolate flex min-h-[100dvh] items-center overflow-hidden px-5 md:px-8"
+    >
+      {/* Soft studio light behind the stack */}
       <div
         aria-hidden
-        className="absolute inset-x-0 top-14 -z-10 h-[52vh] opacity-90 md:inset-y-0 md:left-auto md:right-[-8vw] md:top-0 md:h-full md:w-[62vw] md:opacity-100"
-      >
-        <SceneBoundary>
-          <Suspense fallback={<SceneFallback />}>
-            <HeroScene />
-          </Suspense>
-        </SceneBoundary>
-      </div>
+        className="absolute -z-20 h-[80vh] w-[80vw] max-w-[1000px] rounded-full bg-[radial-gradient(closest-side,hsl(var(--primary)/0.14),transparent)] blur-2xl max-md:left-1/2 max-md:top-[-14vh] max-md:-translate-x-1/2 md:right-[-12vw] md:top-[10vh]"
+      />
 
-      <div className="hero-recede mx-auto grid w-full max-w-[1200px] grid-cols-1 md:grid-cols-12">
-        <div className="mt-[34vh] md:col-span-7 md:mt-0 lg:col-span-6">
+      {/* Exploded view of the stack */}
+      <StackHero className="absolute inset-x-0 top-[10vh] -z-10 h-[46vh] md:inset-y-0 md:left-auto md:right-[2vw] md:top-0 md:h-full md:w-[50vw]" />
+
+      <div className="mx-auto w-full max-w-[1200px]">
+        <div className="mt-[44vh] max-w-[640px] md:mt-0">
           <div
             className="glass inline-flex items-center gap-2.5 rounded-full py-1 pl-1 pr-4 animate-rise-in"
             style={{ animationDelay: "80ms" }}
           >
-            <img
-              src={profileImg}
-              alt="Portrait of Krishna Vaibhav Yadlapalli"
-              width={32}
-              height={32}
-              className="h-8 w-8 rounded-full object-cover"
-            />
+            <span aria-hidden className="relative ml-1.5 grid h-2 w-2 place-items-center">
+              <span className="absolute h-2 w-2 rounded-full bg-[#30d158] motion-safe:animate-ping" />
+              <span className="h-2 w-2 rounded-full bg-[#30d158]" />
+            </span>
             <span className="text-[13px] font-medium tracking-[-0.01em]">
-              Full-stack developer, Azure and AWS certified
+              Cloud Developer at BMO<span className="hidden sm:inline">, Azure and AWS certified</span>
             </span>
           </div>
 
           <h1
-            className="mt-7 font-display text-[clamp(3.25rem,9vw,7.5rem)] font-semibold leading-[0.95] tracking-[-0.045em] animate-rise-in"
-            style={{ animationDelay: "180ms" }}
+            className="mt-7 text-[clamp(3.4rem,9.5vw,8rem)] leading-[0.92] tracking-[-0.05em] animate-rise-in"
+            style={{ animationDelay: "160ms" }}
           >
-            Krishna
-            <br />
-            Vaibhav<span className="text-link">.</span>
+            <KineticName lines={["Krishna", "Vaibhav"]} />
           </h1>
 
           <p

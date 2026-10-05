@@ -171,6 +171,62 @@ const Actions = ({ project }: { project: Project }) => (
   </div>
 );
 
+// Wide tile for the lead project: story on the left, icon and numbers on the right.
+const FeatureTile = ({ project }: { project: Project }) => (
+  <TiltCard tilt={2} as="article" className="surface relative overflow-hidden p-7 md:p-12">
+    <div aria-hidden className={cn("pointer-events-none absolute inset-0", project.washClass)} />
+    <div className="relative grid gap-10 preserve-3d lg:grid-cols-12 lg:gap-14">
+      <div className="flex flex-col lg:col-span-7">
+        <p className="text-sm font-medium text-link">{project.subtitle}</p>
+        <h3 className="mt-2 font-display text-4xl font-semibold tracking-[-0.04em] md:text-6xl">{project.title}</h3>
+        <p className="mt-5 max-w-[58ch] text-[17px] leading-relaxed text-muted-foreground">{project.description}</p>
+        <div className="mt-8">
+          <Highlights items={project.highlights} visible={4} />
+        </div>
+        <div className="mt-8">
+          <TechList items={project.technologies} />
+        </div>
+        <div className="mt-10">
+          <Actions project={project} />
+        </div>
+      </div>
+      <div className="flex flex-col justify-between gap-10 preserve-3d lg:col-span-5 lg:items-end">
+        <AppIcon icon={project.icon} className={project.iconClass} size="lg" />
+        <div className="w-full lg:max-w-[340px]">
+          <Metrics metrics={project.metrics} large />
+        </div>
+      </div>
+    </div>
+  </TiltCard>
+);
+
+// Companion tile: icon and title up top, numbers, then detail; actions pinned to the bottom.
+const ProjectTile = ({ project }: { project: Project }) => (
+  <TiltCard tilt={3} as="article" className="surface relative flex h-full flex-col overflow-hidden p-7 md:p-10">
+    <div aria-hidden className={cn("pointer-events-none absolute inset-0", project.washClass)} />
+    <div className="relative flex items-start gap-5 preserve-3d">
+      <AppIcon icon={project.icon} className={project.iconClass} />
+      <div>
+        <p className="text-sm font-medium text-link">{project.subtitle}</p>
+        <h3 className="mt-1 font-display text-3xl font-semibold tracking-[-0.035em]">{project.title}</h3>
+      </div>
+    </div>
+    <p className="relative mt-6 text-[17px] leading-relaxed text-muted-foreground">{project.description}</p>
+    <div className="relative mt-8 border-y py-6">
+      <Metrics metrics={project.metrics} />
+    </div>
+    <div className="relative mt-8">
+      <Highlights items={project.highlights} visible={3} />
+    </div>
+    <div className="relative mt-8">
+      <TechList items={project.technologies} />
+    </div>
+    <div className="relative mt-auto pt-10">
+      <Actions project={project} />
+    </div>
+  </TiltCard>
+);
+
 export const Projects = () => {
   const [featured, ...rest] = projects;
 
@@ -183,64 +239,12 @@ export const Projects = () => {
         </Reveal>
 
         <div className="mt-14 grid gap-5 md:grid-cols-2">
-          {/* Feature tile */}
           <Reveal className="md:col-span-2">
-            <TiltCard tilt={2.5} as="article" className="surface relative overflow-hidden p-7 md:p-12">
-              <div aria-hidden className={cn("pointer-events-none absolute inset-0", featured.washClass)} />
-              <div className="relative grid gap-12 lg:grid-cols-12 lg:gap-16 preserve-3d">
-                <div className="lg:col-span-7">
-                  <p className="text-sm font-medium text-link">{featured.subtitle}</p>
-                  <h3 className="mt-2 font-display text-4xl font-semibold tracking-[-0.035em] md:text-5xl">
-                    {featured.title}
-                  </h3>
-                  <p className="mt-5 max-w-[60ch] text-lg leading-relaxed text-muted-foreground">
-                    {featured.description}
-                  </p>
-                  <div className="mt-8">
-                    <Highlights items={featured.highlights} visible={4} />
-                  </div>
-                  <div className="mt-8">
-                    <TechList items={featured.technologies} />
-                  </div>
-                  <div className="mt-10">
-                    <Actions project={featured} />
-                  </div>
-                </div>
-                <div className="flex flex-col justify-between gap-12 preserve-3d lg:col-span-5 lg:items-end">
-                  <AppIcon icon={featured.icon} className={featured.iconClass} size="lg" />
-                  <div className="w-full lg:max-w-[340px]">
-                    <Metrics metrics={featured.metrics} large />
-                  </div>
-                </div>
-              </div>
-            </TiltCard>
+            <FeatureTile project={featured} />
           </Reveal>
-
           {rest.map((project, idx) => (
             <Reveal key={project.title} index={idx + 1}>
-              <TiltCard tilt={4} as="article" className="surface relative flex h-full flex-col overflow-hidden p-7 md:p-9">
-                <div aria-hidden className={cn("pointer-events-none absolute inset-0", project.washClass)} />
-                <div className="relative flex items-start justify-between gap-6 preserve-3d">
-                  <div>
-                    <p className="text-sm font-medium text-link">{project.subtitle}</p>
-                    <h3 className="mt-2 font-display text-3xl font-semibold tracking-[-0.03em]">{project.title}</h3>
-                  </div>
-                  <AppIcon icon={project.icon} className={project.iconClass} />
-                </div>
-                <p className="relative mt-5 text-[17px] leading-relaxed text-muted-foreground">{project.description}</p>
-                <div className="relative mt-8">
-                  <Metrics metrics={project.metrics} />
-                </div>
-                <div className="relative mt-8">
-                  <Highlights items={project.highlights} visible={3} />
-                </div>
-                <div className="relative mt-8">
-                  <TechList items={project.technologies} />
-                </div>
-                <div className="relative mt-auto pt-10">
-                  <Actions project={project} />
-                </div>
-              </TiltCard>
+              <ProjectTile project={project} />
             </Reveal>
           ))}
         </div>

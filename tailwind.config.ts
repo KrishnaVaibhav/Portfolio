@@ -26,6 +26,7 @@ export default {
         content: "10",
         nav: "50",
         grain: "60",
+        overlay: "70",
       },
       colors: {
         link: "hsl(var(--link))",

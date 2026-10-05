@@ -124,7 +124,7 @@ export const Skills = () => {
               ref={tabsRef}
               role="tablist"
               aria-label="Skill categories"
-              className="glass flex snap-x gap-1 overflow-x-auto rounded-full p-1 [mask-image:linear-gradient(90deg,#000_88%,transparent)] [scrollbar-width:none]"
+              className="glass flex flex-wrap gap-1 rounded-[24px] p-1.5"
             >
               {skillCategories.map((category, idx) => (
                 <button
@@ -137,7 +137,7 @@ export const Skills = () => {
                   onClick={() => setActiveCategory(idx)}
                   onKeyDown={onTabKey}
                   className={cn(
-                    "h-9 shrink-0 snap-start whitespace-nowrap rounded-full px-3.5 text-[13px] font-medium transition-all duration-300 last:mr-8",
+                    "h-9 whitespace-nowrap rounded-full px-3.5 text-[13px] font-medium transition-all duration-300",
                     activeCategory === idx
                       ? "bg-card text-foreground shadow-[0_1px_2px_hsl(var(--shadow-color)/0.12),0_4px_12px_-4px_hsl(var(--shadow-color)/0.2)] dark:bg-white/[0.12]"
                       : "text-muted-foreground hover:text-foreground",

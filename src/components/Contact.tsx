@@ -1,9 +1,11 @@
-import { Mail, Phone, MapPin, Linkedin, Github, Send, ChevronRight } from "lucide-react";
+import { Mail, Phone, MapPin, Linkedin, Github, Send, ChevronRight, Copy } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Reveal } from "./Reveal";
 import { usePointerVars } from "@/hooks/use-motion";
-import profileImg from "@/assets/profile.jpg";
+import profileImg from "@/assets/profile-900.webp";
+import { profile } from "@/data/profile";
+import { copyToClipboard } from "@/lib/island";
 
 type Row = {
   icon: LucideIcon;
@@ -11,6 +13,7 @@ type Row = {
   value: string;
   href?: string;
   external?: boolean;
+  copy?: boolean;
   tint: string;
 };
 
@@ -18,21 +21,21 @@ const contactInfo: Row[] = [
   {
     icon: Mail,
     label: "Email",
-    value: "krishnavaibhav.y@gmail.com",
-    href: "mailto:krishnavaibhav.y@gmail.com",
+    value: profile.email,
+    copy: true,
     tint: "bg-[#0071e3]",
   },
   {
     icon: Phone,
     label: "Phone",
-    value: "+1 (782) 882-7776",
-    href: "tel:+17828827776",
+    value: profile.phone,
+    href: profile.phoneHref,
     tint: "bg-[#30a46c]",
   },
   {
     icon: MapPin,
     label: "Location",
-    value: "Canada",
+    value: profile.location,
     tint: "bg-[#e5484d]",
   },
 ];
@@ -42,7 +45,7 @@ const socialLinks: Row[] = [
     icon: Linkedin,
     label: "LinkedIn",
     value: "krishna-vaibhav-y",
-    href: "https://www.linkedin.com/in/krishna-vaibhav-y/",
+    href: profile.linkedin,
     external: true,
     tint: "bg-[#0a66c2]",
   },
@@ -50,7 +53,7 @@ const socialLinks: Row[] = [
     icon: Github,
     label: "GitHub",
     value: "KrishnaVaibhav",
-    href: "https://github.com/KrishnaVaibhav",
+    href: profile.github,
     external: true,
     tint: "bg-[#24292f] dark:bg-[#3a3a3e]",
   },
@@ -68,7 +71,11 @@ const ListRow = ({ row }: { row: Row }) => {
         <span className="text-[17px]">{row.label}</span>
         <span className="flex min-w-0 items-center gap-1 text-[15px] text-muted-foreground">
           <span className="truncate">{row.value}</span>
-          {row.href && <ChevronRight className="h-4 w-4 shrink-0 opacity-50" />}
+          {row.copy ? (
+            <Copy className="h-4 w-4 shrink-0 opacity-60" />
+          ) : (
+            row.href && <ChevronRight className="h-4 w-4 shrink-0 opacity-50" />
+          )}
         </span>
       </span>
     </>
@@ -76,7 +83,15 @@ const ListRow = ({ row }: { row: Row }) => {
 
   return (
     <li className="group/list">
-      {row.href ? (
+      {row.copy ? (
+        <button
+          onClick={() => copyToClipboard(row.value, row.label)}
+          aria-label={`Copy ${row.label.toLowerCase()} ${row.value}`}
+          className="flex w-full items-center gap-4 px-4 text-left transition-colors hover:bg-foreground/[0.04] active:bg-foreground/[0.08]"
+        >
+          {body}
+        </button>
+      ) : row.href ? (
         <a
           href={row.href}
           {...(row.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
@@ -103,47 +118,65 @@ const Group = ({ title, rows }: { title: string; rows: Row[] }) => (
 );
 
 export const Contact = () => {
-  const portraitRef = usePointerVars<HTMLDivElement>({ tilt: 10 });
+  const portraitRef = usePointerVars<HTMLElement>({ tilt: 9 });
 
   return (
     <section id="contact" className="section">
-      <div className="section-inner grid gap-16 lg:grid-cols-12 lg:gap-12">
-        <Reveal className="lg:col-span-6">
-          <h2 className="headline">Let's connect.</h2>
-          <p className="lede">
-            Open to opportunities in cloud development and DevOps. Whether you need a cloud architect, a full-stack developer or a DevOps engineer, let's talk about how I can help your team.
-          </p>
-
-          <div className="mt-10">
-            <Button size="lg" asChild className="group">
-              <a href="mailto:krishnavaibhav.y@gmail.com">
-                <Send className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                Email me
-              </a>
-            </Button>
-          </div>
-
-          <div ref={portraitRef} className="tilt mt-14 flex max-w-sm items-center gap-5">
-            <img
-              src={profileImg}
-              alt="Krishna Vaibhav Yadlapalli"
-              loading="lazy"
-              width={88}
-              height={88}
-              className="h-[88px] w-[88px] rounded-[26px] object-cover shadow-[0_18px_40px_-16px_hsl(var(--shadow-color)/0.5)]"
-              style={{ transform: "translateZ(30px)" }}
-            />
-            <div>
+      <div className="section-inner grid items-center gap-14 lg:grid-cols-12 lg:gap-16">
+        {/* Portrait card: tilts in 3D with a glass sheen that follows the pointer */}
+        <Reveal className="mx-auto w-full max-w-[420px] lg:col-span-5 lg:mx-0">
+          <figure ref={portraitRef} className="tilt group relative">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-[36px] shadow-[0_50px_100px_-40px_hsl(var(--shadow-color)/0.7)]">
+              <img
+                src={profileImg}
+                alt="Krishna Vaibhav Yadlapalli in a suit, outdoors on the Dalhousie University campus"
+                loading="lazy"
+                width={900}
+                height={900}
+                className="h-full w-full scale-[1.08] object-cover object-[50%_20%] transition-transform duration-700 ease-apple group-hover:scale-[1.12]"
+              />
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-0 opacity-70 transition-opacity duration-500 group-hover:opacity-100"
+                style={{
+                  background:
+                    "linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.22) calc(var(--mx, 30%) - 10%), transparent calc(var(--mx, 30%) + 15%))",
+                }}
+              />
+              <span aria-hidden className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/15" />
+            </div>
+            <figcaption
+              className="glass absolute -bottom-6 left-6 right-6 rounded-[22px] px-5 py-4"
+              style={{ transform: "translateZ(60px)" }}
+            >
               <p className="font-semibold tracking-[-0.01em]">Masters in Applied Computer Science</p>
               <p className="mt-0.5 text-sm text-muted-foreground">Dalhousie University, graduated May 2025</p>
-            </div>
-          </div>
+            </figcaption>
+          </figure>
         </Reveal>
 
-        <Reveal index={1} className="flex flex-col gap-8 lg:col-span-5 lg:col-start-8 lg:pt-4">
-          <Group title="Contact" rows={contactInfo} />
-          <Group title="Profiles" rows={socialLinks} />
-        </Reveal>
+        <div className="lg:col-span-7">
+          <Reveal>
+            <h2 className="headline">Let's connect.</h2>
+            <p className="lede">
+              Open to opportunities in cloud development and DevOps. Whether you need a cloud architect, a full-stack developer or a DevOps engineer, let's talk about how I can help your team.
+            </p>
+
+            <div className="mt-10">
+              <Button size="lg" asChild className="group">
+                <a href={`mailto:${profile.email}`}>
+                  <Send className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  Email me
+                </a>
+              </Button>
+            </div>
+          </Reveal>
+
+          <Reveal index={1} className="mt-12 grid max-w-xl gap-8">
+            <Group title="Contact" rows={contactInfo} />
+            <Group title="Profiles" rows={socialLinks} />
+          </Reveal>
+        </div>
       </div>
     </section>
   );

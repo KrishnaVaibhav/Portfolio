@@ -326,10 +326,15 @@
         animation-range: entry 20% cover 70%;
       }
 
-      .hero-recede {
-        animation: hero-recede linear both;
+      .view-zoom {
+        animation: view-zoom linear both;
+        animation-timeline: view();
+        animation-range: entry 0% exit 100%;
+      }
+
+      .scroll-ring {
+        animation: scroll-ring linear both;
         animation-timeline: scroll(root);
-        animation-range: 0 90vh;
       }
     }
   }
@@ -339,11 +344,19 @@
     to { transform: scaleY(1); }
   }
 
-  @keyframes hero-recede {
-    to {
-      opacity: 0.15;
-      transform: translateY(-6vh) scale(0.96);
-    }
+  @keyframes view-zoom {
+    from { transform: scale(1.14); }
+    to { transform: scale(1); }
+  }
+
+  @keyframes scroll-ring {
+    from { stroke-dashoffset: 100; }
+    to { stroke-dashoffset: 0; }
+  }
+
+  /* Without scroll timelines the progress ring would sit empty; hide it. */
+  @supports not (animation-timeline: scroll()) {
+    .scroll-ring { display: none; }
   }
 }
 
@@ -384,6 +397,116 @@
     .pass {
       --fan-base: 0deg !important;
       --lift-base: 0px !important;
+    }
+  }
+}
+
+/* ── Hero: exploded view of the stack (pure CSS 3D) ───────────────────────── */
+@property --gap {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 88px;
+}
+
+@property --spread {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@layer components {
+  .stack-stage {
+    --plate: clamp(180px, 24vw, 360px);
+    perspective: 1800px;
+    perspective-origin: 50% 40%;
+  }
+
+  /* The stack rises from its base plate; drop it so the whole stack is centred. */
+  .stack-offset {
+    transform: translateY(calc(var(--plate) * 0.55));
+  }
+
+  .stack-scene {
+    --gap-open: calc(var(--plate) * 0.5);
+    --gap: var(--gap-open);
+    --spread: 1;
+    position: relative;
+    width: var(--plate);
+    height: var(--plate);
+    transform-style: preserve-3d;
+    transform: rotateX(calc(56deg + var(--ty, 0) * 1deg)) rotateZ(calc(-38deg + var(--tx, 0) * 1deg));
+    transition: --spread 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .stack-scene:hover {
+    --spread: 1.35;
+  }
+
+  .stack-layer {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    transform: translateZ(calc(var(--gap) * var(--spread) * var(--i)));
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .stack-layer:hover {
+    transform: translateZ(calc(var(--gap) * var(--spread) * var(--i) + 22px));
+  }
+
+  /* Vertical link between two layers; children travel along it. */
+  .stack-via {
+    --via-len: calc(var(--gap) * var(--spread));
+    position: absolute;
+    width: 1px;
+    height: var(--via-len);
+    transform-origin: top center;
+    transform: rotateX(90deg);
+  }
+
+  .stack-packet {
+    position: absolute;
+    left: -3px;
+    top: 0;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .stack-packet {
+      animation: stack-packet 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+    }
+
+    .stack-float {
+      animation: stack-float 9s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes stack-packet {
+  0% { transform: translateY(0); opacity: 0; }
+  12% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translateY(var(--via-len)); opacity: 0; }
+}
+
+@keyframes stack-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+
+@keyframes stack-collapse {
+  from { --gap: var(--gap-open); }
+  to { --gap: calc(var(--gap-open) * 0.22); }
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .stack-scene {
+      animation: stack-collapse linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 75vh;
     }
   }
 }

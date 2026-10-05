@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 const AdminLogs = lazy(() => import("./pages/AdminLogs"));
 const Signals = lazy(() => import("./pages/Signals"));
 import { useTrackVisit } from "./hooks/use-track-visit";
+import { Spotlight } from "./components/Spotlight";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
       <Sonner />
       <HashRouter>
         <ScrollManager />
+        <Spotlight />
         <VisitTracker>
           <Suspense fallback={<div className="min-h-[100dvh] bg-background" />}>
           <Routes>
