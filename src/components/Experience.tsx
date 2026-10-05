@@ -190,7 +190,8 @@ export const Experience = () => {
                     {exp.tags.map((tag) => (
                       <li
                         key={tag}
-                        className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground"
+                        data-tech={tag}
+                        className="cursor-default rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground transition-colors duration-300 hover:bg-link/15 hover:text-link"
                       >
                         {tag}
                       </li>

@@ -145,7 +145,7 @@ const Highlights = ({ items, visible }: { items: string[]; visible: number }) =>
 const TechList = ({ items }: { items: string[] }) => (
   <ul className="flex flex-wrap gap-1.5" aria-label="Tech stack">
     {items.map((tech) => (
-      <li key={tech} className="rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground">
+      <li key={tech} data-tech={tech} className="cursor-default rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground transition-colors duration-300 hover:bg-link/15 hover:text-link">
         {tech}
       </li>
     ))}

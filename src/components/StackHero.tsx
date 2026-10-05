@@ -48,6 +48,7 @@ const Plate = ({ layer, index }: { layer: Layer; index: number }) => (
         {layer.techs.map((tech) => (
           <span
             key={tech}
+            data-tech={tech}
             className={cn(
               "whitespace-nowrap rounded-[12px] px-1.5 py-[8%] text-center text-[clamp(10px,0.95vw,14px)] font-semibold tracking-[-0.01em]",
               layer.accent ? "bg-white/15" : "bg-foreground/[0.06]",

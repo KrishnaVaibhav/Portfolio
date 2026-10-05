@@ -158,6 +158,7 @@ export const Skills = () => {
             {active.skills.map((skill, idx) => (
               <div
                 key={`${activeCategory}-${skill.name}`}
+                data-tech={skill.name}
                 className="flex items-center justify-between gap-4 border-b py-4 animate-in fade-in-0 slide-in-from-bottom-2 fill-mode-both duration-500"
                 style={{ animationDelay: `${idx * 45}ms` }}
               >
