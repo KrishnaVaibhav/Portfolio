@@ -114,13 +114,13 @@ export const Spotlight = () => {
               <Command.Input
                 autoFocus
                 placeholder="Search sections, projects, credentials"
-                className="h-16 w-full bg-transparent text-[21px] tracking-[-0.015em] outline-none placeholder:text-muted-foreground"
+                className="h-16 w-full bg-transparent text-[1.3125rem] tracking-[-0.015em] outline-none placeholder:text-muted-foreground"
               />
-              <kbd className="hidden shrink-0 rounded-md border px-1.5 py-0.5 font-mono text-[11px] text-muted-foreground sm:block">esc</kbd>
+              <kbd className="hidden shrink-0 rounded-md border px-1.5 py-0.5 font-mono text-[0.6875rem] text-muted-foreground sm:block">esc</kbd>
             </div>
             <div className="h-px bg-border" />
             <Command.List className="max-h-[min(52vh,460px)] overflow-y-auto overscroll-contain p-2 [scrollbar-width:thin]">
-              <Command.Empty className="px-4 py-10 text-center text-[15px] text-muted-foreground">
+              <Command.Empty className="px-4 py-10 text-center text-[0.9375rem] text-muted-foreground">
                 No matches. Try "azure", "projects" or "email".
               </Command.Empty>
               {groups.map((group) => (
@@ -155,7 +155,7 @@ export const Spotlight = () => {
 };
 
 const Key = ({ children }: { children: ReactNode }) => (
-  <kbd className="grid h-5 min-w-5 place-items-center rounded-[5px] border bg-background/60 px-1 font-mono text-[11px]">
+  <kbd className="grid h-5 min-w-5 place-items-center rounded-[5px] border bg-background/60 px-1 font-mono text-[0.6875rem]">
     {children}
   </kbd>
 );
@@ -167,13 +167,13 @@ const SpotlightItem = ({ item, onSelect }: { item: Item; onSelect: () => void })
       value={`${item.label} ${item.hint}`}
       keywords={item.keywords}
       onSelect={onSelect}
-      className="group flex h-12 cursor-pointer items-center gap-3 rounded-[14px] px-3 text-[15px] outline-none transition-colors data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground"
+      className="group flex h-12 cursor-pointer items-center gap-3 rounded-[14px] px-3 text-[0.9375rem] outline-none transition-colors data-[selected=true]:bg-primary data-[selected=true]:text-primary-foreground"
     >
       <span className={`grid h-7 w-7 shrink-0 place-items-center rounded-[8px] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.3)] ${item.tint}`}>
         <Icon className="h-4 w-4" strokeWidth={2} />
       </span>
       <span className="flex-1 truncate">{item.label}</span>
-      <span className="truncate text-[13px] text-muted-foreground group-data-[selected=true]:text-primary-foreground/80">
+      <span className="truncate text-[0.8125rem] text-muted-foreground group-data-[selected=true]:text-primary-foreground/80">
         {item.hint}
       </span>
     </Command.Item>

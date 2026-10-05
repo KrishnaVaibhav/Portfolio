@@ -76,7 +76,7 @@ const IslandToast = ({ msg }: { msg: IslandMessage }) => (
     >
       {msg.tone === "success" ? <Check className="h-4 w-4" strokeWidth={3} /> : <Info className="h-4 w-4" />}
     </span>
-    <span className="text-[15px] font-medium tracking-[-0.01em]">{msg.text}</span>
+    <span className="text-[0.9375rem] font-medium tracking-[-0.01em]">{msg.text}</span>
   </span>
 );
 
@@ -97,7 +97,7 @@ const Monogram = () => (
         className="scroll-ring stroke-link"
       />
     </svg>
-    <span className="grid h-8 w-8 place-items-center rounded-full bg-foreground font-display text-[11px] font-semibold tracking-tight text-background">
+    <span className="grid h-8 w-8 place-items-center rounded-full bg-foreground font-display text-[0.6875rem] font-semibold tracking-tight text-background">
       KV
     </span>
   </span>
@@ -187,7 +187,7 @@ export const Navigation = () => {
             aria-label="Krishna Vaibhav Yadlapalli, back to top"
           >
             <Monogram />
-            <span className="hidden text-[15px] font-semibold tracking-[-0.02em] lg:block">Krishna Vaibhav</span>
+            <span className="hidden text-[0.9375rem] font-semibold tracking-[-0.02em] lg:block">Krishna Vaibhav</span>
           </button>
 
           {/* Dynamic Island */}
@@ -248,7 +248,7 @@ export const Navigation = () => {
               aria-label={`Search (${spotlightShortcut})`}
             >
               <Search className="h-4 w-4" strokeWidth={1.75} />
-              <kbd className="rounded-md border border-foreground/10 px-1.5 font-mono text-[11px]">{spotlightShortcut}</kbd>
+              <kbd className="rounded-md border border-foreground/10 px-1.5 font-mono text-[0.6875rem]">{spotlightShortcut}</kbd>
             </button>
             {socials.map(({ label, href, icon: Icon }) => (
               <a
@@ -313,7 +313,7 @@ export const Navigation = () => {
                 <li key={link.href}>
                   <button
                     onClick={() => scrollToSection(link.href)}
-                    className="flex h-12 w-full items-center rounded-2xl px-4 text-[17px] font-medium tracking-[-0.01em] transition-colors hover:bg-foreground/[0.06]"
+                    className="flex h-12 w-full items-center rounded-2xl px-4 text-[1.0625rem] font-medium tracking-[-0.01em] transition-colors hover:bg-foreground/[0.06]"
                   >
                     {link.label}
                   </button>

@@ -39,7 +39,7 @@ const Plate = ({ layer, index }: { layer: Layer; index: number }) => (
       className={cn(
         "absolute inset-0 overflow-hidden rounded-[30px] border p-[9%] transition-[box-shadow,border-color] duration-500",
         layer.accent
-          ? "border-white/25 bg-[linear-gradient(140deg,#2b8cff,#0071e3_45%,#0050b0)] text-white shadow-[0_30px_60px_-20px_rgba(0,113,227,0.55)]"
+          ? "border-white/25 bg-[linear-gradient(140deg,#0062c8,#0055b4_45%,#00469a)] text-white shadow-[0_30px_60px_-20px_rgba(0,113,227,0.55)]"
           : "border-foreground/10 bg-[linear-gradient(140deg,hsl(var(--card)),hsl(var(--muted)))] shadow-[0_30px_60px_-30px_hsl(var(--shadow-color)/0.5)] group-hover/layer:border-link/50",
       )}
     >
@@ -50,7 +50,7 @@ const Plate = ({ layer, index }: { layer: Layer; index: number }) => (
             key={tech}
             data-tech={tech}
             className={cn(
-              "whitespace-nowrap rounded-[12px] px-1.5 py-[8%] text-center text-[clamp(10px,0.95vw,14px)] font-semibold tracking-[-0.01em]",
+              "whitespace-nowrap rounded-[12px] px-1.5 py-[8%] text-center text-[clamp(0.6875rem,0.95vw,0.875rem)] font-semibold tracking-[-0.01em]",
               layer.accent ? "bg-white/15" : "bg-foreground/[0.06]",
             )}
           >

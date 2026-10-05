@@ -137,7 +137,7 @@ export const Experience = () => {
           {/* Main line of the graph, filled by scroll where CSS scroll timelines are supported */}
           <div aria-hidden className="absolute bottom-0 left-[19px] top-0 w-px bg-border md:left-[calc(33.333%-1px)]">
             <div className="scroll-fill h-full w-full bg-gradient-to-b from-primary via-primary/60 to-transparent" />
-            <span className="absolute -top-9 left-1/2 -translate-x-1/2 rounded-full border bg-background px-2 py-0.5 font-mono text-[11px] text-muted-foreground">
+            <span className="absolute -top-9 left-1/2 -translate-x-1/2 rounded-full border bg-background px-2 py-0.5 font-mono text-[0.6875rem] text-muted-foreground">
               main
             </span>
           </div>
@@ -155,7 +155,7 @@ export const Experience = () => {
                 {/* Commit node */}
                 <span
                   aria-hidden
-                  className="glass absolute top-0 grid h-10 w-10 place-items-center rounded-full"
+                  className="absolute top-0 grid h-10 w-10 place-items-center rounded-full border bg-card shadow-[0_4px_14px_-6px_hsl(var(--shadow-color)/0.4)]"
                   style={{ left: lane ? `calc(var(--rail) + ${LANE_GAP}px - 20px)` : "calc(var(--rail) - 20px)" }}
                 >
                   <Icon className="h-[18px] w-[18px] text-link" strokeWidth={1.75} />
@@ -165,9 +165,9 @@ export const Experience = () => {
                 <Reveal className={cn("md:sticky md:top-28 md:self-start md:pr-12 md:text-right", lane && "pl-6 md:pl-0")}>
                   <div>
                     {lane === 1 && (
-                      <p className="mb-2 font-mono text-[11px] text-link">Concurrent role</p>
+                      <p className="mb-2 font-mono text-[0.6875rem] text-link">Concurrent role</p>
                     )}
-                    <p className="font-mono text-[13px] tabular text-muted-foreground">{exp.period}</p>
+                    <p className="font-mono text-[0.8125rem] tabular text-muted-foreground">{exp.period}</p>
                     <p className="mt-2 text-xl font-semibold tracking-[-0.02em]">{exp.company}</p>
                     <p className="mt-1 text-sm text-muted-foreground">{exp.location}</p>
                   </div>
@@ -179,7 +179,7 @@ export const Experience = () => {
 
                   <ul className="mt-6 grid max-w-[68ch] gap-3">
                     {exp.highlights.map((highlight) => (
-                      <li key={highlight} className="flex gap-3 text-[15px] leading-relaxed">
+                      <li key={highlight} className="flex gap-3 text-[0.9375rem] leading-relaxed">
                         <span aria-hidden className="mt-[0.7em] h-px w-3 shrink-0 bg-link" />
                         <span className="text-foreground/85">{highlight}</span>
                       </li>

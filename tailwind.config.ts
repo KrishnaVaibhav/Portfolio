@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import plugin from "tailwindcss/plugin";
 
 export default {
   darkMode: "media",
@@ -140,5 +141,10 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    // `touch:` applies on coarse pointers (phones, tablets) so controls can meet
+    // the 44pt minimum hit target there while staying compact with a mouse.
+    plugin(({ addVariant }) => addVariant("touch", "@media (pointer: coarse)")),
+  ],
 } satisfies Config;

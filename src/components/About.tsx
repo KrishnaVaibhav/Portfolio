@@ -22,7 +22,7 @@ const FactTile = ({ fact, index }: { fact: Fact; index: number }) => {
         className={cn(
           "flex h-full flex-col justify-between gap-6 rounded-[24px] p-5",
           fact.live
-            ? "bg-[linear-gradient(140deg,#2b8cff,#0071e3_50%,#0057c2)] text-white shadow-[0_24px_50px_-24px_rgba(0,113,227,0.6)]"
+            ? "bg-[linear-gradient(140deg,#0062c8,#0055b4_50%,#00469a)] text-white shadow-[0_24px_50px_-24px_rgba(0,98,200,0.6)]"
             : "surface",
         )}
       >
@@ -35,7 +35,7 @@ const FactTile = ({ fact, index }: { fact: Fact; index: number }) => {
           <Icon className="h-5 w-5" strokeWidth={1.75} />
         </span>
         <div>
-          <p className={cn("flex items-center gap-2 text-[13px]", fact.live ? "text-white/75" : "text-muted-foreground")}>
+          <p className={cn("flex items-center gap-2 text-[0.8125rem]", fact.live ? "text-white/90" : "text-muted-foreground")}>
             {fact.live && (
               <span aria-hidden className="relative grid h-2 w-2 place-items-center">
                 <span className="absolute h-2 w-2 rounded-full bg-[#30d158] motion-safe:animate-ping" />
@@ -44,7 +44,7 @@ const FactTile = ({ fact, index }: { fact: Fact; index: number }) => {
             )}
             {fact.label}
           </p>
-          <p className="mt-1 text-[17px] font-semibold leading-snug tracking-[-0.015em]">{fact.value}</p>
+          <p className="mt-1 text-[1.0625rem] font-semibold leading-snug tracking-[-0.015em]">{fact.value}</p>
         </div>
       </TiltCard>
     </Reveal>

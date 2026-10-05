@@ -24,14 +24,14 @@ export const Hero = () => {
       <div className="mx-auto w-full max-w-[1200px]">
         <div className="mt-[44vh] max-w-[640px] md:mt-0">
           <div
-            className="glass inline-flex items-center gap-2.5 rounded-full py-1 pl-1 pr-4 animate-rise-in"
+            className="inline-flex items-center gap-2.5 rounded-full border bg-secondary py-1 pl-1 pr-4 animate-rise-in"
             style={{ animationDelay: "80ms" }}
           >
             <span aria-hidden className="relative ml-1.5 grid h-2 w-2 place-items-center">
               <span className="absolute h-2 w-2 rounded-full bg-[#30d158] motion-safe:animate-ping" />
               <span className="h-2 w-2 rounded-full bg-[#30d158]" />
             </span>
-            <span className="text-[13px] font-medium tracking-[-0.01em]">
+            <span className="text-[0.8125rem] font-medium tracking-[-0.01em]">
               Cloud Developer at BMO<span className="hidden sm:inline">, Azure and AWS certified</span>
             </span>
           </div>
@@ -60,7 +60,7 @@ export const Hero = () => {
             </Button>
             <button
               onClick={() => scrollTo("contact")}
-              className="group inline-flex items-center gap-0.5 text-[17px] font-medium text-link"
+              className="group inline-flex h-11 items-center gap-0.5 text-[1.0625rem] font-medium text-link"
             >
               Get in touch
               <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />

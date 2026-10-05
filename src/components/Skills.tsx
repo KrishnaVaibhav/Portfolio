@@ -124,7 +124,7 @@ export const Skills = () => {
               ref={tabsRef}
               role="tablist"
               aria-label="Skill categories"
-              className="glass flex flex-wrap gap-1 rounded-[24px] p-1.5"
+              className="flex flex-wrap gap-1 rounded-[24px] bg-secondary p-1.5"
             >
               {skillCategories.map((category, idx) => (
                 <button
@@ -137,7 +137,7 @@ export const Skills = () => {
                   onClick={() => setActiveCategory(idx)}
                   onKeyDown={onTabKey}
                   className={cn(
-                    "h-9 whitespace-nowrap rounded-full px-3.5 text-[13px] font-medium transition-all duration-300",
+                    "h-9 whitespace-nowrap rounded-full px-3.5 text-[0.8125rem] font-medium transition-all duration-300 touch:h-11",
                     activeCategory === idx
                       ? "bg-card text-foreground shadow-[0_1px_2px_hsl(var(--shadow-color)/0.12),0_4px_12px_-4px_hsl(var(--shadow-color)/0.2)] dark:bg-white/[0.12]"
                       : "text-muted-foreground hover:text-foreground",
@@ -162,7 +162,7 @@ export const Skills = () => {
                 className="flex items-center justify-between gap-4 border-b py-4 animate-in fade-in-0 slide-in-from-bottom-2 fill-mode-both duration-500"
                 style={{ animationDelay: `${idx * 45}ms` }}
               >
-                <span className="text-[17px] tracking-[-0.01em]">{skill.name}</span>
+                <span className="text-[1.0625rem] tracking-[-0.01em]">{skill.name}</span>
                 <span className="flex items-center gap-3">
                   <span
                     aria-hidden

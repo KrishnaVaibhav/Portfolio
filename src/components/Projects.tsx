@@ -121,7 +121,7 @@ const Highlights = ({ items, visible }: { items: string[]; visible: number }) =>
   const shown = items.slice(0, visible);
   const rest = items.slice(visible);
   const row = (h: string) => (
-    <li key={h} className="flex gap-3 text-[15px] leading-relaxed">
+    <li key={h} className="flex gap-3 text-[0.9375rem] leading-relaxed">
       <span aria-hidden className="mt-[0.7em] h-px w-3 shrink-0 bg-link" />
       <span className="text-foreground/85">{h}</span>
     </li>
@@ -131,7 +131,7 @@ const Highlights = ({ items, visible }: { items: string[]; visible: number }) =>
       <ul className="grid gap-2.5">{shown.map(row)}</ul>
       {rest.length > 0 && (
         <details className="group mt-2.5">
-          <summary className="inline-flex cursor-pointer list-none items-center gap-1 text-sm font-medium text-link [&::-webkit-details-marker]:hidden">
+          <summary className="-my-1.5 inline-flex cursor-pointer list-none items-center gap-1 py-1.5 text-sm font-medium text-link touch:-my-3 touch:py-3 [&::-webkit-details-marker]:hidden">
             {rest.length} more
             <ChevronDown className="h-4 w-4 transition-transform duration-300 group-open:rotate-180" />
           </summary>
@@ -179,7 +179,7 @@ const FeatureTile = ({ project }: { project: Project }) => (
       <div className="flex flex-col lg:col-span-7">
         <p className="text-sm font-medium text-link">{project.subtitle}</p>
         <h3 className="mt-2 font-display text-4xl font-semibold tracking-[-0.04em] md:text-6xl">{project.title}</h3>
-        <p className="mt-5 max-w-[58ch] text-[17px] leading-relaxed text-muted-foreground">{project.description}</p>
+        <p className="mt-5 max-w-[58ch] text-[1.0625rem] leading-relaxed text-muted-foreground">{project.description}</p>
         <div className="mt-8">
           <Highlights items={project.highlights} visible={4} />
         </div>
@@ -211,7 +211,7 @@ const ProjectTile = ({ project }: { project: Project }) => (
         <h3 className="mt-1 font-display text-3xl font-semibold tracking-[-0.035em]">{project.title}</h3>
       </div>
     </div>
-    <p className="relative mt-6 text-[17px] leading-relaxed text-muted-foreground">{project.description}</p>
+    <p className="relative mt-6 text-[1.0625rem] leading-relaxed text-muted-foreground">{project.description}</p>
     <div className="relative mt-8 border-y py-6">
       <Metrics metrics={project.metrics} />
     </div>

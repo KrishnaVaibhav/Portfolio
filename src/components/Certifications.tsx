@@ -1,36 +1,64 @@
 import type { CSSProperties } from "react";
-import { Award, Shield, CheckCircle2, ArrowUpRight } from "lucide-react";
+import { CheckCircle2, ArrowUpRight } from "lucide-react";
 import { Reveal } from "./Reveal";
 import { usePointerVars } from "@/hooks/use-motion";
 import { cn } from "@/lib/utils";
+import microsoftLogo from "@/assets/certs/microsoft.svg";
+import azureMark from "@/assets/certs/azure.svg";
+import awsLogo from "@/assets/certs/aws-white.svg";
+import servicenowWordmark from "@/assets/certs/servicenow-white.svg";
+import servicenowMark from "@/assets/certs/servicenow-mark.svg";
 
+/*
+  Each pass wears its issuer's identity: the issuer's own logo and mark, its
+  brand palette for the card, and an accent tuned to stay above 4.5:1 for the
+  small text on that card.
+*/
 const certifications = [
   {
     title: "Microsoft Certified: Azure Developer Associate",
     issuer: "Microsoft",
+    issuerLogo: microsoftLogo,
+    issuerLogoClass: "h-4 w-4",
+    showIssuerText: true,
+    mark: azureMark,
+    markClass: "h-11 w-11",
     code: "AZ-204",
-    icon: Shield,
     description: "Expert in developing cloud solutions on Microsoft Azure platform",
     CredentialURL: "https://learn.microsoft.com/api/credentials/share/en-us/KrishnaVaibhav/D4B8C34A386E99D6?sharingId=E00486C99D01BA6",
-    passClass: "bg-gradient-to-br from-[#2b8cff] via-[#0071e3] to-[#003f8a] text-white",
+    background:
+      "radial-gradient(120% 90% at 88% 0%, rgba(80,230,255,0.22), transparent 55%), linear-gradient(145deg, #0b3a6e 0%, #082a52 55%, #051b36 100%)",
+    accent: "#50e6ff",
   },
   {
     title: "AWS Certified Developer - Associate",
     issuer: "Amazon Web Services",
+    issuerLogo: undefined as string | undefined,
+    issuerLogoClass: "",
+    showIssuerText: true,
+    mark: awsLogo,
+    markClass: "h-9 w-auto",
     code: "DVA-C02",
-    icon: Award,
     description: "Proficient in developing and deploying applications on AWS",
     CredentialURL: "https://cp.certmetrics.com/amazon/en/public/verify/credential/392466d9b23b457e8a7cf0fc0d992be8",
-    passClass: "bg-gradient-to-br from-[#3a3a3e] via-[#1d1d1f] to-[#0b0b0c] text-white",
+    background:
+      "radial-gradient(120% 90% at 88% 0%, rgba(255,98,0,0.2), transparent 55%), linear-gradient(145deg, #2a3647 0%, #161d26 55%, #0c1117 100%)",
+    accent: "#ff8a3d",
   },
   {
     title: "ServiceNow Certified Administrator",
     issuer: "ServiceNow",
+    issuerLogo: servicenowWordmark,
+    issuerLogoClass: "h-[15px] w-auto",
+    showIssuerText: false,
+    mark: servicenowMark,
+    markClass: "h-10 w-10",
     code: "CSA",
-    icon: CheckCircle2,
     description: "Skilled in ServiceNow platform administration and configuration",
     CredentialURL: "https://www.servicenow.com/products/certification.html",
-    passClass: "bg-gradient-to-br from-[#f4f4f6] via-[#e3e3e8] to-[#c9c9d0] text-[#1d1d1f]",
+    background:
+      "radial-gradient(120% 90% at 88% 0%, rgba(129,181,161,0.25), transparent 55%), linear-gradient(145deg, #34504f 0%, #293e40 50%, #1a2829 100%)",
+    accent: "#9fd1bd",
   },
 ];
 
@@ -50,42 +78,51 @@ const fan = [
 
 const Pass = ({ cert, index }: { cert: (typeof certifications)[number]; index: number }) => {
   const ref = usePointerVars<HTMLAnchorElement>({ tilt: 8 });
-  const Icon = cert.icon;
   return (
     <a
       ref={ref}
       href={cert.CredentialURL}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label={`${cert.title}, ${cert.code}. Verify credential (opens in a new tab)`}
+      aria-label={`${cert.title}, ${cert.code}, issued by ${cert.issuer}. Verify credential (opens in a new tab)`}
       className={cn(
-        "pass group relative flex aspect-[1.58/1] w-[82vw] max-w-[380px] shrink-0 snap-center flex-col justify-between overflow-hidden rounded-[24px] p-6 md:w-full",
-        "shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_30px_60px_-24px_rgba(0,0,0,0.45)]",
-        cert.passClass,
+        "pass group relative flex aspect-[1.58/1] w-[82vw] max-w-[380px] shrink-0 snap-center flex-col justify-between rounded-[24px] p-6 text-white md:w-full",
+        "shadow-[inset_0_1px_0_rgba(255,255,255,0.22),inset_0_0_0_1px_rgba(255,255,255,0.08),0_30px_60px_-24px_rgba(0,0,0,0.5)]",
       )}
-      style={fan[index] as CSSProperties}
+      style={{ ...(fan[index] as CSSProperties), background: cert.background }}
     >
-      {/* Specular sweep that follows the pointer */}
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-0 opacity-60 transition-opacity duration-500 group-hover:opacity-100"
-        style={{
-          background:
-            "radial-gradient(420px circle at var(--mx, 20%) var(--my, 0%), rgba(255,255,255,0.32), transparent 55%)",
-        }}
-      />
-      <div className="relative flex items-start justify-between">
+      {/* Specular light that follows the pointer, clipped to the card */}
+      <span aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
+        <span
+          className="absolute inset-0 opacity-50 transition-opacity duration-500 group-hover:opacity-100"
+          style={{ background: "radial-gradient(420px circle at var(--mx, 20%) var(--my, 0%), rgba(255,255,255,0.22), transparent 55%)" }}
+        />
+      </span>
+
+      <div className="relative flex items-start justify-between gap-4 preserve-3d">
         <div>
-          <p className="text-[13px] font-medium opacity-80">{cert.issuer}</p>
-          <p className="mt-1 font-mono text-2xl font-semibold tracking-tight">{cert.code}</p>
+          <p className="flex items-center gap-2 text-[0.8125rem] font-semibold tracking-[-0.01em]">
+            {cert.issuerLogo && <img src={cert.issuerLogo} alt="" aria-hidden className={cert.issuerLogoClass} />}
+            {cert.showIssuerText ? cert.issuer : <span className="sr-only">{cert.issuer}</span>}
+          </p>
+          <p className="mt-2 font-mono text-2xl font-semibold tracking-tight" style={{ color: cert.accent }}>
+            {cert.code}
+          </p>
         </div>
-        <Icon className="h-7 w-7 opacity-90" strokeWidth={1.5} />
+        {/* Issuer mark, lifted off the card in 3D */}
+        <img
+          src={cert.mark}
+          alt=""
+          aria-hidden
+          className={cn(cert.markClass, "shrink-0 drop-shadow-[0_8px_14px_rgba(0,0,0,0.45)] transition-transform duration-700 ease-apple [transform:translateZ(30px)] group-hover:[transform:translateZ(52px)]")}
+        />
       </div>
+
       <div className="relative">
-        <p className="text-[17px] font-semibold leading-snug tracking-[-0.015em]">{cert.title}</p>
+        <p className="text-[1.0625rem] font-semibold leading-snug tracking-[-0.015em]">{cert.title}</p>
         <div className="mt-3 flex items-end justify-between gap-4">
-          <p className="max-w-[30ch] text-[13px] leading-snug opacity-75">{cert.description}</p>
-          <span className="inline-flex shrink-0 items-center gap-0.5 text-[13px] font-medium opacity-90">
+          <p className="max-w-[30ch] text-[0.8125rem] leading-snug text-white/85">{cert.description}</p>
+          <span className="inline-flex shrink-0 items-center gap-0.5 text-[0.8125rem] font-semibold" style={{ color: cert.accent }}>
             Verify
             <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </span>
@@ -118,7 +155,7 @@ export const Certifications = () => {
             {achievements.map((achievement, idx) => (
               <Reveal as="li" key={achievement} index={idx} className="flex flex-col gap-3">
                 <CheckCircle2 className="h-5 w-5 text-link" strokeWidth={1.75} aria-hidden />
-                <p className="text-[15px] leading-relaxed text-foreground/85">{achievement}</p>
+                <p className="text-[0.9375rem] leading-relaxed text-foreground/85">{achievement}</p>
               </Reveal>
             ))}
           </ul>

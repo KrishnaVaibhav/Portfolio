@@ -68,8 +68,8 @@ const ListRow = ({ row }: { row: Row }) => {
         <Icon className="h-[17px] w-[17px]" strokeWidth={2} />
       </span>
       <span className="flex min-w-0 flex-1 items-center justify-between gap-4 border-b py-3.5 group-last/list:border-b-0">
-        <span className="text-[17px]">{row.label}</span>
-        <span className="flex min-w-0 items-center gap-1 text-[15px] text-muted-foreground">
+        <span className="text-[1.0625rem]">{row.label}</span>
+        <span className="flex min-w-0 items-center gap-1 text-[0.9375rem] text-muted-foreground">
           <span className="truncate">{row.value}</span>
           {row.copy ? (
             <Copy className="h-4 w-4 shrink-0 opacity-60" />
@@ -108,8 +108,8 @@ const ListRow = ({ row }: { row: Row }) => {
 
 const Group = ({ title, rows }: { title: string; rows: Row[] }) => (
   <div>
-    <h3 className="px-4 pb-2 text-[13px] text-muted-foreground">{title}</h3>
-    <ul className="glass overflow-hidden rounded-[20px]">
+    <h3 className="px-4 pb-2 text-[0.8125rem] text-muted-foreground">{title}</h3>
+    <ul className="surface overflow-hidden">
       {rows.map((row) => (
         <ListRow key={row.label} row={row} />
       ))}
@@ -123,7 +123,7 @@ export const Contact = () => {
   return (
     <section id="contact" className="section">
       <div className="section-inner grid items-center gap-14 lg:grid-cols-12 lg:gap-16">
-        {/* Portrait card: tilts in 3D with a glass sheen that follows the pointer */}
+        {/* Portrait card: tilts in 3D with a sheen that follows the pointer */}
         <Reveal className="mx-auto w-full max-w-[420px] lg:col-span-5 lg:mx-0">
           <figure ref={portraitRef} className="tilt group relative">
             <div className="relative aspect-[4/5] overflow-hidden rounded-[36px] shadow-[0_50px_100px_-40px_hsl(var(--shadow-color)/0.7)]">
@@ -146,7 +146,7 @@ export const Contact = () => {
               <span aria-hidden className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/15" />
             </div>
             <figcaption
-              className="glass absolute -bottom-6 left-6 right-6 rounded-[22px] px-5 py-4"
+              className="surface absolute -bottom-6 left-6 right-6 px-5 py-4"
               style={{ transform: "translateZ(60px)" }}
             >
               <p className="font-semibold tracking-[-0.01em]">Masters in Applied Computer Science</p>

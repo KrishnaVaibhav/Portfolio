@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
     Loader2, Search, ShieldCheck, Eye, Smartphone, List,
@@ -77,7 +78,7 @@ const countryFlag = (country: string): string => {
 const SectionLabel = ({ icon: Icon, label }: { icon: any; label: string }) => (
     <div className="flex items-center gap-2 mb-3">
         <div className="p-1.5 rounded-md bg-primary/10"><Icon className="h-3.5 w-3.5 text-primary" /></div>
-        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{label}</span>
+        <span className="text-[0.6875rem] font-bold uppercase tracking-widest text-muted-foreground">{label}</span>
     </div>
 );
 
@@ -91,7 +92,7 @@ const KV = ({ label, value, mono = false }: { label: string; value: any; mono?: 
 );
 
 const FeatureBadge = ({ label, enabled }: { label: string; enabled: boolean }) => (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.6875rem] font-bold border ${
         enabled
             ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
             : 'bg-red-500/10 text-red-500 border-red-500/20'
@@ -154,9 +155,9 @@ const SessionModal = ({ log }: { log: any }) => {
                     { label: 'Clicks',       value: clicks,           sub: firstClick ? `First at ${fmtMs(firstClick)}` : 'No clicks', color: 'from-pink-500 to-pink-700' },
                 ].map(({ label, value, sub, color }) => (
                     <div key={label} className={`rounded-xl p-3 text-white bg-gradient-to-br ${color} shadow-sm`}>
-                        <p className="text-[9px] uppercase tracking-widest opacity-70 mb-1">{label}</p>
+                        <p className="text-[0.6875rem] uppercase tracking-widest opacity-70 mb-1">{label}</p>
                         <p className="text-xl font-bold">{value}</p>
-                        {sub && <p className="text-[10px] opacity-60 mt-0.5">{sub}</p>}
+                        {sub && <p className="text-[0.6875rem] opacity-60 mt-0.5">{sub}</p>}
                     </div>
                 ))}
             </div>
@@ -241,7 +242,7 @@ const SessionModal = ({ log }: { log: any }) => {
                     <KV label="Do Not Track"    value={browser.do_not_track === '1' ? 'Enabled' : browser.do_not_track === '0' ? 'Disabled' : 'Unset'} />
                     <KV label="Speech Voices"   value={browser.speech_voices} />
                 </div>
-                <div className="mt-2 text-[10px] text-muted-foreground font-mono bg-muted/50 px-3 py-2 rounded-lg break-all">
+                <div className="mt-2 text-[0.6875rem] text-muted-foreground font-mono bg-muted/50 px-3 py-2 rounded-lg break-all">
                     {(log.user_agent ?? '').substring(0, 150)}{log.user_agent?.length > 150 ? '…' : ''}
                 </div>
             </div>
@@ -368,25 +369,25 @@ const SessionModal = ({ log }: { log: any }) => {
                     <div className="bg-card border rounded-xl p-4 space-y-3">
                         {fp.canvas && (
                             <div>
-                                <p className="text-[10px] text-muted-foreground mb-1">Canvas Hash</p>
-                                <p className="font-mono text-[10px] break-all bg-muted/50 p-2 rounded">{fp.canvas.substring(0, 80)}…</p>
+                                <p className="text-[0.6875rem] text-muted-foreground mb-1">Canvas Hash</p>
+                                <p className="font-mono text-[0.6875rem] break-all bg-muted/50 p-2 rounded">{fp.canvas.substring(0, 80)}…</p>
                             </div>
                         )}
                         {fp.audio && fp.audio !== 'timeout' && fp.audio !== 'error' && (
                             <div>
-                                <p className="text-[10px] text-muted-foreground mb-1">Audio Fingerprint</p>
-                                <p className="font-mono text-[10px] break-all bg-muted/50 p-2 rounded">{String(fp.audio).substring(0, 80)}…</p>
+                                <p className="text-[0.6875rem] text-muted-foreground mb-1">Audio Fingerprint</p>
+                                <p className="font-mono text-[0.6875rem] break-all bg-muted/50 p-2 rounded">{String(fp.audio).substring(0, 80)}…</p>
                             </div>
                         )}
                         {fp.math && (
                             <div>
-                                <p className="text-[10px] text-muted-foreground mb-1">Math Fingerprint (JS Engine)</p>
-                                <p className="font-mono text-[10px] break-all bg-muted/50 p-2 rounded">{fp.math}</p>
+                                <p className="text-[0.6875rem] text-muted-foreground mb-1">Math Fingerprint (JS Engine)</p>
+                                <p className="font-mono text-[0.6875rem] break-all bg-muted/50 p-2 rounded">{fp.math}</p>
                             </div>
                         )}
                         {fp.fonts && Array.isArray(fp.fonts) && (
                             <div>
-                                <p className="text-[10px] text-muted-foreground mb-1">Detected Fonts ({fp.fonts.length})</p>
+                                <p className="text-[0.6875rem] text-muted-foreground mb-1">Detected Fonts ({fp.fonts.length})</p>
                                 <p className="text-xs text-muted-foreground">{fp.fonts.join(', ')}</p>
                             </div>
                         )}
@@ -397,7 +398,7 @@ const SessionModal = ({ log }: { log: any }) => {
             {/* ── Raw Meta JSON ─────────────────────────────────────────────── */}
             <div>
                 <SectionLabel icon={Cpu} label="Raw Session Data" />
-                <pre className="text-[10px] bg-muted/50 border rounded-xl p-4 overflow-auto max-h-72 font-mono leading-relaxed">
+                <pre className="text-[0.6875rem] bg-muted/50 border rounded-xl p-4 overflow-auto max-h-72 font-mono leading-relaxed">
                     {JSON.stringify(log.meta, null, 2)}
                 </pre>
             </div>
@@ -566,7 +567,7 @@ const AdminLogs = () => {
 
         const StatCard = ({ label, value, sub, gradient }: any) => (
             <div className={`rounded-xl p-5 text-white shadow-sm ${gradient}`}>
-                <p className="text-[9px] font-bold uppercase tracking-widest opacity-70 mb-1">{label}</p>
+                <p className="text-[0.6875rem] font-bold uppercase tracking-widest opacity-70 mb-1">{label}</p>
                 <p className="text-3xl font-bold">{value}</p>
                 {sub && <p className="text-xs opacity-60 mt-1">{sub}</p>}
             </div>
@@ -575,7 +576,7 @@ const AdminLogs = () => {
         const ChartCard = ({ title, children }: any) => (
             <Card className="shadow-sm border">
                 <CardHeader className="pb-1 pt-4 px-5">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{title}</p>
+                    <p className="text-[0.6875rem] font-bold uppercase tracking-widest text-muted-foreground">{title}</p>
                 </CardHeader>
                 <CardContent className="px-5 pb-5">{children}</CardContent>
             </Card>
@@ -747,13 +748,16 @@ const AdminLogs = () => {
                         <div className="mx-auto w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
                             <ShieldCheck className="h-6 w-6 text-primary" />
                         </div>
-                        <p className="text-lg font-bold">Admin Access</p>
+                        <h1 className="text-lg font-bold">Admin access</h1>
                         <p className="text-sm text-muted-foreground">Enter your secure password to view logs.</p>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={handleLogin} className="space-y-4">
-                            <Input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} autoFocus />
-                            <Button type="submit" className="w-full">Verify Identity</Button>
+                            <div className="space-y-2">
+                                <Label htmlFor="admin-password">Password</Label>
+                                <Input id="admin-password" type="password" autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)} autoFocus />
+                            </div>
+                            <Button type="submit" className="w-full">Verify identity</Button>
                         </form>
                     </CardContent>
                 </Card>
@@ -888,20 +892,20 @@ const AdminLogs = () => {
                                                     <span>{countryFlag(log.country || '')}</span>
                                                     <span className="font-medium">{log.city || '—'}</span>
                                                 </div>
-                                                <span className="text-[10px] text-muted-foreground">{log.country}</span>
+                                                <span className="text-[0.6875rem] text-muted-foreground">{log.country}</span>
                                             </TableCell>
                                             <TableCell className="text-xs font-mono text-primary max-w-[120px] truncate">{log.page_path}</TableCell>
                                             <TableCell>
                                                 <span className="text-xs font-medium capitalize block">{log.meta?.os?.name ?? log.device_type}</span>
-                                                <span className="text-[10px] text-muted-foreground">{log.device_type} · {log.screen_resolution}</span>
+                                                <span className="text-[0.6875rem] text-muted-foreground">{log.device_type} · {log.screen_resolution}</span>
                                             </TableCell>
                                             <TableCell>
                                                 <span className="text-xs font-medium block">{log.meta?.browser_info?.name || parseBrowser(log.user_agent || '')}</span>
-                                                <span className="text-[10px] text-muted-foreground">{log.meta?.browser_info?.version}</span>
+                                                <span className="text-[0.6875rem] text-muted-foreground">{log.meta?.browser_info?.version}</span>
                                             </TableCell>
                                             <TableCell className="hidden lg:table-cell">
                                                 <span className="text-xs">{log.meta?.network?.effective_type ?? log.connection_type}</span>
-                                                {log.meta?.network?.downlink_mbps && <span className="text-[10px] text-muted-foreground block">{log.meta.network.downlink_mbps} Mbps</span>}
+                                                {log.meta?.network?.downlink_mbps && <span className="text-[0.6875rem] text-muted-foreground block">{log.meta.network.downlink_mbps} Mbps</span>}
                                             </TableCell>
                                             <TableCell className="text-right">
                                                 <Sheet>
@@ -931,19 +935,19 @@ const AdminLogs = () => {
                                                     <span>{countryFlag(group.country || '')}</span>
                                                     <span className="font-medium">{group.city || '—'}</span>
                                                 </div>
-                                                <span className="text-[10px] text-muted-foreground">{group.country}</span>
+                                                <span className="text-[0.6875rem] text-muted-foreground">{group.country}</span>
                                             </TableCell>
                                             <TableCell className="text-center">
                                                 <span className="text-lg font-bold text-primary">{group.visit_count}</span>
-                                                <span className="text-[10px] text-muted-foreground block">{group.paths.size} pages</span>
+                                                <span className="text-[0.6875rem] text-muted-foreground block">{group.paths.size} pages</span>
                                             </TableCell>
                                             <TableCell>
                                                 <span className="text-xs font-medium capitalize block">{group.meta?.os?.name ?? group.device_type}</span>
-                                                <span className="text-[10px] text-muted-foreground">{group.device_type}</span>
+                                                <span className="text-[0.6875rem] text-muted-foreground">{group.device_type}</span>
                                             </TableCell>
                                             <TableCell>
                                                 <span className="text-xs font-medium block">{group.meta?.browser_info?.name || parseBrowser(group.user_agent || '')}</span>
-                                                <span className="text-[10px] text-muted-foreground">{group.meta?.browser_info?.version}</span>
+                                                <span className="text-[0.6875rem] text-muted-foreground">{group.meta?.browser_info?.version}</span>
                                             </TableCell>
                                             {viewMode === 'fingerprint' ? (
                                                 <TableCell>
@@ -981,13 +985,13 @@ const AdminLogs = () => {
                                                                     { label: 'Linked IDs', value: group.visitor_ids.size, gradient: 'from-pink-500 to-pink-700' },
                                                                 ].map(({ label, value, gradient }) => (
                                                                     <div key={label} className={`rounded-xl p-3 text-white bg-gradient-to-br ${gradient}`}>
-                                                                        <p className="text-[9px] uppercase opacity-70 mb-1">{label}</p>
+                                                                        <p className="text-[0.6875rem] uppercase opacity-70 mb-1">{label}</p>
                                                                         <p className="text-2xl font-bold">{value}</p>
                                                                     </div>
                                                                 ))}
                                                             </div>
                                                             <div>
-                                                                <p className="text-[10px] font-bold text-muted-foreground uppercase mb-2">Visited Pages</p>
+                                                                <p className="text-[0.6875rem] font-bold text-muted-foreground uppercase mb-2">Visited Pages</p>
                                                                 <div className="space-y-1">
                                                                     {Array.from(group.paths).map((path: string) => (
                                                                         <div key={path} className="flex items-center gap-2 text-xs bg-muted/50 px-3 py-1.5 rounded-lg">
@@ -998,7 +1002,7 @@ const AdminLogs = () => {
                                                             </div>
                                                             {group.visitor_ids.size > 0 && (
                                                                 <div>
-                                                                    <p className="text-[10px] font-bold text-muted-foreground uppercase mb-2">Visitor IDs</p>
+                                                                    <p className="text-[0.6875rem] font-bold text-muted-foreground uppercase mb-2">Visitor IDs</p>
                                                                     <div className="space-y-1">
                                                                         {Array.from(group.visitor_ids).map((id: string) => (
                                                                             <div key={id} className="text-xs font-mono bg-muted/50 px-3 py-1.5 rounded-lg">{id}</div>
@@ -1007,7 +1011,7 @@ const AdminLogs = () => {
                                                                 </div>
                                                             )}
                                                             <div>
-                                                                <p className="text-[10px] font-bold text-muted-foreground uppercase mb-2">Latest Session Data</p>
+                                                                <p className="text-[0.6875rem] font-bold text-muted-foreground uppercase mb-2">Latest Session Data</p>
                                                                 <SessionModal log={group.latest_log} />
                                                             </div>
                                                         </div>

@@ -74,7 +74,7 @@ const ResultCell = ({ hit1d, hit7d }: { hit1d: boolean | null; hit7d: boolean | 
     <div className="flex items-center gap-1.5 text-xs">
       <span className="text-muted-foreground w-6">{label}</span>
       <AgreementIcon status={hit} />
-      <span className={hit == null ? "text-muted-foreground/70" : ""}>
+      <span className={hit == null ? "text-muted-foreground" : ""}>
         {hit === true ? "Hit" : hit === false ? "Miss" : "Pending"}
       </span>
     </div>
