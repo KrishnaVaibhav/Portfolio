@@ -1,154 +1,149 @@
-import { Mail, Phone, MapPin, Linkedin, Github, Send } from "lucide-react";
-import { Card } from "./ui/card";
+import { Mail, Phone, MapPin, Linkedin, Github, Send, ChevronRight } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Button } from "./ui/button";
+import { Reveal } from "./Reveal";
+import { usePointerVars } from "@/hooks/use-motion";
+import profileImg from "@/assets/profile.jpg";
 
-const contactInfo = [
+type Row = {
+  icon: LucideIcon;
+  label: string;
+  value: string;
+  href?: string;
+  external?: boolean;
+  tint: string;
+};
+
+const contactInfo: Row[] = [
   {
     icon: Mail,
     label: "Email",
     value: "krishnavaibhav.y@gmail.com",
     href: "mailto:krishnavaibhav.y@gmail.com",
-    color: "text-primary",
+    tint: "bg-[#0071e3]",
   },
   {
     icon: Phone,
     label: "Phone",
     value: "+1 (782) 882-7776",
     href: "tel:+17828827776",
-    color: "text-accent",
+    tint: "bg-[#30a46c]",
   },
   {
     icon: MapPin,
     label: "Location",
-    value: "Canada 🍁",
-    href: "#",
-    color: "text-secondary",
+    value: "Canada",
+    tint: "bg-[#e5484d]",
   },
 ];
 
-const socialLinks = [
+const socialLinks: Row[] = [
   {
     icon: Linkedin,
     label: "LinkedIn",
+    value: "krishna-vaibhav-y",
     href: "https://www.linkedin.com/in/krishna-vaibhav-y/",
-    color: "hover:text-primary",
+    external: true,
+    tint: "bg-[#0a66c2]",
   },
   {
     icon: Github,
     label: "GitHub",
+    value: "KrishnaVaibhav",
     href: "https://github.com/KrishnaVaibhav",
-    color: "hover:text-accent",
+    external: true,
+    tint: "bg-[#24292f] dark:bg-[#3a3a3e]",
   },
 ];
 
-export const Contact = () => {
+// One row of an iOS-style inset grouped list.
+const ListRow = ({ row }: { row: Row }) => {
+  const Icon = row.icon;
+  const body = (
+    <>
+      <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-[9px] text-white ${row.tint}`}>
+        <Icon className="h-[17px] w-[17px]" strokeWidth={2} />
+      </span>
+      <span className="flex min-w-0 flex-1 items-center justify-between gap-4 border-b py-3.5 group-last/list:border-b-0">
+        <span className="text-[17px]">{row.label}</span>
+        <span className="flex min-w-0 items-center gap-1 text-[15px] text-muted-foreground">
+          <span className="truncate">{row.value}</span>
+          {row.href && <ChevronRight className="h-4 w-4 shrink-0 opacity-50" />}
+        </span>
+      </span>
+    </>
+  );
+
   return (
-    <section id="contact" className="py-20 px-4 relative overflow-hidden">
-      {/* Background Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-muted/30 to-background pointer-events-none" />
-      
-      <div className="container mx-auto max-w-7xl relative z-10">
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-            Let's Connect
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Open to exciting opportunities in cloud development and DevOps
+    <li className="group/list">
+      {row.href ? (
+        <a
+          href={row.href}
+          {...(row.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+          className="flex items-center gap-4 px-4 transition-colors hover:bg-foreground/[0.04] active:bg-foreground/[0.08]"
+        >
+          {body}
+        </a>
+      ) : (
+        <div className="flex items-center gap-4 px-4">{body}</div>
+      )}
+    </li>
+  );
+};
+
+const Group = ({ title, rows }: { title: string; rows: Row[] }) => (
+  <div>
+    <h3 className="px-4 pb-2 text-[13px] text-muted-foreground">{title}</h3>
+    <ul className="glass overflow-hidden rounded-[20px]">
+      {rows.map((row) => (
+        <ListRow key={row.label} row={row} />
+      ))}
+    </ul>
+  </div>
+);
+
+export const Contact = () => {
+  const portraitRef = usePointerVars<HTMLDivElement>({ tilt: 10 });
+
+  return (
+    <section id="contact" className="section">
+      <div className="section-inner grid gap-16 lg:grid-cols-12 lg:gap-12">
+        <Reveal className="lg:col-span-6">
+          <h2 className="headline">Let's connect.</h2>
+          <p className="lede">
+            Open to opportunities in cloud development and DevOps. Whether you need a cloud architect, a full-stack developer or a DevOps engineer, let's talk about how I can help your team.
           </p>
-        </div>
 
-        <div className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {/* Contact Info Card */}
-          <Card className="p-8 bg-card/80 backdrop-blur-sm border-2 border-border space-y-6 animate-fade-in">
-            <div>
-              <h3 className="text-2xl font-bold text-foreground mb-2">
-                Get In Touch
-              </h3>
-              <p className="text-muted-foreground">
-                I'm always interested in discussing new projects, creative ideas, or opportunities.
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {contactInfo.map((info, idx) => {
-                const Icon = info.icon;
-                return (
-                  <a
-                    key={idx}
-                    href={info.href}
-                    className="flex items-start gap-4 p-4 rounded-lg bg-muted/50 hover:bg-muted transition-all duration-300 hover:translate-x-2 group"
-                  >
-                    <div className={`w-10 h-10 rounded-lg bg-background flex items-center justify-center ${info.color} group-hover:scale-110 transition-transform`}>
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">{info.label}</p>
-                      <p className="font-medium text-foreground">{info.value}</p>
-                    </div>
-                  </a>
-                );
-              })}
-            </div>
-
-            {/* Social Links */}
-            <div className="pt-6 border-t border-border">
-              <p className="text-sm text-muted-foreground mb-4">Connect with me</p>
-              <div className="flex gap-4">
-                {socialLinks.map((social, idx) => {
-                  const Icon = social.icon;
-                  return (
-                    <Button
-                      key={idx}
-                      size="icon"
-                      variant="outline"
-                      className={`border-2 ${social.color} transition-all duration-300 hover:scale-110`}
-                      asChild
-                    >
-                      <a href={social.href} target="_blank" rel="noopener noreferrer">
-                        <Icon className="w-5 h-5" />
-                      </a>
-                    </Button>
-                  );
-                })}
-              </div>
-            </div>
-          </Card>
-
-          {/* CTA Card */}
-          <Card className="p-8 bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 backdrop-blur-sm border-2 border-primary/30 flex flex-col justify-center items-center text-center animate-fade-in">
-            <div className="w-20 h-20 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center mb-6 animate-glow">
-              <Send className="w-10 h-10 text-white" />
-            </div>
-            
-            <h3 className="text-2xl font-bold text-foreground mb-4">
-              Ready to Build Something Great?
-            </h3>
-            
-            <p className="text-muted-foreground mb-8 max-w-md">
-              Whether you're looking for a cloud architect, full-stack developer, or DevOps engineer, let's discuss how I can contribute to your team.
-            </p>
-            
-            <Button
-              size="lg"
-              className="bg-gradient-to-r from-primary via-accent to-secondary hover:opacity-90 text-white px-8 py-6 text-lg group"
-              asChild
-            >
+          <div className="mt-10">
+            <Button size="lg" asChild className="group">
               <a href="mailto:krishnavaibhav.y@gmail.com">
-                Send Message
-                <Send className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <Send className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                Email me
               </a>
             </Button>
+          </div>
 
-            <div className="mt-8 pt-8 border-t border-border/50 w-full">
-              <p className="text-sm text-muted-foreground">
-                <strong className="text-foreground">Masters in Applied Computer Science</strong> at Dalhousie University
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Graduated: May 2025
-              </p>
+          <div ref={portraitRef} className="tilt mt-14 flex max-w-sm items-center gap-5">
+            <img
+              src={profileImg}
+              alt="Krishna Vaibhav Yadlapalli"
+              loading="lazy"
+              width={88}
+              height={88}
+              className="h-[88px] w-[88px] rounded-[26px] object-cover shadow-[0_18px_40px_-16px_hsl(var(--shadow-color)/0.5)]"
+              style={{ transform: "translateZ(30px)" }}
+            />
+            <div>
+              <p className="font-semibold tracking-[-0.01em]">Masters in Applied Computer Science</p>
+              <p className="mt-0.5 text-sm text-muted-foreground">Dalhousie University, graduated May 2025</p>
             </div>
-          </Card>
-        </div>
+          </div>
+        </Reveal>
+
+        <Reveal index={1} className="flex flex-col gap-8 lg:col-span-5 lg:col-start-8 lg:pt-4">
+          <Group title="Contact" rows={contactInfo} />
+          <Group title="Profiles" rows={socialLinks} />
+        </Reveal>
       </div>
     </section>
   );

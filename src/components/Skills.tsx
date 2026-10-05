@@ -1,12 +1,11 @@
-import { useState } from "react";
-import { Code2, Cloud, Database, Wrench, TestTube, GitBranch } from "lucide-react";
-import { Card } from "./ui/card";
+import { useMemo, useRef, useState, type KeyboardEvent } from "react";
+import { Reveal } from "./Reveal";
+import { SkillGlobe } from "./SkillGlobe";
+import { cn } from "@/lib/utils";
 
 const skillCategories = [
   {
-    icon: Code2,
     title: "React & Mobile",
-    color: "text-primary",
     skills: [
       { name: "React.js", level: 92 },
       { name: "React Native", level: 90 },
@@ -19,9 +18,7 @@ const skillCategories = [
     ],
   },
   {
-    icon: Code2,
     title: "Java & Backend",
-    color: "text-secondary",
     skills: [
       { name: "Java", level: 91 },
       { name: "Spring Boot", level: 90 },
@@ -34,9 +31,7 @@ const skillCategories = [
     ],
   },
   {
-    icon: Cloud,
     title: "Cloud Platforms",
-    color: "text-accent",
     skills: [
       { name: "Azure (App Services, AKS, ACR)", level: 92 },
       { name: "Azure Service Bus", level: 88 },
@@ -47,9 +42,7 @@ const skillCategories = [
     ],
   },
   {
-    icon: Database,
     title: "Databases",
-    color: "text-secondary",
     skills: [
       { name: "Cosmos DB", level: 88 },
       { name: "PostgreSQL", level: 86 },
@@ -59,9 +52,7 @@ const skillCategories = [
     ],
   },
   {
-    icon: Wrench,
     title: "DevOps & CI/CD",
-    color: "text-primary",
     skills: [
       { name: "Azure DevOps Pipelines", level: 90 },
       { name: "Docker", level: 92 },
@@ -72,9 +63,7 @@ const skillCategories = [
     ],
   },
   {
-    icon: TestTube,
     title: "Testing & Quality",
-    color: "text-accent",
     skills: [
       { name: "JUnit", level: 87 },
       { name: "Jest", level: 85 },
@@ -85,9 +74,7 @@ const skillCategories = [
     ],
   },
   {
-    icon: GitBranch,
     title: "Methodologies",
-    color: "text-secondary",
     skills: [
       { name: "Agile/Scrum", level: 90 },
       { name: "Code Reviews", level: 92 },
@@ -100,65 +87,100 @@ const skillCategories = [
 
 export const Skills = () => {
   const [activeCategory, setActiveCategory] = useState(0);
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  const tags = useMemo(
+    () =>
+      skillCategories.flatMap((category, group) =>
+        category.skills.map((skill) => ({ name: skill.name, group })),
+      ),
+    [],
+  );
+
+  // Arrow keys move between tabs, per the WAI-ARIA tabs pattern.
+  const onTabKey = (e: KeyboardEvent<HTMLButtonElement>) => {
+    const step = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+    if (!step) return;
+    e.preventDefault();
+    const next = (activeCategory + step + skillCategories.length) % skillCategories.length;
+    setActiveCategory(next);
+    tabsRef.current?.querySelectorAll<HTMLButtonElement>("[role=tab]")[next]?.focus();
+  };
+
+  const active = skillCategories[activeCategory];
 
   return (
-    <section id="skills" className="py-20 px-4 relative">
-      <div className="container mx-auto max-w-7xl">
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent">
-            Technical Expertise
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Full-stack proficiency in React, Java, and cloud technologies
-          </p>
-        </div>
+    <section id="skills" className="section">
+      <div className="section-inner grid items-center gap-14 lg:grid-cols-12 lg:gap-10">
+        <div className="min-w-0 lg:col-span-7">
+          <Reveal>
+            <h2 className="headline">Technical expertise.</h2>
+            <p className="lede">Full-stack work across React, Java and the cloud, from mobile UI to the pipeline that ships it.</p>
+          </Reveal>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          {skillCategories.map((category, idx) => {
-            const Icon = category.icon;
-            return (
-              <Card
-                key={idx}
-                className={`p-6 cursor-pointer transition-all duration-300 backdrop-blur-sm border-2 ${
-                  activeCategory === idx
-                    ? "bg-card/90 border-primary shadow-lg shadow-primary/20 scale-105"
-                    : "bg-card/50 border-border hover:border-primary/50 hover:shadow-md"
-                }`}
-                onClick={() => setActiveCategory(idx)}
+          {/* Segmented control */}
+          <Reveal index={1} className="mt-10">
+            <div
+              ref={tabsRef}
+              role="tablist"
+              aria-label="Skill categories"
+              className="glass flex snap-x gap-1 overflow-x-auto rounded-full p-1 [mask-image:linear-gradient(90deg,#000_88%,transparent)] [scrollbar-width:none]"
+            >
+              {skillCategories.map((category, idx) => (
+                <button
+                  key={category.title}
+                  role="tab"
+                  id={`skill-tab-${idx}`}
+                  aria-selected={activeCategory === idx}
+                  aria-controls="skill-panel"
+                  tabIndex={activeCategory === idx ? 0 : -1}
+                  onClick={() => setActiveCategory(idx)}
+                  onKeyDown={onTabKey}
+                  className={cn(
+                    "h-9 shrink-0 snap-start whitespace-nowrap rounded-full px-3.5 text-[13px] font-medium transition-all duration-300 last:mr-8",
+                    activeCategory === idx
+                      ? "bg-card text-foreground shadow-[0_1px_2px_hsl(var(--shadow-color)/0.12),0_4px_12px_-4px_hsl(var(--shadow-color)/0.2)] dark:bg-white/[0.12]"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  {category.title}
+                </button>
+              ))}
+            </div>
+          </Reveal>
+
+          <div
+            id="skill-panel"
+            role="tabpanel"
+            aria-labelledby={`skill-tab-${activeCategory}`}
+            className="mt-8 grid gap-x-10 sm:grid-cols-2"
+          >
+            {active.skills.map((skill, idx) => (
+              <div
+                key={`${activeCategory}-${skill.name}`}
+                className="flex items-center justify-between gap-4 border-b py-4 animate-in fade-in-0 slide-in-from-bottom-2 fill-mode-both duration-500"
+                style={{ animationDelay: `${idx * 45}ms` }}
               >
-                <div className="flex items-center gap-3 mb-2">
-                  <Icon className={`w-6 h-6 ${category.color}`} />
-                  <h3 className="text-xl font-semibold">{category.title}</h3>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {category.skills.length} skills
-                </p>
-              </Card>
-            );
-          })}
-        </div>
-
-        <Card className="p-8 bg-card/80 backdrop-blur-sm border-2 border-border">
-          <div className="grid gap-6">
-            {skillCategories[activeCategory].skills.map((skill, idx) => (
-              <div key={idx} className="space-y-2 animate-slide-in-right">
-                <div className="flex justify-between items-center">
-                  <span className="font-medium text-foreground">{skill.name}</span>
-                  <span className="text-sm text-muted-foreground">{skill.level}%</span>
-                </div>
-                <div className="h-3 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-primary via-accent to-secondary rounded-full transition-all duration-1000 ease-out"
-                    style={{
-                      width: `${skill.level}%`,
-                      animation: "skill-bar 1.5s ease-out forwards",
-                    }}
+                <span className="text-[17px] tracking-[-0.01em]">{skill.name}</span>
+                <span className="flex items-center gap-3">
+                  <span
+                    aria-hidden
+                    className="h-[3px] rounded-full bg-link/70"
+                    style={{ width: `${(skill.level - 70) * 1.6}px` }}
                   />
-                </div>
+                  <span className="w-7 text-right font-mono text-sm tabular text-muted-foreground">
+                    {skill.level}
+                  </span>
+                </span>
               </div>
             ))}
           </div>
-        </Card>
+          <p className="mt-4 text-xs text-muted-foreground">Self-assessed proficiency out of 100.</p>
+        </div>
+
+        <Reveal index={2} className="mx-auto w-full max-w-[520px] lg:col-span-5">
+          <SkillGlobe tags={tags} activeGroup={activeCategory} />
+        </Reveal>
       </div>
     </section>
   );

@@ -1,10 +1,10 @@
 import { useLocation, Link } from "react-router-dom";
 import { useEffect } from "react";
+import { ArrowLeft } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
-import { SubtleSkillIcons } from "@/components/SubtleSkillIcons";
+import { AmbientBackground } from "@/components/AmbientBackground";
+import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Home } from "lucide-react";
 
 const NotFound = () => {
   const location = useLocation();
@@ -14,37 +14,31 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground relative flex flex-col">
-      <SubtleSkillIcons />
+    <div className="relative flex min-h-[100dvh] flex-col bg-background text-foreground">
+      <AmbientBackground />
       <Navigation />
 
-      <div className="flex-1 flex flex-col items-center justify-center p-4 z-10">
-        <Card className="text-center space-y-6 max-w-lg animated-card p-8 rounded-2xl border border-border/50 shadow-xl">
-          <div className="space-y-2">
-            <h1 className="text-6xl font-black text-primary glitch-effect">404</h1>
-            <p className="text-2xl font-medium text-foreground">Page Not Found</p>
-          </div>
-
-          <p className="text-muted-foreground">
-            The coordinates you are trying to visit seem to be lost in the digital void.
+      <main id="main" className="relative z-content flex flex-1 items-center px-5 pt-24 md:px-8">
+        <div className="mx-auto w-full max-w-[1200px]">
+          <p className="font-mono text-sm text-muted-foreground tabular">404</p>
+          <h1 className="mt-3 font-display text-[clamp(3rem,8vw,6.5rem)] font-semibold leading-[0.95] tracking-[-0.045em] animate-rise-in">
+            This page
+            <br />
+            doesn't exist<span className="text-link">.</span>
+          </h1>
+          <p className="mt-6 max-w-[48ch] text-lg text-muted-foreground">
+            Nothing lives at <span className="font-mono text-foreground">{location.pathname}</span>. Head back to the portfolio to keep looking around.
           </p>
-
-          <Link to="/">
-            <Button size="lg" className="gap-2 group">
-              <Home className="h-4 w-4 group-hover:scale-110 transition-transform" />
-              Return to Base
-            </Button>
-          </Link>
-        </Card>
-      </div>
-
-      <footer className="py-8 px-4 border-t border-border bg-muted/30 z-10">
-        <div className="container mx-auto max-w-7xl text-center">
-          <p className="text-muted-foreground text-sm">
-            © 2025 Krishna Vaibhav Yadlapalli.
-          </p>
+          <Button asChild size="lg" className="group mt-10">
+            <Link to="/">
+              <ArrowLeft className="transition-transform duration-300 group-hover:-translate-x-0.5" />
+              Back to portfolio
+            </Link>
+          </Button>
         </div>
-      </footer>
+      </main>
+
+      <Footer showCredentials={false} />
     </div>
   );
 };

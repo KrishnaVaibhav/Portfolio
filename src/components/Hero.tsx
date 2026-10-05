@@ -1,113 +1,94 @@
-import { Cloud, Code2, Database, Cpu } from "lucide-react";
+import { Component, Suspense, lazy, type ReactNode } from "react";
+import { ArrowRight, ChevronRight } from "lucide-react";
 import { Button } from "./ui/button";
-import heroBg from "@/assets/hero-bg.jpg";
 import profileImg from "@/assets/profile.jpg";
+
+const HeroScene = lazy(() => import("./three/HeroScene"));
+
+// Static stand-in shown while three.js loads, or if WebGL is unavailable.
+const SceneFallback = () => (
+  <div className="grid h-full w-full place-items-center">
+    <div className="h-[46%] aspect-square rounded-full bg-[radial-gradient(circle_at_35%_30%,hsl(0_0%_100%/0.5),hsl(var(--primary)/0.18)_45%,transparent_70%)] shadow-[inset_0_0_60px_hsl(var(--primary)/0.15)]" />
+  </div>
+);
+
+class SceneBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  render() {
+    return this.state.failed ? <SceneFallback /> : this.props.children;
+  }
+}
+
+const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 
 export const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image with Overlay */}
-      <div 
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: `url(${heroBg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
+    <section id="top" className="relative isolate flex min-h-[100dvh] items-center overflow-hidden px-5 pb-16 pt-24 md:px-8">
+      {/* 3D scene: bleeds off the right edge on desktop, sits behind the copy on mobile */}
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-14 -z-10 h-[52vh] opacity-90 md:inset-y-0 md:left-auto md:right-[-8vw] md:top-0 md:h-full md:w-[62vw] md:opacity-100"
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-background/90 to-background" />
+        <SceneBoundary>
+          <Suspense fallback={<SceneFallback />}>
+            <HeroScene />
+          </Suspense>
+        </SceneBoundary>
       </div>
 
-      {/* Floating Tech Icons */}
-      <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none">
-        <Cloud className="absolute top-20 left-[10%] w-16 h-16 text-primary/30 animate-float" />
-        <Database className="absolute top-40 right-[15%] w-12 h-12 text-accent/40 animate-float-slow" />
-        <Code2 className="absolute bottom-32 left-[20%] w-14 h-14 text-secondary/30 animate-float" />
-        <Cpu className="absolute bottom-20 right-[25%] w-16 h-16 text-primary/40 animate-float-slow" />
-      </div>
-
-      {/* Main Content */}
-      <div className="relative z-20 container mx-auto px-4">
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-20 animate-fade-in">
-          {/* Profile Image with Cutout Style */}
-          <div className="relative group">
-            <div className="absolute -inset-4 bg-gradient-to-r from-primary via-accent to-secondary rounded-full opacity-75 blur-2xl group-hover:opacity-100 transition duration-500 animate-glow" />
-            <div className="relative">
-              <div className="absolute -inset-2 bg-gradient-to-r from-primary to-accent rounded-full opacity-50 animate-pulse" />
-              <img 
-                src={profileImg} 
-                alt="Krishna Vaibhav Yadlapalli"
-                className="relative w-64 h-64 lg:w-80 lg:h-80 object-cover rounded-full border-4 border-background shadow-2xl transform group-hover:scale-105 transition duration-500"
-                style={{
-                  clipPath: "circle(50% at 50% 50%)",
-                }}
-              />
-            </div>
-            {/* Floating Badge */}
-            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-card border-2 border-primary rounded-full shadow-lg whitespace-nowrap">
-              <span className="text-sm font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-                Full Stack Developer
-              </span>
-            </div>
+      <div className="hero-recede mx-auto grid w-full max-w-[1200px] grid-cols-1 md:grid-cols-12">
+        <div className="mt-[34vh] md:col-span-7 md:mt-0 lg:col-span-6">
+          <div
+            className="glass inline-flex items-center gap-2.5 rounded-full py-1 pl-1 pr-4 animate-rise-in"
+            style={{ animationDelay: "80ms" }}
+          >
+            <img
+              src={profileImg}
+              alt="Portrait of Krishna Vaibhav Yadlapalli"
+              width={32}
+              height={32}
+              className="h-8 w-8 rounded-full object-cover"
+            />
+            <span className="text-[13px] font-medium tracking-[-0.01em]">
+              Full-stack developer, Azure and AWS certified
+            </span>
           </div>
 
-          {/* Text Content */}
-          <div className="text-center lg:text-left max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6 backdrop-blur-sm">
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-              <span className="text-sm font-medium text-primary">Azure & AWS Certified Developer</span>
-            </div>
-            
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent leading-tight">
-              KRISHNA VAIBHAV<br />
-            </h1>
-          
-            <p className="text-xl md:text-2xl text-muted-foreground mb-4">
-              Cloud-Native Application Developer
-            </p>
-            
-            <p className="text-lg text-muted-foreground/80 mb-8">
-              Specializing in React, React Native, Java & Cloud Solutions
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center">
-              <Button 
-                size="lg" 
-                className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-primary-foreground group"
-                onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                View Projects
-                <Code2 className="ml-2 w-5 h-5 group-hover:rotate-12 transition-transform" />
-              </Button>
-              <Button 
-                size="lg" 
-                variant="outline"
-                className="text-lg px-8 py-6 border-2 border-accent text-accent hover:bg-accent hover:text-accent-foreground"
-                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                Get In Touch
-              </Button>
-            </div>
+          <h1
+            className="mt-7 font-display text-[clamp(3.25rem,9vw,7.5rem)] font-semibold leading-[0.95] tracking-[-0.045em] animate-rise-in"
+            style={{ animationDelay: "180ms" }}
+          >
+            Krishna
+            <br />
+            Vaibhav<span className="text-link">.</span>
+          </h1>
 
-            <div className="flex flex-wrap gap-6 justify-center lg:justify-start items-center mt-12 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <Cloud className="w-4 h-4 text-primary" />
-                <span>Canada 🍁</span>
-              </div>
-              <div className="w-1 h-1 rounded-full bg-muted-foreground/50" />
-              <div className="flex items-center gap-2">
-                <Code2 className="w-4 h-4 text-accent" />
-                <span>AWS •React • Java • Mobile</span>
-              </div>
-            </div>
+          <p
+            className="mt-7 max-w-[30ch] text-xl leading-snug text-muted-foreground md:text-2xl animate-rise-in"
+            style={{ animationDelay: "300ms" }}
+          >
+            Cloud-native application developer. React, React Native and Java, shipped on Azure and AWS.
+          </p>
+
+          <div
+            className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4 animate-rise-in"
+            style={{ animationDelay: "420ms" }}
+          >
+            <Button size="lg" className="group" onClick={() => scrollTo("projects")}>
+              View projects
+              <ArrowRight className="transition-transform duration-300 group-hover:translate-x-0.5" />
+            </Button>
+            <button
+              onClick={() => scrollTo("contact")}
+              className="group inline-flex items-center gap-0.5 text-[17px] font-medium text-link"
+            >
+              Get in touch
+              <ChevronRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+            </button>
           </div>
-        </div>
-      </div>
-
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 animate-bounce">
-        <div className="w-6 h-10 border-2 border-primary/50 rounded-full flex items-start justify-center p-2">
-          <div className="w-1 h-2 bg-primary rounded-full" />
         </div>
       </div>
     </section>
