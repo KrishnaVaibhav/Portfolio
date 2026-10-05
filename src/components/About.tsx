@@ -2,9 +2,8 @@ import { MapPin, Building2, BadgeCheck } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Reveal } from "./Reveal";
 import { TiltCard } from "./TiltCard";
-import { usePointerVars } from "@/hooks/use-motion";
+import { HoloArt } from "./HoloArt";
 import { cn } from "@/lib/utils";
-import illustration from "@/assets/about-illustration.webp";
 
 type Fact = { icon: LucideIcon; label: string; value: string; live?: boolean };
 
@@ -57,35 +56,13 @@ const FactTile = ({ fact, index }: { fact: Fact; index: number }) => {
   beside it, and three fact tiles underneath.
 */
 export const About = () => {
-  const art = usePointerVars<HTMLDivElement>();
-
   return (
     <section id="about" aria-labelledby="about-title" className="section">
       <div className="section-inner grid gap-5 md:grid-cols-12">
-        {/* Artwork */}
-        <Reveal className="md:col-span-6 md:row-span-2 lg:col-span-7">
-          <div
-            ref={art}
-            className="relative isolate h-full min-h-[340px] overflow-hidden rounded-[32px] bg-[#111329] shadow-[0_40px_100px_-40px_hsl(var(--shadow-color)/0.6)] md:min-h-[560px]"
-          >
-            <img
-              src={illustration}
-              alt="Illustrated portrait of Krishna in a hoodie, surrounded by circuit traces and code"
-              loading="lazy"
-              width={2048}
-              height={861}
-              className="view-zoom absolute inset-0 h-full w-full object-cover object-[50%_35%]"
-            />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute inset-0 mix-blend-screen"
-              style={{
-                background: "radial-gradient(380px circle at var(--mx, 55%) var(--my, 35%), rgba(120,170,255,0.2), transparent 60%)",
-              }}
-            />
-            <div aria-hidden className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/10" />
-          </div>
-        </Reveal>
+        {/* Artwork: layered holographic parallax */}
+        <div className="md:col-span-6 md:row-span-2 lg:col-span-7">
+          <HoloArt />
+        </div>
 
         {/* Introduction */}
         <Reveal index={1} className="md:col-span-6 lg:col-span-5">

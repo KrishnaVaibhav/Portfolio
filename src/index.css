@@ -510,3 +510,104 @@
     }
   }
 }
+
+/* ── About artwork: layered "holographic" parallax ───────────────────────── */
+@layer components {
+  .holo {
+    --px: 0;
+    --py: 0;
+    --gx: 50%;
+    --gy: 30%;
+    isolation: isolate;
+  }
+
+  .holo-stage {
+    position: absolute;
+    inset: 0;
+    transform: perspective(1400px) rotateX(calc(var(--py) * -6deg)) rotateY(calc(var(--px) * 8deg));
+    clip-path: inset(0 0 0 0 round 32px);
+  }
+
+  .holo-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 35%;
+    will-change: transform;
+  }
+
+  /* Back plate trails the pointer; the figure leads it. */
+  .holo-back,
+  .holo-energy {
+    transform: scale(1.12) translate3d(calc(var(--px) * -16px), calc(var(--py) * -12px), 0);
+  }
+
+  .holo-figure {
+    transform: scale(1.12) translate3d(calc(var(--px) * 20px), calc(var(--py) * 14px), 0);
+    filter: drop-shadow(0 26px 34px rgba(4, 5, 20, 0.6));
+  }
+
+  /* Bright-pass copy of the artwork: only its glowing circuits and code survive,
+     and a moving mask lets a pulse of light run through them. */
+  .holo-energy {
+    mix-blend-mode: plus-lighter;
+    filter: brightness(1.35) contrast(5) saturate(1.6);
+    opacity: 0;
+    -webkit-mask-image: linear-gradient(100deg, transparent 0% 40%, #000 50%, transparent 60% 100%);
+    mask-image: linear-gradient(100deg, transparent 0% 40%, #000 50%, transparent 60% 100%);
+    -webkit-mask-size: 320% 100%;
+    mask-size: 320% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+  }
+
+  .holo-sheen {
+    background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, 0.1) 50%, transparent 62%);
+    background-size: 260% 100%;
+    background-position: calc(50% + var(--px) * 70%) 0;
+    mix-blend-mode: screen;
+  }
+
+  .holo-glare {
+    background: radial-gradient(560px circle at var(--gx) var(--gy), rgba(160, 200, 255, 0.18), transparent 55%);
+    mix-blend-mode: screen;
+  }
+
+  .holo-scan {
+    opacity: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .holo[data-shown="true"] .holo-energy {
+      animation: holo-energy 6s cubic-bezier(0.45, 0, 0.25, 1) 1.8s infinite;
+    }
+
+    /* Boot-up: the portrait renders in behind a scan line the first time it is seen. */
+    .js .holo:not([data-shown="true"]) .holo-stage {
+      clip-path: inset(0 0 100% 0 round 32px);
+    }
+
+    .js .holo .holo-stage {
+      transition: clip-path 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.15s;
+    }
+
+    .holo[data-shown="true"] .holo-scan {
+      animation: holo-scan 1.6s cubic-bezier(0.65, 0, 0.35, 1) 0.15s both;
+    }
+  }
+}
+
+@keyframes holo-energy {
+  0% { -webkit-mask-position: 120% 0; mask-position: 120% 0; opacity: 0; }
+  8% { opacity: 1; }
+  55% { -webkit-mask-position: -20% 0; mask-position: -20% 0; opacity: 1; }
+  65%, 100% { -webkit-mask-position: -20% 0; mask-position: -20% 0; opacity: 0; }
+}
+
+@keyframes holo-scan {
+  0% { transform: translateY(0); opacity: 1; }
+  92% { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
