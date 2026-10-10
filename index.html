@@ -26,7 +26,21 @@
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-    <script>document.documentElement.classList.add("js");</script>
+    <script>
+      // Apply a saved appearance choice before first paint, so there is no flash.
+      (function () {
+        var root = document.documentElement;
+        root.classList.add("js");
+        try {
+          var t = localStorage.getItem("theme");
+          if (t === "light" || t === "dark") {
+            root.dataset.theme = t;
+            var bg = t === "dark" ? "#09090b" : "#fbfbfd";
+            document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) { m.content = bg; });
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
 
   <body>

@@ -6,6 +6,7 @@ import { onIsland, openSpotlight, spotlightShortcut, type IslandMessage } from "
 import { profile } from "@/data/profile";
 import { navigateWithTransition } from "@/lib/view-transition";
 import { cn } from "@/lib/utils";
+import { AppearanceButton } from "./Appearance";
 
 const navLinks = [
   { label: "Skills", href: "#skills" },
@@ -72,7 +73,7 @@ const IslandToast = ({ msg }: { msg: IslandMessage }) => (
     <span
       className={cn(
         "grid h-8 w-8 place-items-center rounded-full",
-        msg.tone === "success" ? "bg-[#30d158] text-black" : "bg-white/15 text-white",
+        msg.tone === "success" ? "bg-[#30d158] text-black" : "bg-foreground/10 text-foreground",
       )}
     >
       {msg.tone === "success" ? <Check className="h-4 w-4" strokeWidth={3} /> : <Info className="h-4 w-4" />}
@@ -193,7 +194,7 @@ export const Navigation = () => {
 
           {/* Dynamic Island */}
           <div
-            className="relative overflow-hidden rounded-full bg-[#09090b] text-white shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_12px_40px_-12px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.08)] transition-[width,height] duration-500 ease-apple"
+            className="relative overflow-hidden rounded-full bg-white/80 text-foreground shadow-[0_0_0_1px_hsl(var(--foreground)/0.08),0_12px_40px_-12px_hsl(var(--shadow-color)/0.35),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur-xl backdrop-saturate-150 dark:bg-[#09090b] dark:text-white dark:shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_12px_40px_-12px_rgba(0,0,0,0.6),inset_0_1px_0_rgba(255,255,255,0.08)] transition-[width,height,background-color,color] duration-500 ease-apple"
             style={size ? { width: size.w, height: size.h } : undefined}
           >
             <div
@@ -207,7 +208,7 @@ export const Navigation = () => {
             >
               <span
                 aria-hidden
-                className="absolute left-0 top-1/2 h-9 -translate-y-1/2 rounded-full bg-white/[0.14] transition-[transform,width,opacity] duration-500 ease-apple"
+                className="absolute left-0 top-1/2 h-9 -translate-y-1/2 rounded-full bg-foreground/[0.08] dark:bg-white/[0.14] transition-[transform,width,opacity] duration-500 ease-apple"
                 style={{
                   width: indicator?.w ?? 0,
                   transform: `translate3d(${indicator?.x ?? 0}px, -50%, 0)`,
@@ -223,7 +224,7 @@ export const Navigation = () => {
                   aria-current={active === link.href ? "true" : undefined}
                   className={cn(
                     "relative h-9 rounded-full px-4 text-sm transition-colors duration-200",
-                    active === link.href ? "text-white" : "text-white/60 hover:text-white",
+                    active === link.href ? "text-foreground" : "text-foreground/70 hover:text-foreground dark:text-foreground/60",
                   )}
                 >
                   {link.label}
@@ -242,65 +243,78 @@ export const Navigation = () => {
             </div>
           </div>
 
-          <div ref={rightRef} className="glass flex items-center gap-1 justify-self-end rounded-full p-1">
-            <button
-              onClick={openSpotlight}
-              className="flex h-10 items-center gap-2 rounded-full pl-3 pr-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
-              aria-label={`Search (${spotlightShortcut})`}
-            >
-              <Search className="h-4 w-4" strokeWidth={1.75} />
-              <kbd className="hidden whitespace-nowrap rounded-md border border-foreground/10 px-1.5 font-mono text-[0.6875rem] lg:inline">{spotlightShortcut}</kbd>
-            </button>
-            {socials.map(({ label, href, icon: Icon }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={label}
-                className="grid h-10 w-10 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
+          <div className="flex items-center gap-2 justify-self-end">
+            <div ref={rightRef} className="glass flex items-center gap-1 rounded-full p-1">
+              <button
+                onClick={openSpotlight}
+                className="flex h-10 items-center gap-2 rounded-full pl-3 pr-2 text-sm text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
+                aria-label={`Search (${spotlightShortcut})`}
               >
-                <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
-              </a>
-            ))}
+                <Search className="h-4 w-4" strokeWidth={1.75} />
+                <kbd className="hidden whitespace-nowrap rounded-md border border-foreground/10 px-1.5 font-mono text-[0.6875rem] lg:inline">
+                  {spotlightShortcut}
+                </kbd>
+              </button>
+              {socials.map(({ label, href, icon: Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="grid h-10 w-10 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
+                >
+                  <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
+                </a>
+              ))}
+            </div>
+            {/* Appearance: its own control, apart from search and links */}
+            <AppearanceButton className="h-12" />
           </div>
         </div>
 
         {/* Mobile bar */}
-        <div className="glass relative flex h-14 items-center justify-between rounded-full px-1.5 md:hidden">
-          <button onClick={goHome} className="rounded-full p-1" aria-label="Krishna Vaibhav Yadlapalli, back to top">
-            <Monogram />
-          </button>
-
-          {/* Island toast, centred over the bar */}
-          <div
-            aria-hidden
-            className={cn(
-              "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full bg-[#09090b] py-1.5 text-white shadow-[0_8px_30px_-8px_rgba(0,0,0,0.6)] transition-all duration-500 ease-apple",
-              msg ? "scale-100 opacity-100" : "pointer-events-none scale-50 opacity-0",
-            )}
-          >
-            {msg && <IslandToast msg={msg} />}
-          </div>
-
-          <div className="flex items-center">
-            <button
-              onClick={openSpotlight}
-              className="grid h-11 w-11 place-items-center rounded-full transition-colors hover:bg-foreground/[0.06]"
-              aria-label="Search"
-            >
-              <Search className="h-5 w-5" strokeWidth={1.75} />
+        <div className="flex items-center gap-2 md:hidden">
+          <div className="glass relative flex h-14 flex-1 items-center justify-between rounded-full px-1.5">
+            <button onClick={goHome} className="rounded-full p-1" aria-label="Krishna Vaibhav Yadlapalli, back to top">
+              <Monogram />
             </button>
-            <button
-              className="grid h-11 w-11 place-items-center rounded-full transition-colors hover:bg-foreground/[0.06]"
-              onClick={() => setIsOpen(!isOpen)}
-              aria-expanded={isOpen}
-              aria-controls="mobile-menu"
-              aria-label={isOpen ? "Close menu" : "Open menu"}
+
+            {/* Island toast, centred over the bar */}
+            <div
+              aria-hidden
+              className={cn(
+                "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full bg-white/90 py-1.5 text-foreground shadow-[0_0_0_1px_hsl(var(--foreground)/0.08),0_8px_30px_-8px_hsl(var(--shadow-color)/0.35)] backdrop-blur-xl dark:bg-[#09090b] dark:text-white dark:shadow-[0_8px_30px_-8px_rgba(0,0,0,0.6)] transition-all duration-500 ease-apple",
+                msg ? "scale-100 opacity-100" : "pointer-events-none scale-50 opacity-0",
+              )}
             >
-              {isOpen ? <X className="h-5 w-5" strokeWidth={1.75} /> : <Menu className="h-5 w-5" strokeWidth={1.75} />}
-            </button>
+              {msg && <IslandToast msg={msg} />}
+            </div>
+
+            <div className="flex items-center">
+              <button
+                onClick={openSpotlight}
+                className="grid h-11 w-11 place-items-center rounded-full transition-colors hover:bg-foreground/[0.06]"
+                aria-label="Search"
+              >
+                <Search className="h-5 w-5" strokeWidth={1.75} />
+              </button>
+              <button
+                className="grid h-11 w-11 place-items-center rounded-full transition-colors hover:bg-foreground/[0.06]"
+                onClick={() => setIsOpen(!isOpen)}
+                aria-expanded={isOpen}
+                aria-controls="mobile-menu"
+                aria-label={isOpen ? "Close menu" : "Open menu"}
+              >
+                {isOpen ? (
+                  <X className="h-5 w-5" strokeWidth={1.75} />
+                ) : (
+                  <Menu className="h-5 w-5" strokeWidth={1.75} />
+                )}
+              </button>
+            </div>
           </div>
+          <AppearanceButton className="h-14" />
         </div>
 
         {/* Mobile menu */}

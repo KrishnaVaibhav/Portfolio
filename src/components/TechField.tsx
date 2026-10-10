@@ -5,6 +5,7 @@ import {
   siGitlab, siJest, siSelenium, siPostman, siApachekafka, siGit, siRedux, siSupabase,
 } from "simple-icons";
 import { usePrefersReducedMotion } from "@/hooks/use-motion";
+import { isDarkResolved, onAppearanceChange } from "@/lib/theme";
 
 /*
   A background made of the stack. Tiny monochrome logos drift in three depth
@@ -102,7 +103,7 @@ export const TechField = () => {
     let particles: Particle[] = [];
     let ink = readToken("--foreground");
     let accent = readToken("--link");
-    let dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    let dark = isDarkResolved();
 
     const pointer = { x: -9999, y: -9999, active: false };
     let focusGlyph = -1;
@@ -325,9 +326,9 @@ export const TechField = () => {
         focusEl = null;
       }
     };
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    // Follows the visible appearance: the visitor's choice or, by default, the device.
     const onScheme = () => {
-      dark = mq.matches;
+      dark = isDarkResolved();
       ink = readToken("--foreground");
       accent = readToken("--link");
     };
@@ -341,7 +342,7 @@ export const TechField = () => {
     document.addEventListener("pointerout", onOut);
     document.addEventListener("focusin", onOver);
     document.addEventListener("focusout", onOut);
-    mq.addEventListener("change", onScheme);
+    const offAppearance = onAppearanceChange(onScheme);
     // Fonts arrive after first paint; refresh the wordmarks once they do.
     document.fonts?.ready.then(onScheme).catch(() => undefined);
 
@@ -354,7 +355,7 @@ export const TechField = () => {
       document.removeEventListener("pointerout", onOut);
       document.removeEventListener("focusin", onOver);
       document.removeEventListener("focusout", onOut);
-      mq.removeEventListener("change", onScheme);
+      offAppearance();
     };
   }, [reduced]);
 
