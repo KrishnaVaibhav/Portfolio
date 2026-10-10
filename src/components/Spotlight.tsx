@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { copyToClipboard, onSpotlight } from "@/lib/island";
 import { profile } from "@/data/profile";
+import { navigateWithTransition } from "@/lib/view-transition";
 
 type Item = {
   label: string;
@@ -48,7 +49,7 @@ export const Spotlight = () => {
     if (location.pathname === "/") {
       document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
     } else {
-      navigate("/", { state: { scrollTo: href } });
+      navigateWithTransition(navigate, "/", { state: { scrollTo: href } });
     }
   };
 
@@ -68,7 +69,7 @@ export const Spotlight = () => {
     {
       heading: "Projects",
       items: [
-        { label: "Daily Signals: live forecasts", hint: "Open", icon: Radio, tint: "bg-gradient-to-br from-emerald-400 to-rose-600", keywords: ["stocks", "ai", "pipeline"], run: () => navigate("/signals") },
+        { label: "Daily Signals: live forecasts", hint: "Open", icon: Radio, tint: "bg-gradient-to-br from-emerald-400 to-rose-600", keywords: ["stocks", "ai", "pipeline"], run: () => navigateWithTransition(navigate, "/signals") },
         { label: "File Share Platform", hint: "GitHub", icon: Lock, tint: "bg-gradient-to-br from-sky-400 to-blue-800", keywords: ["aws", "lambda"], run: () => openUrl("https://github.com/KrishnaVaibhav/File-Share") },
         { label: "ActicClass", hint: "GitHub", icon: Users, tint: "bg-gradient-to-br from-zinc-500 to-zinc-900", keywords: ["azure", "aks", "classroom"], run: () => openUrl("https://github.com/KrishnaVaibhav/Acticlass") },
       ],

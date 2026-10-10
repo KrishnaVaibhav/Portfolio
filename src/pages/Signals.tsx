@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { TransitionLink } from "@/components/TransitionLink";
 import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
 import { AmbientBackground } from "@/components/AmbientBackground";
@@ -411,10 +411,10 @@ const Signals = () => {
 
           <div className="mt-10 text-center">
             <Button asChild variant="ghost" size="sm" className="group">
-              <Link to="/">
+              <TransitionLink to="/">
                 <ArrowLeft className="transition-transform duration-300 group-hover:-translate-x-0.5" />
                 Back to portfolio
-              </Link>
+              </TransitionLink>
             </Button>
           </div>
         </div>

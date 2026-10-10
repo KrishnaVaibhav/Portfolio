@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import { Github, Lock, Users, ChartNoAxesCombined, Radio, ChevronDown } from "lucide-react";
-import { Link } from "react-router-dom";
+import { TransitionLink } from "./TransitionLink";
+import { CountUp } from "./CountUp";
 import { Button } from "./ui/button";
 import { Reveal } from "./Reveal";
 import { TiltCard } from "./TiltCard";
@@ -110,7 +111,7 @@ const Metrics = ({ metrics, large }: { metrics: Project["metrics"]; large?: bool
             large ? "text-6xl md:text-7xl" : "text-5xl",
           )}
         >
-          {metric.value}
+          <CountUp value={metric.value} />
         </dd>
       </div>
     ))}
@@ -156,10 +157,10 @@ const Actions = ({ project }: { project: Project }) => (
   <div className="flex flex-wrap gap-3">
     {project.liveUrl && (
       <Button asChild className="group">
-        <Link to={project.liveUrl}>
+        <TransitionLink to={project.liveUrl}>
           <Radio className="text-emerald-300 group-hover:animate-pulse" />
           View live data
-        </Link>
+        </TransitionLink>
       </Button>
     )}
     <Button asChild variant={project.liveUrl ? "outline" : "default"}>

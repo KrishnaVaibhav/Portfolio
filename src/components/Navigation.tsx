@@ -4,6 +4,7 @@ import { Menu, X, Github, Linkedin, Search, Check, Info } from "lucide-react";
 import { usePointerVars } from "@/hooks/use-motion";
 import { onIsland, openSpotlight, spotlightShortcut, type IslandMessage } from "@/lib/island";
 import { profile } from "@/data/profile";
+import { navigateWithTransition } from "@/lib/view-transition";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -149,7 +150,7 @@ export const Navigation = () => {
     if (isHome) {
       document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
     } else {
-      navigate("/", { state: { scrollTo: href } });
+      navigateWithTransition(navigate, "/", { state: { scrollTo: href } });
     }
     setIsOpen(false);
   };
@@ -158,13 +159,13 @@ export const Navigation = () => {
     if (isHome) {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      navigate("/");
+      navigateWithTransition(navigate, "/");
     }
     setIsOpen(false);
   };
 
   return (
-    <header className="fixed inset-x-0 top-0 z-nav px-3 pt-3 md:px-[var(--gutter)] md:pt-4">
+    <header className="site-header fixed inset-x-0 top-0 z-nav px-3 pt-3 md:px-[var(--gutter)] md:pt-4">
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"

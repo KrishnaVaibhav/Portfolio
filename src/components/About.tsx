@@ -3,6 +3,7 @@ import type { LucideIcon } from "lucide-react";
 import { Reveal } from "./Reveal";
 import { TiltCard } from "./TiltCard";
 import { HoloArt } from "./HoloArt";
+import { ScrollText } from "./ScrollText";
 import { cn } from "@/lib/utils";
 
 type Fact = { icon: LucideIcon; label: string; value: string; live?: boolean };
@@ -70,10 +71,8 @@ export const About = () => {
             <h2 id="about-title" className="font-display text-5xl font-semibold leading-[1] tracking-[-0.045em] md:text-6xl">
               Hi, I'm Krishna<span className="text-link">.</span>
             </h2>
-            <p className="mt-6 max-w-[46ch] text-lg leading-relaxed text-muted-foreground">
-              I'm a cloud developer at BMO in Toronto, with a Master's in Applied Computer Science from Dalhousie.
-              Most of my work lives behind the interface: serverless services, event pipelines, CI/CD, and the
-              monitoring that keeps them healthy.
+            <p className="mt-6 max-w-[46ch] text-[clamp(1.125rem,1rem+0.4vw,1.375rem)] font-medium leading-relaxed tracking-[-0.01em] text-foreground">
+              <ScrollText text="I'm a cloud developer at BMO in Toronto, with a Master's in Applied Computer Science from Dalhousie. Most of my work lives behind the interface: serverless services, event pipelines, CI/CD, and the monitoring that keeps them healthy." />
             </p>
           </div>
         </Reveal>

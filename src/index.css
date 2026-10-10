@@ -133,6 +133,22 @@
     --gutter: clamp(1.25rem, 4.2vw, 6rem);
     --measure: 65ch;
     font-size: clamp(1rem, 0.35vw + 0.6875rem, 1.1875rem);
+
+    /*
+      Motion. One easing family, as on Apple's sites: a long, soft ease-out for
+      things entering, and a physical spring (damping 0.78, ~2% overshoot) for
+      anything the visitor touches. The spring is sampled into linear(); older
+      browsers fall back to the ease-out.
+    */
+    --ease-apple: cubic-bezier(0.28, 0.11, 0.32, 1);
+    --ease-spring: var(--ease-apple);
+    --dur-enter: 1.1s;
+  }
+
+  @supports (transition-timing-function: linear(0, 1)) {
+    html {
+      --ease-spring: linear(0, 0.063 3.6%, 0.204 7.1%, 0.371 10.7%, 0.533 14.3%, 0.674 17.9%, 0.787 21.4%, 0.873 25%, 0.934 28.6%, 0.975 32.1%, 0.999 35.7%, 1.013 39.3%, 1.019 42.9%, 1.02 46.4%, 1.018 50%, 1.015 53.6%, 1.012 57.1%, 1.009 60.7%, 1.006 64.3%, 1.004 67.9%, 1.002 71.4%, 1.001 75%, 1);
+    }
   }
 
   body {
@@ -333,16 +349,30 @@
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    /* Content rises and settles into place, Apple's long ease-out, staggered. */
     .js .reveal:not([data-shown="true"]) {
       opacity: 0;
-      transform: translateY(28px) scale(0.985);
+      transform: translateY(44px) scale(0.965);
     }
 
     .js .reveal {
       transition:
-        opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-      transition-delay: calc(var(--i, 0) * 70ms);
+        opacity var(--dur-enter) var(--ease-apple),
+        transform var(--dur-enter) var(--ease-apple);
+      transition-delay: calc(var(--i, 0) * 90ms);
+    }
+
+    /* Section headlines rise out of a slot, like apple.com's type reveals. */
+    .js .reveal .headline {
+      transition:
+        transform 1.2s var(--ease-apple) 0.08s,
+        clip-path 1.2s var(--ease-apple) 0.08s;
+      clip-path: inset(-12% -4% -24% -4%);
+    }
+
+    .js .reveal:not([data-shown="true"]) .headline {
+      transform: translateY(42%);
+      clip-path: inset(-12% -4% 100% -4%);
     }
   }
 
@@ -574,12 +604,28 @@
   to { --gap: calc(var(--gap-open) * 0.22); }
 }
 
+@keyframes stack-assemble {
+  from { --spread: 2.8; opacity: 0; }
+  35% { opacity: 1; }
+  to { --spread: 1; opacity: 1; }
+}
+
+/* On load the layers fly in from wide apart and settle together (backwards
+   fill only, so the hover spread takes over once it has finished). */
+@media (prefers-reduced-motion: no-preference) {
+  .stack-scene {
+    animation: stack-assemble 1.8s var(--ease-spring) 0.25s backwards;
+  }
+}
+
 @supports (animation-timeline: scroll()) {
   @media (prefers-reduced-motion: no-preference) {
     .stack-scene {
-      animation: stack-collapse linear both;
-      animation-timeline: scroll(root);
-      animation-range: 0 75vh;
+      animation:
+        stack-collapse linear both,
+        stack-assemble 1.8s var(--ease-spring) 0.25s backwards;
+      animation-timeline: scroll(root), auto;
+      animation-range: 0 75vh, normal;
     }
   }
 }
@@ -732,4 +778,47 @@
 @keyframes mark-foil {
   from { background-position: 0% 0; }
   to { background-position: 100% 0; }
+}
+
+
+/* ── Apple motion layer ───────────────────────────────────────────────────── */
+
+/* Words light up as you read: each word runs on its own view timeline, so the
+   paragraph brightens line by line as it scrolls into the reading zone. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .scroll-word {
+      animation: word-on linear both;
+      animation-timeline: view();
+      animation-range: cover 18% cover 42%;
+    }
+  }
+}
+
+@keyframes word-on {
+  from { opacity: 0.2; }
+  to { opacity: 1; }
+}
+
+/* Route changes cross-fade with a slight depth change; the nav stays put. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: vt-out 0.32s var(--ease-apple) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: vt-in 0.6s var(--ease-apple) 0.06s both;
+  }
+}
+
+header.site-header {
+  view-transition-name: site-header;
+}
+
+@keyframes vt-out {
+  to { opacity: 0; transform: scale(0.985); }
+}
+
+@keyframes vt-in {
+  from { opacity: 0; transform: translateY(14px) scale(1.01); }
 }

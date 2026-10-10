@@ -1,4 +1,5 @@
-import { useLocation, Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { TransitionLink } from "@/components/TransitionLink";
 import { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
@@ -30,10 +31,10 @@ const NotFound = () => {
             Nothing lives at <span className="font-mono text-foreground">{location.pathname}</span>. Head back to the portfolio to keep looking around.
           </p>
           <Button asChild size="lg" className="group mt-10">
-            <Link to="/">
+            <TransitionLink to="/">
               <ArrowLeft className="transition-transform duration-300 group-hover:-translate-x-0.5" />
               Back to portfolio
-            </Link>
+            </TransitionLink>
           </Button>
         </div>
       </main>

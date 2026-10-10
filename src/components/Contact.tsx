@@ -2,6 +2,7 @@ import { Mail, Phone, MapPin, Linkedin, Github, Send, ChevronRight, Copy } from 
 import type { LucideIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Reveal } from "./Reveal";
+import { ScrollText } from "./ScrollText";
 import { usePointerVars } from "@/hooks/use-motion";
 import profileImg from "@/assets/profile-900.webp";
 import { profile } from "@/data/profile";
@@ -158,8 +159,8 @@ export const Contact = () => {
         <div className="lg:col-span-7">
           <Reveal>
             <h2 className="headline">Let's connect.</h2>
-            <p className="lede">
-              Open to opportunities in cloud development and DevOps. Whether you need a cloud architect, a full-stack developer or a DevOps engineer, let's talk about how I can help your team.
+            <p className="lede font-medium text-foreground">
+              <ScrollText text="Open to opportunities in cloud development and DevOps. Whether you need a cloud architect, a full-stack developer or a DevOps engineer, let's talk about how I can help your team." />
             </p>
 
             <div className="mt-10">

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { TransitionLink } from "./TransitionLink";
 
 export const Footer = ({ showCredentials = true }: { showCredentials?: boolean }) => (
   <footer className="relative z-content border-t px-[var(--gutter)] py-10">
@@ -6,9 +6,9 @@ export const Footer = ({ showCredentials = true }: { showCredentials?: boolean }
       <p>Copyright © 2026 Krishna Vaibhav Yadlapalli. Built with React, TypeScript and Tailwind CSS.</p>
       <div className="flex items-center gap-5">
         {showCredentials && <span>Azure Developer Associate, AWS Developer Associate</span>}
-        <Link to="/" className="-mx-2 -my-2 px-2 py-2 transition-colors hover:text-foreground touch:-my-3.5 touch:py-3.5">
+        <TransitionLink to="/" className="-mx-2 -my-2 px-2 py-2 transition-colors hover:text-foreground touch:-my-3.5 touch:py-3.5">
           Home
-        </Link>
+        </TransitionLink>
       </div>
     </div>
   </footer>
