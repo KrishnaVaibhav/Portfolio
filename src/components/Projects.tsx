@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import { Github, Lock, Users, ChartNoAxesCombined, Radio, ChevronDown } from "lucide-react";
-import { Link } from "react-router-dom";
+import { TransitionLink } from "./TransitionLink";
+import { CountUp } from "./CountUp";
 import { Button } from "./ui/button";
 import { Reveal } from "./Reveal";
 import { TiltCard } from "./TiltCard";
@@ -82,35 +83,29 @@ const projects = [
 
 type Project = (typeof projects)[number];
 
-// Glossy squircle in the style of an app icon, lifted off the tile in 3D.
-const AppIcon = ({ icon: Icon, className, size = "md" }: { icon: LucideIcon; className: string; size?: "md" | "lg" }) => (
+// Glossy squircle in the style of an app icon, lifted off the card in 3D.
+const AppIcon = ({ icon: Icon, className }: { icon: LucideIcon; className: string }) => (
   <div
     aria-hidden
     className={cn(
-      "relative grid shrink-0 place-items-center bg-gradient-to-br text-white",
-      "shadow-[inset_0_1px_0_rgba(255,255,255,0.45),inset_0_-8px_16px_rgba(0,0,0,0.18),0_20px_40px_-16px_rgba(0,0,0,0.45)]",
-      size === "lg" ? "h-36 w-36 rounded-[36px] md:h-44 md:w-44 md:rounded-[44px]" : "h-16 w-16 rounded-[18px]",
+      "relative grid h-14 w-14 shrink-0 place-items-center rounded-[16px] bg-gradient-to-br text-white md:h-16 md:w-16 md:rounded-[18px]",
+      "shadow-[inset_0_1px_0_rgba(255,255,255,0.45),inset_0_-8px_16px_rgba(0,0,0,0.18),0_16px_32px_-14px_rgba(0,0,0,0.45)]",
       className,
     )}
-    style={{ transform: `translateZ(${size === "lg" ? 60 : 30}px)` }}
+    style={{ transform: "translateZ(30px)" }}
   >
     <span className="absolute inset-0 rounded-[inherit] bg-[linear-gradient(180deg,rgba(255,255,255,0.28),transparent_48%)]" />
-    <Icon className={size === "lg" ? "relative h-16 w-16 md:h-20 md:w-20" : "relative h-7 w-7"} strokeWidth={1.5} />
+    <Icon className="relative h-7 w-7" strokeWidth={1.5} />
   </div>
 );
 
-const Metrics = ({ metrics, large }: { metrics: Project["metrics"]; large?: boolean }) => (
-  <dl className="grid grid-cols-2 gap-6">
+const Metrics = ({ metrics }: { metrics: Project["metrics"] }) => (
+  <dl className="grid grid-cols-2 gap-5">
     {metrics.map((metric) => (
       <div key={metric.label}>
-        <dt className="text-sm text-muted-foreground">{metric.label}</dt>
-        <dd
-          className={cn(
-            "mt-1 font-display font-semibold tracking-[-0.04em] tabular",
-            large ? "text-6xl md:text-7xl" : "text-5xl",
-          )}
-        >
-          {metric.value}
+        <dt className="text-[0.8125rem] text-muted-foreground">{metric.label}</dt>
+        <dd className="mt-0.5 font-display text-4xl font-semibold tracking-[-0.04em] tabular xl:text-[2.75rem]">
+          <CountUp value={metric.value} />
         </dd>
       </div>
     ))}
@@ -121,21 +116,21 @@ const Highlights = ({ items, visible }: { items: string[]; visible: number }) =>
   const shown = items.slice(0, visible);
   const rest = items.slice(visible);
   const row = (h: string) => (
-    <li key={h} className="flex gap-3 text-[0.9375rem] leading-relaxed">
-      <span aria-hidden className="mt-[0.7em] h-px w-3 shrink-0 bg-link" />
+    <li key={h} className="flex gap-3 text-[0.9375rem] leading-snug">
+      <span aria-hidden className="mt-[0.6em] h-px w-3 shrink-0 bg-link" />
       <span className="text-foreground/85">{h}</span>
     </li>
   );
   return (
     <div>
-      <ul className="grid gap-2.5">{shown.map(row)}</ul>
+      <ul className="grid gap-2">{shown.map(row)}</ul>
       {rest.length > 0 && (
-        <details className="group mt-2.5">
+        <details className="group mt-2">
           <summary className="-my-1.5 inline-flex cursor-pointer list-none items-center gap-1 py-1.5 text-sm font-medium text-link touch:-my-3 touch:py-3 [&::-webkit-details-marker]:hidden">
             {rest.length} more
             <ChevronDown className="h-4 w-4 transition-transform duration-300 group-open:rotate-180" />
           </summary>
-          <ul className="mt-2.5 grid gap-2.5">{rest.map(row)}</ul>
+          <ul className="mt-2 grid gap-2">{rest.map(row)}</ul>
         </details>
       )}
     </div>
@@ -145,7 +140,7 @@ const Highlights = ({ items, visible }: { items: string[]; visible: number }) =>
 const TechList = ({ items }: { items: string[] }) => (
   <ul className="flex flex-wrap gap-1.5" aria-label="Tech stack">
     {items.map((tech) => (
-      <li key={tech} data-tech={tech} className="cursor-default rounded-full bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground transition-colors duration-300 hover:bg-link/15 hover:text-link">
+      <li key={tech} data-tech={tech} className="cursor-default rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground transition-colors duration-300 hover:bg-link/15 hover:text-link">
         {tech}
       </li>
     ))}
@@ -153,16 +148,16 @@ const TechList = ({ items }: { items: string[] }) => (
 );
 
 const Actions = ({ project }: { project: Project }) => (
-  <div className="flex flex-wrap gap-3">
+  <div className="flex flex-wrap gap-2.5">
     {project.liveUrl && (
-      <Button asChild className="group">
-        <Link to={project.liveUrl}>
+      <Button asChild size="sm" className="group">
+        <TransitionLink to={project.liveUrl}>
           <Radio className="text-emerald-300 group-hover:animate-pulse" />
           View live data
-        </Link>
+        </TransitionLink>
       </Button>
     )}
-    <Button asChild variant={project.liveUrl ? "outline" : "default"}>
+    <Button asChild size="sm" variant={project.liveUrl ? "outline" : "default"}>
       <a href={project.githubUrl} target="_blank" rel="noreferrer">
         <Github />
         View on GitHub
@@ -171,84 +166,65 @@ const Actions = ({ project }: { project: Project }) => (
   </div>
 );
 
-// Wide tile for the lead project: story on the left, icon and numbers on the right.
-const FeatureTile = ({ project }: { project: Project }) => (
-  <TiltCard tilt={2} as="article" className="surface relative overflow-hidden p-7 md:p-12">
+/*
+  One dense row per project, like an App Store listing. Wide screens read
+  across four columns (icon, story, highlights, numbers and actions); tablets
+  wrap highlights and numbers under the story; phones stack. Every column is
+  sized by its own content, so nothing is stretched to fill empty space.
+*/
+const ProjectRow = ({ project }: { project: Project }) => (
+  <TiltCard tilt={1.5} as="article" className="surface relative overflow-hidden p-5 sm:p-6 xl:p-7">
     <div aria-hidden className={cn("pointer-events-none absolute inset-0", project.washClass)} />
-    <div className="relative grid gap-10 preserve-3d lg:grid-cols-12 lg:gap-14">
-      <div className="flex flex-col lg:col-span-7">
-        <p className="text-sm font-medium text-link">{project.subtitle}</p>
-        <h3 className="mt-2 font-display text-4xl font-semibold tracking-[-0.04em] md:text-6xl">{project.title}</h3>
-        <p className="mt-5 max-w-[58ch] text-[1.0625rem] leading-relaxed text-muted-foreground">{project.description}</p>
-        <div className="mt-8">
-          <Highlights items={project.highlights} visible={4} />
-        </div>
-        <div className="mt-8">
+    <div className="relative grid gap-5 preserve-3d md:grid-cols-[auto_minmax(0,1fr)] md:gap-x-6 xl:grid-cols-[auto_minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,15rem)] xl:gap-x-8">
+      <AppIcon icon={project.icon} className={project.iconClass} />
+
+      <div>
+        <p className="flex flex-wrap items-center gap-2 text-sm font-medium text-link">
+          {project.subtitle}
+          {project.liveUrl && (
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[0.6875rem] font-semibold text-emerald-600 dark:text-emerald-400">
+              <span aria-hidden className="relative grid h-1.5 w-1.5 place-items-center">
+                <span className="absolute h-1.5 w-1.5 rounded-full bg-emerald-500 motion-safe:animate-ping" />
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              </span>
+              Live
+            </span>
+          )}
+        </p>
+        <h3 className="mt-1 font-display text-2xl font-semibold tracking-[-0.035em] md:text-[1.75rem]">{project.title}</h3>
+        <p className="mt-2 max-w-[62ch] text-[0.9375rem] leading-relaxed text-muted-foreground">{project.description}</p>
+        <div className="mt-4">
           <TechList items={project.technologies} />
         </div>
-        <div className="mt-10">
-          <Actions project={project} />
-        </div>
       </div>
-      <div className="flex flex-col justify-between gap-10 preserve-3d lg:col-span-5 lg:items-end">
-        <AppIcon icon={project.icon} className={project.iconClass} size="lg" />
-        <div className="w-full lg:max-w-[340px]">
-          <Metrics metrics={project.metrics} large />
-        </div>
+
+      <div className="md:col-start-2 xl:col-start-auto xl:border-l xl:pl-8">
+        <Highlights items={project.highlights} visible={3} />
+      </div>
+
+      <div className="flex flex-col gap-5 md:col-start-2 md:flex-row md:items-end md:justify-between xl:col-start-auto xl:flex-col xl:items-stretch xl:justify-between xl:border-l xl:pl-8">
+        <Metrics metrics={project.metrics} />
+        <Actions project={project} />
       </div>
     </div>
   </TiltCard>
 );
 
-// Companion tile: icon and title up top, numbers, then detail; actions pinned to the bottom.
-const ProjectTile = ({ project }: { project: Project }) => (
-  <TiltCard tilt={3} as="article" className="surface relative flex h-full flex-col overflow-hidden p-7 md:p-10">
-    <div aria-hidden className={cn("pointer-events-none absolute inset-0", project.washClass)} />
-    <div className="relative flex items-start gap-5 preserve-3d">
-      <AppIcon icon={project.icon} className={project.iconClass} />
-      <div>
-        <p className="text-sm font-medium text-link">{project.subtitle}</p>
-        <h3 className="mt-1 font-display text-3xl font-semibold tracking-[-0.035em]">{project.title}</h3>
-      </div>
-    </div>
-    <p className="relative mt-6 text-[1.0625rem] leading-relaxed text-muted-foreground">{project.description}</p>
-    <div className="relative mt-8 border-y py-6">
-      <Metrics metrics={project.metrics} />
-    </div>
-    <div className="relative mt-8">
-      <Highlights items={project.highlights} visible={3} />
-    </div>
-    <div className="relative mt-8">
-      <TechList items={project.technologies} />
-    </div>
-    <div className="relative mt-auto pt-10">
-      <Actions project={project} />
-    </div>
-  </TiltCard>
-);
+export const Projects = () => (
+  <section id="projects" className="section">
+    <div className="section-inner">
+      <Reveal className="max-w-3xl">
+        <h2 className="headline">Featured projects.</h2>
+        <p className="lede">Production-grade cloud applications, built end to end.</p>
+      </Reveal>
 
-export const Projects = () => {
-  const [featured, ...rest] = projects;
-
-  return (
-    <section id="projects" className="section">
-      <div className="section-inner">
-        <Reveal className="max-w-3xl">
-          <h2 className="headline">Featured projects.</h2>
-          <p className="lede">Production-grade cloud applications, built end to end.</p>
-        </Reveal>
-
-        <div className="mt-14 grid gap-5 md:grid-cols-2">
-          <Reveal className="md:col-span-2">
-            <FeatureTile project={featured} />
+      <div className="mt-8 grid gap-4">
+        {projects.map((project, idx) => (
+          <Reveal key={project.title} index={idx}>
+            <ProjectRow project={project} />
           </Reveal>
-          {rest.map((project, idx) => (
-            <Reveal key={project.title} index={idx + 1}>
-              <ProjectTile project={project} />
-            </Reveal>
-          ))}
-        </div>
+        ))}
       </div>
-    </section>
-  );
-};
+    </div>
+  </section>
+);

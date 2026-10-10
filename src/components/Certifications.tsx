@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { CheckCircle2, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "./Reveal";
 import { usePointerVars } from "@/hooks/use-motion";
 import { cn } from "@/lib/utils";
@@ -62,13 +62,6 @@ const certifications = [
   },
 ];
 
-const achievements = [
-  "Zero-downtime deployments with Docker + CI/CD at Cognizant",
-  "Delivered SDLC workshops for undergraduate students",
-  "Guided students in secure, cloud-ready application development",
-  "Achieved 99.5% SLA uptime across distributed workloads",
-];
-
 // Fan the deck: outer passes turn inward, the middle one sits forward.
 const fan = [
   { "--fan-base": "16deg", "--lift-base": "0px" },
@@ -86,7 +79,7 @@ const Pass = ({ cert, index }: { cert: (typeof certifications)[number]; index: n
       rel="noopener noreferrer"
       aria-label={`${cert.title}, ${cert.code}, issued by ${cert.issuer}. Verify credential (opens in a new tab)`}
       className={cn(
-        "pass group relative flex aspect-[1.58/1] w-[82vw] max-w-[380px] shrink-0 snap-center flex-col justify-between rounded-[24px] p-6 text-white md:w-full",
+        "pass group relative flex aspect-[1.58/1] w-[82vw] max-w-[380px] shrink-0 md:max-w-none snap-center flex-col justify-between rounded-[24px] p-6 text-white md:w-full",
         "shadow-[inset_0_1px_0_rgba(255,255,255,0.22),inset_0_0_0_1px_rgba(255,255,255,0.08),0_30px_60px_-24px_rgba(0,0,0,0.5)]",
       )}
       style={{ ...(fan[index] as CSSProperties), background: cert.background }}
@@ -137,29 +130,17 @@ export const Certifications = () => {
     <section id="certifications" className="section overflow-hidden">
       <div className="section-inner">
         <Reveal className="max-w-3xl">
-          <h2 className="headline">Certifications and achievements.</h2>
+          <h2 className="headline">Certifications.</h2>
           <p className="lede">Industry-recognized credentials. Select a pass to verify it with the issuer.</p>
         </Reveal>
 
         <Reveal index={1}>
-          <div className="-mx-5 mt-16 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-6 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:py-10 [perspective:1600px]">
+          <div className="-mx-5 mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-6 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:py-6 [perspective:1600px]">
             {certifications.map((cert, idx) => (
               <Pass key={cert.code} cert={cert} index={idx} />
             ))}
           </div>
         </Reveal>
-
-        <div className="mt-16 border-t pt-12">
-          <h3 className="text-xl font-semibold tracking-[-0.02em]">Key achievements</h3>
-          <ul className="mt-8 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
-            {achievements.map((achievement, idx) => (
-              <Reveal as="li" key={achievement} index={idx} className="flex flex-col gap-3">
-                <CheckCircle2 className="h-5 w-5 text-link" strokeWidth={1.75} aria-hidden />
-                <p className="text-[0.9375rem] leading-relaxed text-foreground/85">{achievement}</p>
-              </Reveal>
-            ))}
-          </ul>
-        </div>
       </div>
     </section>
   );

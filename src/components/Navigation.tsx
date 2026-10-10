@@ -4,6 +4,7 @@ import { Menu, X, Github, Linkedin, Search, Check, Info } from "lucide-react";
 import { usePointerVars } from "@/hooks/use-motion";
 import { onIsland, openSpotlight, spotlightShortcut, type IslandMessage } from "@/lib/island";
 import { profile } from "@/data/profile";
+import { navigateWithTransition } from "@/lib/view-transition";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
@@ -29,7 +30,7 @@ const useActiveSection = (enabled: boolean) => {
       return;
     }
     const band = { rootMargin: "-45% 0px -50% 0px" };
-    const targets = ["#top", "#about", "#skills", "#experience", "#education", "#projects", "#certifications", "#contact"]
+    const targets = ["#top", "#skills", "#experience", "#education", "#projects", "#certifications", "#contact"]
       .map((id) => document.querySelector(id))
       .filter((el): el is Element => !!el);
 
@@ -37,8 +38,8 @@ const useActiveSection = (enabled: boolean) => {
       for (const entry of entries) {
         if (!entry.isIntersecting) continue;
         const id = `#${entry.target.id}`;
-        // Hero and About have no nav item; Education sits inside the Experience stretch.
-        setActive(id === "#top" || id === "#about" ? null : id === "#education" ? "#experience" : id);
+        // The hero has no nav item; Education sits inside the Experience stretch.
+        setActive(id === "#top" ? null : id === "#education" ? "#experience" : id);
       }
     }, band);
     targets.forEach((el) => io.observe(el));
@@ -149,7 +150,7 @@ export const Navigation = () => {
     if (isHome) {
       document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
     } else {
-      navigate("/", { state: { scrollTo: href } });
+      navigateWithTransition(navigate, "/", { state: { scrollTo: href } });
     }
     setIsOpen(false);
   };
@@ -158,13 +159,13 @@ export const Navigation = () => {
     if (isHome) {
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      navigate("/");
+      navigateWithTransition(navigate, "/");
     }
     setIsOpen(false);
   };
 
   return (
-    <header className="fixed inset-x-0 top-0 z-nav px-3 pt-3 md:px-6 md:pt-4">
+    <header className="site-header fixed inset-x-0 top-0 z-nav px-3 pt-3 md:px-[var(--gutter)] md:pt-4">
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
@@ -177,7 +178,7 @@ export const Navigation = () => {
         {msg?.text}
       </div>
 
-      <nav aria-label="Primary" className="mx-auto max-w-[1200px] animate-rise-in">
+      <nav aria-label="Primary" className="page animate-rise-in">
         {/* Desktop: three floating pieces */}
         <div className="hidden grid-cols-[1fr_auto_1fr] items-center gap-4 md:grid">
           <button
@@ -248,7 +249,7 @@ export const Navigation = () => {
               aria-label={`Search (${spotlightShortcut})`}
             >
               <Search className="h-4 w-4" strokeWidth={1.75} />
-              <kbd className="rounded-md border border-foreground/10 px-1.5 font-mono text-[0.6875rem]">{spotlightShortcut}</kbd>
+              <kbd className="hidden whitespace-nowrap rounded-md border border-foreground/10 px-1.5 font-mono text-[0.6875rem] lg:inline">{spotlightShortcut}</kbd>
             </button>
             {socials.map(({ label, href, icon: Icon }) => (
               <a

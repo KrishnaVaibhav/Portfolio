@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useReveal, usePrefersReducedMotion } from "@/hooks/use-motion";
 import backplate from "@/assets/about-backplate.webp";
 import figure from "@/assets/about-figure.webp";
+import { cn } from "@/lib/utils";
 
 /*
   The illustrated portrait as a layered hologram, after Apple TV's parallax
@@ -11,7 +12,7 @@ import figure from "@/assets/about-figure.webp";
   the first time it scrolls into view a scan line renders it in. Pointer state
   goes straight to CSS variables.
 */
-export const HoloArt = () => {
+export const HoloArt = ({ compact = false }: { compact?: boolean }) => {
   const ref = useReveal<HTMLDivElement>();
   const reduced = usePrefersReducedMotion();
 
@@ -71,7 +72,10 @@ export const HoloArt = () => {
   return (
     <div
       ref={ref}
-      className="holo relative h-full min-h-[340px] overflow-hidden rounded-[32px] bg-[#0e1027] shadow-[0_40px_100px_-40px_hsl(var(--shadow-color)/0.6)] md:min-h-[560px]"
+      className={cn(
+        "holo relative h-full overflow-hidden rounded-[32px] bg-[#0e1027] shadow-[0_40px_100px_-40px_hsl(var(--shadow-color)/0.6)]",
+        compact ? "min-h-[200px] md:min-h-[clamp(190px,15vw,280px)]" : "min-h-[340px] md:min-h-[clamp(440px,32vw,680px)]",
+      )}
     >
       <div className="holo-stage">
         <img

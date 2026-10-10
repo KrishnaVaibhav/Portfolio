@@ -20,7 +20,7 @@ export default {
         mono: ['"SF Mono"', '"Geist Mono Variable"', "ui-monospace", "Menlo", "monospace"],
       },
       transitionTimingFunction: {
-        apple: "cubic-bezier(0.16, 1, 0.3, 1)",
+        apple: "cubic-bezier(0.28, 0.11, 0.32, 1)",
       },
       zIndex: {
         base: "0",
@@ -137,7 +137,7 @@ export default {
         "slide-in-right": "slide-in-right 0.6s ease-out",
         "glow": "glow 2s ease-in-out infinite",
         "skill-bar": "skill-bar 1.5s ease-out forwards",
-        "rise-in": "rise-in 1s cubic-bezier(0.16, 1, 0.3, 1) both",
+        "rise-in": "rise-in 1.2s cubic-bezier(0.28, 0.11, 0.32, 1) both",
       },
     },
   },

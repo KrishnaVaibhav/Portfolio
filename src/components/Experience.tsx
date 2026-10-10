@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { Briefcase, GraduationCap, Code2, Building2, Hospital } from "lucide-react";
 import { Reveal } from "./Reveal";
 import { cn } from "@/lib/utils";
@@ -109,18 +110,27 @@ const lanes = experiences.map((exp, idx) => {
   return a.from <= b.to && b.from <= a.to ? 1 : 0;
 });
 
-const LANE_GAP = 28;
+/*
+  Graph geometry. Everything is positioned from one coordinate: --rail is the
+  centre of the main line and --lane the branch offset, both scaling with the
+  root font size, and every mark is centred on its line with translate(-50%).
+  The fork and merge curves stretch exactly between the two lines; a
+  non-scaling stroke keeps their weight constant however they are sized.
+*/
+const NODE_Y = "1.25rem"; // half of the 2.5rem commit node
 
-// Fork out of main at the top of the item, merge back at the bottom.
+const Curve = ({ d, className, style }: { d: string; className: string; style: CSSProperties }) => (
+  <svg aria-hidden className={cn("absolute overflow-visible", className)} style={style} viewBox="0 0 100 100" preserveAspectRatio="none" fill="none">
+    <path d={d} vectorEffect="non-scaling-stroke" strokeWidth="1.5" strokeLinecap="round" className="stroke-link/75" />
+  </svg>
+);
+
+// Fork out of main above the role, run alongside it, merge back below it.
 const Branch = () => (
-  <div aria-hidden className="pointer-events-none absolute inset-y-0 left-[19px] w-10 md:left-[calc(33.333%-1px)]">
-    <svg className="absolute left-0 top-[-8px] h-12 w-10 overflow-visible" viewBox="0 0 40 48" fill="none">
-      <path d={`M0.5 0 C0.5 26 ${LANE_GAP} 18 ${LANE_GAP} 48`} className="stroke-link/70" strokeWidth="1.5" />
-    </svg>
-    <div className="absolute bottom-12 top-10 w-px bg-link/70" style={{ left: LANE_GAP }} />
-    <svg className="absolute bottom-0 left-0 h-12 w-10 overflow-visible" viewBox="0 0 40 48" fill="none">
-      <path d={`M${LANE_GAP} 0 C${LANE_GAP} 30 0.5 22 0.5 48`} className="stroke-link/70" strokeWidth="1.5" />
-    </svg>
+  <div aria-hidden className="pointer-events-none absolute inset-y-0" style={{ left: "var(--rail)", width: "var(--lane)" }}>
+    <Curve d="M0,0 C0,55 100,45 100,100" className="left-0 w-full" style={{ top: "-2.5rem", height: `calc(2.5rem + ${NODE_Y})` }} />
+    <div className="absolute w-px -translate-x-1/2 bg-link/75" style={{ left: "100%", top: NODE_Y, bottom: "3rem" }} />
+    <Curve d="M100,0 C100,55 0,45 0,100" className="bottom-0 left-0 w-full" style={{ height: "3rem" }} />
   </div>
 );
 
@@ -133,9 +143,9 @@ export const Experience = () => {
           <p className="lede">Enterprise cloud work across banking, healthcare, research and teaching.</p>
         </Reveal>
 
-        <ol className="relative mt-24 [--rail:19px] md:mt-28 md:[--rail:calc(33.333%-0.5px)]">
+        <ol className="relative mt-14 [--lane:1.75rem] [--rail:1.25rem] md:mt-16 md:[--rail:25%]">
           {/* Main line of the graph, filled by scroll where CSS scroll timelines are supported */}
-          <div aria-hidden className="absolute bottom-0 left-[19px] top-0 w-px bg-border md:left-[calc(33.333%-1px)]">
+          <div aria-hidden className="absolute bottom-0 top-0 w-px -translate-x-1/2 bg-border" style={{ left: "var(--rail)" }}>
             <div className="scroll-fill h-full w-full bg-gradient-to-b from-primary via-primary/60 to-transparent" />
             <span className="absolute -top-9 left-1/2 -translate-x-1/2 rounded-full border bg-background px-2 py-0.5 font-mono text-[0.6875rem] text-muted-foreground">
               main
@@ -148,15 +158,15 @@ export const Experience = () => {
             return (
               <li
                 key={exp.company + exp.title}
-                className="relative grid gap-6 pb-20 pl-14 last:pb-0 md:grid-cols-3 md:gap-12 md:pl-0"
+                className="relative grid gap-5 pb-12 pl-14 last:pb-0 md:grid-cols-[1fr_3fr] md:gap-10 md:pb-14 md:pl-0"
               >
                 {lane === 1 && <Branch />}
 
                 {/* Commit node */}
                 <span
                   aria-hidden
-                  className="absolute top-0 grid h-10 w-10 place-items-center rounded-full border bg-card shadow-[0_4px_14px_-6px_hsl(var(--shadow-color)/0.4)]"
-                  style={{ left: lane ? `calc(var(--rail) + ${LANE_GAP}px - 20px)` : "calc(var(--rail) - 20px)" }}
+                  className="glass absolute top-0 grid h-10 w-10 -translate-x-1/2 place-items-center rounded-full"
+                  style={{ left: lane ? "calc(var(--rail) + var(--lane))" : "var(--rail)" }}
                 >
                   <Icon className="h-[18px] w-[18px] text-link" strokeWidth={1.75} />
                 </span>
@@ -173,7 +183,7 @@ export const Experience = () => {
                   </div>
                 </Reveal>
 
-                <Reveal index={1} className={lane ? "pl-6 md:col-span-2 md:pl-16" : "md:col-span-2 md:pl-12"}>
+                <Reveal index={1} className={lane ? "pl-6 md:pl-16" : "md:pl-12"}>
                   <h3 className="font-display text-3xl font-semibold tracking-[-0.03em] md:text-4xl">{exp.title}</h3>
                   <p className="mt-4 max-w-[62ch] text-lg leading-relaxed text-muted-foreground">{exp.description}</p>
 

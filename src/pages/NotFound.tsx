@@ -1,4 +1,5 @@
-import { useLocation, Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { TransitionLink } from "@/components/TransitionLink";
 import { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Navigation } from "@/components/Navigation";
@@ -18,8 +19,8 @@ const NotFound = () => {
       <AmbientBackground />
       <Navigation />
 
-      <main id="main" className="relative z-content flex flex-1 items-center px-5 pt-24 md:px-8">
-        <div className="mx-auto w-full max-w-[1200px]">
+      <main id="main" className="relative z-content flex flex-1 items-center px-[var(--gutter)] pt-24">
+        <div className="page">
           <p className="font-mono text-sm text-muted-foreground tabular">404</p>
           <h1 className="mt-3 font-display text-[clamp(3rem,8vw,6.5rem)] font-semibold leading-[0.95] tracking-[-0.045em] animate-rise-in">
             This page
@@ -30,15 +31,15 @@ const NotFound = () => {
             Nothing lives at <span className="font-mono text-foreground">{location.pathname}</span>. Head back to the portfolio to keep looking around.
           </p>
           <Button asChild size="lg" className="group mt-10">
-            <Link to="/">
+            <TransitionLink to="/">
               <ArrowLeft className="transition-transform duration-300 group-hover:-translate-x-0.5" />
               Back to portfolio
-            </Link>
+            </TransitionLink>
           </Button>
         </div>
       </main>
 
-      <Footer showCredentials={false} />
+      <Footer />
     </div>
   );
 };

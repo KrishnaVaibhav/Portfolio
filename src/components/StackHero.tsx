@@ -32,7 +32,7 @@ const Plate = ({ layer, index }: { layer: Layer; index: number }) => (
     {/* Edge: a darker slab under the face gives the plate thickness */}
     <div
       className="absolute inset-0 rounded-[30px] bg-[hsl(var(--foreground)/0.12)] dark:bg-black/60"
-      style={{ transform: "translateZ(-12px)" }}
+      style={{ transform: "translateZ(calc(var(--plate) * -0.045))" }}
     />
     {/* Face */}
     <div
@@ -50,7 +50,7 @@ const Plate = ({ layer, index }: { layer: Layer; index: number }) => (
             key={tech}
             data-tech={tech}
             className={cn(
-              "whitespace-nowrap rounded-[12px] px-1.5 py-[8%] text-center text-[clamp(0.6875rem,0.95vw,0.875rem)] font-semibold tracking-[-0.01em]",
+              "whitespace-nowrap rounded-[12px] px-1.5 py-[8%] text-center stack-chip font-semibold tracking-[-0.01em]",
               layer.accent ? "bg-white/15" : "bg-foreground/[0.06]",
             )}
           >
@@ -66,8 +66,8 @@ const Plate = ({ layer, index }: { layer: Layer; index: number }) => (
       style={{ transform: "translateX(14%) rotateZ(38deg) rotateX(-56deg)", transformOrigin: "left center" }}
     >
       <div className="flex items-center gap-2.5">
-        <span className="h-px w-8 bg-foreground/25 transition-colors duration-500 group-hover/layer:bg-link" />
-        <span className="text-sm font-semibold tracking-[-0.01em] transition-colors duration-500 group-hover/layer:text-link">
+        <span className="stack-label-line h-px bg-foreground/25 transition-colors duration-500 group-hover/layer:bg-link" />
+        <span className="stack-label font-semibold tracking-[-0.01em] transition-colors duration-500 group-hover/layer:text-link">
           {layer.name}
         </span>
       </div>

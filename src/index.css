@@ -50,6 +50,11 @@
     --glass-edge: 0 0% 100% / 0.75;
     --glass-rim: 240 6% 20% / 0.08;
     --glass-shadow: 240 30% 20% / 0.12;
+    /* Lensing rim: where light enters and where it catches again. */
+    --lens-hi: 0 0% 100%;
+    --lens-hi-a: 0.95;
+    --lens-lo: 240 10% 20%;
+    --lens-lo-a: 0.14;
 
     /* Tinted elevation, lit from above */
     --shadow-color: 230 25% 30%;
@@ -97,6 +102,10 @@
       --glass-edge: 0 0% 100% / 0.16;
       --glass-rim: 0 0% 100% / 0.06;
       --glass-shadow: 240 40% 2% / 0.5;
+      --lens-hi: 0 0% 100%;
+      --lens-hi-a: 0.42;
+      --lens-lo: 0 0% 100%;
+      --lens-lo-a: 0.16;
 
       --shadow-color: 240 50% 1%;
 
@@ -114,6 +123,32 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    /*
+      Fluid page geometry. Content uses the screen up to a generous maximum,
+      gutters grow with the viewport, and the base type size eases from 16px on
+      laptops toward 19px on large monitors (rem-based, so it still follows the
+      visitor's own browser font setting).
+    */
+    --page-max: 1760px;
+    --gutter: clamp(1.25rem, 4.2vw, 6rem);
+    --measure: 65ch;
+    font-size: clamp(1rem, 0.35vw + 0.6875rem, 1.1875rem);
+
+    /*
+      Motion. One easing family, as on Apple's sites: a long, soft ease-out for
+      things entering, and a physical spring (damping 0.78, ~2% overshoot) for
+      anything the visitor touches. The spring is sampled into linear(); older
+      browsers fall back to the ease-out.
+    */
+    --ease-apple: cubic-bezier(0.28, 0.11, 0.32, 1);
+    --ease-spring: var(--ease-apple);
+    --dur-enter: 1.1s;
+  }
+
+  @supports (transition-timing-function: linear(0, 1)) {
+    html {
+      --ease-spring: linear(0, 0.063 3.6%, 0.204 7.1%, 0.371 10.7%, 0.533 14.3%, 0.674 17.9%, 0.787 21.4%, 0.873 25%, 0.934 28.6%, 0.975 32.1%, 0.999 35.7%, 1.013 39.3%, 1.019 42.9%, 1.02 46.4%, 1.018 50%, 1.015 53.6%, 1.012 57.1%, 1.009 60.7%, 1.006 64.3%, 1.004 67.9%, 1.002 71.4%, 1.001 75%, 1);
+    }
   }
 
   body {
@@ -159,19 +194,37 @@
 @layer components {
   /* Section rhythm: generous top, slightly larger bottom for optical balance. */
   .section {
-    @apply relative px-5 py-20 md:px-8 md:pt-24 md:pb-28;
+    position: relative;
+    /* clip (not hidden): trims decorative overhang without breaking sticky */
+    overflow-x: clip;
+    padding-inline: var(--gutter);
+    padding-top: clamp(3rem, 4.5vw, 5.5rem);
+    padding-bottom: clamp(3.5rem, 5vw, 6rem);
+  }
+
+  /* The page column: fluid up to --page-max, centred. */
+  .page {
+    margin-inline: auto;
+    width: 100%;
+    max-width: var(--page-max);
   }
 
   .section-inner {
-    @apply mx-auto w-full max-w-[1200px];
+    @apply page;
   }
 
   .headline {
-    @apply font-display text-[2.5rem] font-semibold leading-[1.05] tracking-[-0.035em] md:text-6xl lg:text-[4.25rem];
+    @apply font-display font-semibold;
+    font-size: clamp(2.25rem, 1.5rem + 2.6vw, 4.5rem);
+    line-height: 1.04;
+    letter-spacing: -0.035em;
   }
 
+  /* Paragraph copy keeps a comfortable line length however wide the page gets. */
   .lede {
-    @apply mt-5 max-w-[60ch] text-lg leading-relaxed text-muted-foreground md:text-xl;
+    @apply mt-4 leading-relaxed text-muted-foreground;
+    max-width: var(--measure);
+    font-size: clamp(1.0625rem, 0.95rem + 0.45vw, 1.375rem);
   }
 
   /*
@@ -185,8 +238,8 @@
     background:
       linear-gradient(135deg, hsl(0 0% 100% / 0.14), hsl(0 0% 100% / 0.02)),
       hsl(var(--glass-tint));
-    backdrop-filter: blur(22px) saturate(180%);
-    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(200%) brightness(1.04);
+    -webkit-backdrop-filter: blur(24px) saturate(200%) brightness(1.04);
     border: 1px solid hsl(var(--glass-rim));
     box-shadow:
       inset 0 1px 0 hsl(var(--glass-edge)),
@@ -208,6 +261,29 @@
     );
     opacity: 0.9;
     transition: opacity 0.3s ease;
+  }
+
+  /* Lensing edge: a 1px gradient rim, bright where light enters (top left),
+     fading along the sides and catching again bottom right, like the curved
+     edge of a thick pane. Drawn as a masked border so it follows any radius. */
+  .glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background: linear-gradient(
+      140deg,
+      hsl(var(--lens-hi) / var(--lens-hi-a)) 0%,
+      hsl(var(--lens-hi) / calc(var(--lens-hi-a) * 0.2)) 28%,
+      transparent 48%,
+      hsl(var(--lens-lo) / calc(var(--lens-lo-a) * 0.4)) 70%,
+      hsl(var(--lens-lo) / var(--lens-lo-a)) 100%
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
   }
 
   @media (prefers-reduced-transparency: reduce) {
@@ -273,16 +349,30 @@
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    /* Content rises and settles into place, Apple's long ease-out, staggered. */
     .js .reveal:not([data-shown="true"]) {
       opacity: 0;
-      transform: translateY(28px) scale(0.985);
+      transform: translateY(44px) scale(0.965);
     }
 
     .js .reveal {
       transition:
-        opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-        transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-      transition-delay: calc(var(--i, 0) * 70ms);
+        opacity var(--dur-enter) var(--ease-apple),
+        transform var(--dur-enter) var(--ease-apple);
+      transition-delay: calc(var(--i, 0) * 90ms);
+    }
+
+    /* Section headlines rise out of a slot, like apple.com's type reveals. */
+    .js .reveal .headline {
+      transition:
+        transform 1.2s var(--ease-apple) 0.08s,
+        clip-path 1.2s var(--ease-apple) 0.08s;
+      clip-path: inset(-12% -4% -24% -4%);
+    }
+
+    .js .reveal:not([data-shown="true"]) .headline {
+      transform: translateY(42%);
+      clip-path: inset(-12% -4% 100% -4%);
     }
   }
 
@@ -415,15 +505,46 @@
 }
 
 @layer components {
+  /*
+    Every dimension of the stack derives from one value, --plate. The settled
+    stack measures about 2.05 plates tall, so its slot is 2.1 plates and can
+    never be overflowed; the plate itself is limited by both width and height
+    so the stack fits any screen shape. Perspective, thickness, type, and the
+    entrance distance all scale with it, so it looks the same at every size.
+  */
   .stack-stage {
-    --plate: clamp(180px, 24vw, 360px);
-    perspective: 1800px;
+    --plate: clamp(96px, min(19vw, 25vh), 380px);
+    height: calc(var(--plate) * 2.1);
+    perspective: calc(var(--plate) * 7);
     perspective-origin: 50% 40%;
   }
 
   /* The stack rises from its base plate; drop it so the whole stack is centred. */
   .stack-offset {
-    transform: translateY(calc(var(--plate) * 0.55));
+    transform: translateY(calc(var(--plate) * 0.6));
+  }
+
+  /* Phones: the stack sits in the flow above the copy, sized to the screen. */
+  @media (max-width: 767px) {
+    .stack-stage {
+      --plate: clamp(108px, min(38vw, 28vh), 200px);
+    }
+
+    .stack-offset {
+      transform: translate(-10%, calc(var(--plate) * 0.6));
+    }
+  }
+
+  .stack-label {
+    font-size: clamp(0.6875rem, calc(var(--plate) * 0.056), 1rem);
+  }
+
+  .stack-label-line {
+    width: calc(var(--plate) * 0.12);
+  }
+
+  .stack-chip {
+    font-size: clamp(0.625rem, calc(var(--plate) * 0.05), 0.9375rem);
   }
 
   .stack-scene {
@@ -451,7 +572,7 @@
   }
 
   .stack-layer:hover {
-    transform: translateZ(calc(var(--gap) * var(--spread) * var(--i) + 22px));
+    transform: translateZ(calc(var(--gap) * var(--spread) * var(--i) + var(--plate) * 0.09));
   }
 
   /* Vertical link between two layers; children travel along it. */
@@ -499,6 +620,28 @@
 @keyframes stack-collapse {
   from { --gap: var(--gap-open); }
   to { --gap: calc(var(--gap-open) * 0.22); }
+}
+
+/*
+  Entrance: the layers rise out of the base plate, bottom layer first.
+  It animates the individual `translate` property, which the compositor runs
+  off the main thread (so it stays smooth while the page is still starting
+  up), and deliberately no opacity: fading a preserve-3d element flattens it,
+  which made the old entrance render flat and then pop into depth.
+*/
+/* The exploded view opens: every layer starts collapsed onto the base plate
+   and rises to its place, so the motion stays inside the stack's own slot on
+   every screen. Distances are in plates, so it reads the same at any size. */
+@keyframes layer-in {
+  from { translate: 0 0 calc(var(--gap-open) * var(--i) * -1); }
+  to { translate: 0 0 0; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .stack-layer {
+    animation: layer-in 1.3s var(--ease-apple) both;
+    animation-delay: calc(0.2s + var(--i) * 0.08s);
+  }
 }
 
 @supports (animation-timeline: scroll()) {
@@ -659,4 +802,47 @@
 @keyframes mark-foil {
   from { background-position: 0% 0; }
   to { background-position: 100% 0; }
+}
+
+
+/* ── Apple motion layer ───────────────────────────────────────────────────── */
+
+/* Words light up as you read: each word runs on its own view timeline, so the
+   paragraph brightens line by line as it scrolls into the reading zone. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .scroll-word {
+      animation: word-on linear both;
+      animation-timeline: view();
+      animation-range: cover 18% cover 42%;
+    }
+  }
+}
+
+@keyframes word-on {
+  from { opacity: 0.2; }
+  to { opacity: 1; }
+}
+
+/* Route changes cross-fade with a slight depth change; the nav stays put. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(root) {
+    animation: vt-out 0.32s var(--ease-apple) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: vt-in 0.6s var(--ease-apple) 0.06s both;
+  }
+}
+
+header.site-header {
+  view-transition-name: site-header;
+}
+
+@keyframes vt-out {
+  to { opacity: 0; transform: scale(0.985); }
+}
+
+@keyframes vt-in {
+  from { opacity: 0; transform: translateY(14px) scale(1.01); }
 }

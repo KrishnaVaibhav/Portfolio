@@ -2,6 +2,7 @@ import { Mail, Phone, MapPin, Linkedin, Github, Send, ChevronRight, Copy } from 
 import type { LucideIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Reveal } from "./Reveal";
+import { ScrollText } from "./ScrollText";
 import { usePointerVars } from "@/hooks/use-motion";
 import profileImg from "@/assets/profile-900.webp";
 import { profile } from "@/data/profile";
@@ -122,9 +123,9 @@ export const Contact = () => {
 
   return (
     <section id="contact" className="section">
-      <div className="section-inner grid items-center gap-14 lg:grid-cols-12 lg:gap-16">
+      <div className="section-inner grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
         {/* Portrait card: tilts in 3D with a sheen that follows the pointer */}
-        <Reveal className="mx-auto w-full max-w-[420px] lg:col-span-5 lg:mx-0">
+        <Reveal className="mx-auto w-full max-w-[420px] lg:col-span-5 lg:mx-0 lg:max-w-[min(100%,560px)]">
           <figure ref={portraitRef} className="tilt group relative">
             <div className="relative aspect-[4/5] overflow-hidden rounded-[36px] shadow-[0_50px_100px_-40px_hsl(var(--shadow-color)/0.7)]">
               <img
@@ -145,24 +146,17 @@ export const Contact = () => {
               />
               <span aria-hidden className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/15" />
             </div>
-            <figcaption
-              className="surface absolute -bottom-6 left-6 right-6 px-5 py-4"
-              style={{ transform: "translateZ(60px)" }}
-            >
-              <p className="font-semibold tracking-[-0.01em]">Masters in Applied Computer Science</p>
-              <p className="mt-0.5 text-sm text-muted-foreground">Dalhousie University, graduated May 2025</p>
-            </figcaption>
           </figure>
         </Reveal>
 
         <div className="lg:col-span-7">
           <Reveal>
             <h2 className="headline">Let's connect.</h2>
-            <p className="lede">
-              Open to opportunities in cloud development and DevOps. Whether you need a cloud architect, a full-stack developer or a DevOps engineer, let's talk about how I can help your team.
+            <p className="lede font-medium text-foreground">
+              <ScrollText text="Open to opportunities in cloud development and DevOps. Whether you need a cloud architect, a full-stack developer or a DevOps engineer, let's talk about how I can help your team." />
             </p>
 
-            <div className="mt-10">
+            <div className="mt-8">
               <Button size="lg" asChild className="group">
                 <a href={`mailto:${profile.email}`}>
                   <Send className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -172,7 +166,7 @@ export const Contact = () => {
             </div>
           </Reveal>
 
-          <Reveal index={1} className="mt-12 grid max-w-xl gap-8">
+          <Reveal index={1} className="mt-8 grid max-w-xl gap-8">
             <Group title="Contact" rows={contactInfo} />
             <Group title="Profiles" rows={socialLinks} />
           </Reveal>

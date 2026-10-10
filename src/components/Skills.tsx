@@ -78,9 +78,6 @@ const skillCategories = [
     skills: [
       { name: "Agile/Scrum", level: 90 },
       { name: "Code Reviews", level: 92 },
-      { name: "Automated Testing", level: 88 },
-      { name: "Microservices Architecture", level: 89 },
-      { name: "RESTful API Design", level: 91 },
     ],
   },
 ];
@@ -111,7 +108,7 @@ export const Skills = () => {
 
   return (
     <section id="skills" className="section">
-      <div className="section-inner grid items-center gap-14 lg:grid-cols-12 lg:gap-10">
+      <div className="section-inner grid items-center gap-10 lg:grid-cols-12 lg:gap-10">
         <div className="min-w-0 lg:col-span-7">
           <Reveal>
             <h2 className="headline">Technical expertise.</h2>
@@ -119,12 +116,12 @@ export const Skills = () => {
           </Reveal>
 
           {/* Segmented control */}
-          <Reveal index={1} className="mt-10">
+          <Reveal index={1} className="mt-8">
             <div
               ref={tabsRef}
               role="tablist"
               aria-label="Skill categories"
-              className="flex flex-wrap gap-1 rounded-[24px] bg-secondary p-1.5"
+              className="glass flex flex-wrap gap-1 rounded-[24px] p-1.5"
             >
               {skillCategories.map((category, idx) => (
                 <button
@@ -153,13 +150,13 @@ export const Skills = () => {
             id="skill-panel"
             role="tabpanel"
             aria-labelledby={`skill-tab-${activeCategory}`}
-            className="mt-8 grid gap-x-10 sm:grid-cols-2"
+            className="mt-8 grid gap-x-8 sm:grid-cols-2"
           >
             {active.skills.map((skill, idx) => (
               <div
                 key={`${activeCategory}-${skill.name}`}
                 data-tech={skill.name}
-                className="flex items-center justify-between gap-4 border-b py-4 animate-in fade-in-0 slide-in-from-bottom-2 fill-mode-both duration-500"
+                className="flex items-center justify-between gap-4 border-b py-3 animate-in fade-in-0 slide-in-from-bottom-2 fill-mode-both duration-500"
                 style={{ animationDelay: `${idx * 45}ms` }}
               >
                 <span className="text-[1.0625rem] tracking-[-0.01em]">{skill.name}</span>
@@ -179,7 +176,7 @@ export const Skills = () => {
           <p className="mt-4 text-xs text-muted-foreground">Self-assessed proficiency out of 100.</p>
         </div>
 
-        <Reveal index={2} className="mx-auto w-full max-w-[520px] lg:col-span-5">
+        <Reveal index={2} className="mx-auto w-full max-w-[min(100%,680px)] lg:col-span-5">
           <SkillGlobe tags={tags} activeGroup={activeCategory} />
         </Reveal>
       </div>
