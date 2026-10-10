@@ -39,7 +39,7 @@ const NotFound = () => {
         </div>
       </main>
 
-      <Footer showCredentials={false} />
+      <Footer />
     </div>
   );
 };

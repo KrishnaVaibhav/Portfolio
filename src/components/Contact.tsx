@@ -146,13 +146,6 @@ export const Contact = () => {
               />
               <span aria-hidden className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/15" />
             </div>
-            <figcaption
-              className="glass absolute -bottom-6 left-6 right-6 rounded-[22px] px-5 py-4"
-              style={{ transform: "translateZ(60px)" }}
-            >
-              <p className="font-semibold tracking-[-0.01em]">Masters in Applied Computer Science</p>
-              <p className="mt-0.5 text-sm text-muted-foreground">Dalhousie University, graduated May 2025</p>
-            </figcaption>
           </figure>
         </Reveal>
 

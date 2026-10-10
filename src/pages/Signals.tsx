@@ -420,7 +420,7 @@ const Signals = () => {
         </div>
       </main>
 
-      <Footer showCredentials={false} />
+      <Footer />
     </div>
   );
 };

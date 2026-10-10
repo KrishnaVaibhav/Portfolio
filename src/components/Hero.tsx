@@ -68,7 +68,7 @@ export const Hero = () => {
 
       <div className="page grid items-center gap-6 md:grid-cols-2 md:gap-8">
         {/* Exploded view of the stack */}
-        <StackHero className="relative -z-10 w-full md:order-2 md:h-[min(56vh,580px)]" />
+        <StackHero className="relative -z-10 w-full md:order-2" />
 
         <div className="md:order-1">
           <h1
@@ -84,7 +84,7 @@ export const Hero = () => {
           >
             <span className="font-medium text-foreground">Cloud-native developer at BMO in Toronto</span>, shipping React,
             React Native and Java on Azure and AWS. Most of my work lives behind the interface: serverless services, event
-            pipelines, CI/CD and the monitoring that keeps them healthy. Master&apos;s in Applied Computer Science, Dalhousie.
+            pipelines, CI/CD and the monitoring that keeps them healthy.
           </p>
 
           <div

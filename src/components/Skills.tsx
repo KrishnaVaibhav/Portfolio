@@ -78,9 +78,6 @@ const skillCategories = [
     skills: [
       { name: "Agile/Scrum", level: 90 },
       { name: "Code Reviews", level: 92 },
-      { name: "Automated Testing", level: 88 },
-      { name: "Microservices Architecture", level: 89 },
-      { name: "RESTful API Design", level: 91 },
     ],
   },
 ];

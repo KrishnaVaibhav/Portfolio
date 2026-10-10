@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { CheckCircle2, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "./Reveal";
 import { usePointerVars } from "@/hooks/use-motion";
 import { cn } from "@/lib/utils";
@@ -60,13 +60,6 @@ const certifications = [
       "radial-gradient(120% 90% at 88% 0%, rgba(129,181,161,0.25), transparent 55%), linear-gradient(145deg, #34504f 0%, #293e40 50%, #1a2829 100%)",
     accent: "#9fd1bd",
   },
-];
-
-const achievements = [
-  "Zero-downtime deployments with Docker + CI/CD at Cognizant",
-  "Delivered SDLC workshops for undergraduate students",
-  "Guided students in secure, cloud-ready application development",
-  "Achieved 99.5% SLA uptime across distributed workloads",
 ];
 
 // Fan the deck: outer passes turn inward, the middle one sits forward.
@@ -137,7 +130,7 @@ export const Certifications = () => {
     <section id="certifications" className="section overflow-hidden">
       <div className="section-inner">
         <Reveal className="max-w-3xl">
-          <h2 className="headline">Certifications and achievements.</h2>
+          <h2 className="headline">Certifications.</h2>
           <p className="lede">Industry-recognized credentials. Select a pass to verify it with the issuer.</p>
         </Reveal>
 
@@ -148,18 +141,6 @@ export const Certifications = () => {
             ))}
           </div>
         </Reveal>
-
-        <div className="mt-10 border-t pt-8">
-          <h3 className="text-xl font-semibold tracking-[-0.02em]">Key achievements</h3>
-          <ul className="mt-6 grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
-            {achievements.map((achievement, idx) => (
-              <Reveal as="li" key={achievement} index={idx} className="flex flex-col gap-3">
-                <CheckCircle2 className="h-5 w-5 text-link" strokeWidth={1.75} aria-hidden />
-                <p className="text-[0.9375rem] leading-relaxed text-foreground/85">{achievement}</p>
-              </Reveal>
-            ))}
-          </ul>
-        </div>
       </div>
     </section>
   );

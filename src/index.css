@@ -505,28 +505,46 @@
 }
 
 @layer components {
+  /*
+    Every dimension of the stack derives from one value, --plate. The settled
+    stack measures about 2.05 plates tall, so its slot is 2.1 plates and can
+    never be overflowed; the plate itself is limited by both width and height
+    so the stack fits any screen shape. Perspective, thickness, type, and the
+    entrance distance all scale with it, so it looks the same at every size.
+  */
   .stack-stage {
-    --plate: clamp(170px, min(19vw, 26vh), 400px);
-    perspective: 1800px;
+    --plate: clamp(96px, min(19vw, 25vh), 380px);
+    height: calc(var(--plate) * 2.1);
+    perspective: calc(var(--plate) * 7);
     perspective-origin: 50% 40%;
   }
 
   /* The stack rises from its base plate; drop it so the whole stack is centred. */
   .stack-offset {
-    transform: translateY(calc(var(--plate) * 0.55));
+    transform: translateY(calc(var(--plate) * 0.6));
   }
 
-  /* Phones: the stack sits in the flow above the copy, sized to the screen
-     width, with a height derived from the plate so it can never overlap. */
+  /* Phones: the stack sits in the flow above the copy, sized to the screen. */
   @media (max-width: 767px) {
     .stack-stage {
-      --plate: clamp(118px, 38vw, 200px);
-      height: calc(var(--plate) * 2.15);
+      --plate: clamp(108px, min(38vw, 28vh), 200px);
     }
 
     .stack-offset {
-      transform: translate(-10%, calc(var(--plate) * 0.55));
+      transform: translate(-10%, calc(var(--plate) * 0.6));
     }
+  }
+
+  .stack-label {
+    font-size: clamp(0.6875rem, calc(var(--plate) * 0.056), 1rem);
+  }
+
+  .stack-label-line {
+    width: calc(var(--plate) * 0.12);
+  }
+
+  .stack-chip {
+    font-size: clamp(0.625rem, calc(var(--plate) * 0.05), 0.9375rem);
   }
 
   .stack-scene {
@@ -554,7 +572,7 @@
   }
 
   .stack-layer:hover {
-    transform: translateZ(calc(var(--gap) * var(--spread) * var(--i) + 22px));
+    transform: translateZ(calc(var(--gap) * var(--spread) * var(--i) + var(--plate) * 0.09));
   }
 
   /* Vertical link between two layers; children travel along it. */
@@ -605,21 +623,24 @@
 }
 
 /*
-  Entrance: each layer drops onto the stack from above, bottom layer first.
+  Entrance: the layers rise out of the base plate, bottom layer first.
   It animates the individual `translate` property, which the compositor runs
   off the main thread (so it stays smooth while the page is still starting
   up), and deliberately no opacity: fading a preserve-3d element flattens it,
   which made the old entrance render flat and then pop into depth.
 */
+/* The exploded view opens: every layer starts collapsed onto the base plate
+   and rises to its place, so the motion stays inside the stack's own slot on
+   every screen. Distances are in plates, so it reads the same at any size. */
 @keyframes layer-in {
-  from { translate: 0 0 calc(240px + var(--i) * 90px); }
+  from { translate: 0 0 calc(var(--gap-open) * var(--i) * -1); }
   to { translate: 0 0 0; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .stack-layer {
-    animation: layer-in 1.25s var(--ease-apple) both;
-    animation-delay: calc(0.15s + var(--i) * 0.1s);
+    animation: layer-in 1.3s var(--ease-apple) both;
+    animation-delay: calc(0.2s + var(--i) * 0.08s);
   }
 }
 
