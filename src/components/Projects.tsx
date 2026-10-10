@@ -173,7 +173,7 @@ const Actions = ({ project }: { project: Project }) => (
 
 // Wide tile for the lead project: story on the left, icon and numbers on the right.
 const FeatureTile = ({ project }: { project: Project }) => (
-  <TiltCard tilt={2} as="article" className="surface relative overflow-hidden p-7 md:p-12">
+  <TiltCard tilt={2} as="article" className="surface relative h-full overflow-hidden p-5 sm:p-7 md:p-12">
     <div aria-hidden className={cn("pointer-events-none absolute inset-0", project.washClass)} />
     <div className="relative grid gap-10 preserve-3d lg:grid-cols-12 lg:gap-14">
       <div className="flex flex-col lg:col-span-7">
@@ -202,7 +202,7 @@ const FeatureTile = ({ project }: { project: Project }) => (
 
 // Companion tile: icon and title up top, numbers, then detail; actions pinned to the bottom.
 const ProjectTile = ({ project }: { project: Project }) => (
-  <TiltCard tilt={3} as="article" className="surface relative flex h-full flex-col overflow-hidden p-7 md:p-10">
+  <TiltCard tilt={3} as="article" className="surface relative flex h-full flex-col overflow-hidden p-5 sm:p-7 md:p-10">
     <div aria-hidden className={cn("pointer-events-none absolute inset-0", project.washClass)} />
     <div className="relative flex items-start gap-5 preserve-3d">
       <AppIcon icon={project.icon} className={project.iconClass} />
@@ -238,12 +238,14 @@ export const Projects = () => {
           <p className="lede">Production-grade cloud applications, built end to end.</p>
         </Reveal>
 
-        <div className="mt-14 grid gap-5 md:grid-cols-2">
-          <Reveal className="md:col-span-2">
+        {/* Two columns on tablets and laptops; on wide screens the lead project
+            takes two thirds and the companions stack beside it. */}
+        <div className="mt-14 grid gap-5 md:grid-cols-2 2xl:grid-cols-3 [&>*]:min-w-0">
+          <Reveal className="h-full md:col-span-2 2xl:row-span-2">
             <FeatureTile project={featured} />
           </Reveal>
           {rest.map((project, idx) => (
-            <Reveal key={project.title} index={idx + 1}>
+            <Reveal key={project.title} index={idx + 1} className="h-full">
               <ProjectTile project={project} />
             </Reveal>
           ))}

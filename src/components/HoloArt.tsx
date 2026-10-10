@@ -71,7 +71,7 @@ export const HoloArt = () => {
   return (
     <div
       ref={ref}
-      className="holo relative h-full min-h-[340px] overflow-hidden rounded-[32px] bg-[#0e1027] shadow-[0_40px_100px_-40px_hsl(var(--shadow-color)/0.6)] md:min-h-[560px]"
+      className="holo relative h-full min-h-[340px] overflow-hidden rounded-[32px] bg-[#0e1027] shadow-[0_40px_100px_-40px_hsl(var(--shadow-color)/0.6)] md:min-h-[clamp(560px,40vw,860px)]"
     >
       <div className="holo-stage">
         <img

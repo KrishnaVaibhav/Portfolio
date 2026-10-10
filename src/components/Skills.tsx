@@ -124,7 +124,7 @@ export const Skills = () => {
               ref={tabsRef}
               role="tablist"
               aria-label="Skill categories"
-              className="flex flex-wrap gap-1 rounded-[24px] bg-secondary p-1.5"
+              className="glass flex flex-wrap gap-1 rounded-[24px] p-1.5"
             >
               {skillCategories.map((category, idx) => (
                 <button
@@ -179,7 +179,7 @@ export const Skills = () => {
           <p className="mt-4 text-xs text-muted-foreground">Self-assessed proficiency out of 100.</p>
         </div>
 
-        <Reveal index={2} className="mx-auto w-full max-w-[520px] lg:col-span-5">
+        <Reveal index={2} className="mx-auto w-full max-w-[min(100%,680px)] lg:col-span-5">
           <SkillGlobe tags={tags} activeGroup={activeCategory} />
         </Reveal>
       </div>

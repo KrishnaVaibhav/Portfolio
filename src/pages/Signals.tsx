@@ -180,8 +180,8 @@ const Signals = () => {
       <AmbientBackground />
       <Navigation />
 
-      <main id="main" className="relative z-content px-5 pb-24 pt-32 md:px-8 md:pt-40">
-        <div className="mx-auto max-w-[1200px]">
+      <main id="main" className="relative z-content px-[var(--gutter)] pb-24 pt-32 md:pt-40">
+        <div className="page">
           <div className="mb-12 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
             <div className="animate-rise-in">
               <div className="mb-6 grid h-16 w-16 place-items-center rounded-[18px] bg-gradient-to-br from-emerald-400 via-emerald-600 to-rose-600 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.45),0_20px_40px_-16px_rgba(0,0,0,0.45)]">

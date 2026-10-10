@@ -10,7 +10,7 @@ export const Hero = () => {
     <section
       id="top"
       aria-label="Introduction"
-      className="relative isolate flex min-h-[100dvh] items-center overflow-hidden px-5 md:px-8"
+      className="relative isolate flex min-h-[100dvh] flex-col justify-center overflow-hidden px-[var(--gutter)] pb-12 pt-24 md:flex-row md:items-center md:py-0"
     >
       {/* Soft studio light behind the stack */}
       <div
@@ -19,12 +19,12 @@ export const Hero = () => {
       />
 
       {/* Exploded view of the stack */}
-      <StackHero className="absolute inset-x-0 top-[10vh] -z-10 h-[46vh] md:inset-y-0 md:left-auto md:right-[2vw] md:top-0 md:h-full md:w-[50vw]" />
+      <StackHero className="relative -z-10 w-full md:absolute md:inset-y-0 md:right-[2vw] md:h-full md:w-[50vw]" />
 
-      <div className="mx-auto w-full max-w-[1200px]">
-        <div className="mt-[44vh] max-w-[640px] md:mt-0">
+      <div className="page">
+        <div className="mt-6 max-w-[640px] md:mt-0 md:max-w-[min(46vw,760px)]">
           <div
-            className="inline-flex items-center gap-2.5 rounded-full border bg-secondary py-1 pl-1 pr-4 animate-rise-in"
+            className="glass inline-flex items-center gap-2.5 rounded-full py-1 pl-1 pr-4 animate-rise-in"
             style={{ animationDelay: "80ms" }}
           >
             <span aria-hidden className="relative ml-1.5 grid h-2 w-2 place-items-center">

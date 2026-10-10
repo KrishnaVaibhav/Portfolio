@@ -86,7 +86,7 @@ const Pass = ({ cert, index }: { cert: (typeof certifications)[number]; index: n
       rel="noopener noreferrer"
       aria-label={`${cert.title}, ${cert.code}, issued by ${cert.issuer}. Verify credential (opens in a new tab)`}
       className={cn(
-        "pass group relative flex aspect-[1.58/1] w-[82vw] max-w-[380px] shrink-0 snap-center flex-col justify-between rounded-[24px] p-6 text-white md:w-full",
+        "pass group relative flex aspect-[1.58/1] w-[82vw] max-w-[380px] shrink-0 md:max-w-none snap-center flex-col justify-between rounded-[24px] p-6 text-white md:w-full",
         "shadow-[inset_0_1px_0_rgba(255,255,255,0.22),inset_0_0_0_1px_rgba(255,255,255,0.08),0_30px_60px_-24px_rgba(0,0,0,0.5)]",
       )}
       style={{ ...(fan[index] as CSSProperties), background: cert.background }}

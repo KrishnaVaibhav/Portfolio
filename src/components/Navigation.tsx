@@ -164,7 +164,7 @@ export const Navigation = () => {
   };
 
   return (
-    <header className="fixed inset-x-0 top-0 z-nav px-3 pt-3 md:px-6 md:pt-4">
+    <header className="fixed inset-x-0 top-0 z-nav px-3 pt-3 md:px-[var(--gutter)] md:pt-4">
       <a
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-full focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
@@ -177,7 +177,7 @@ export const Navigation = () => {
         {msg?.text}
       </div>
 
-      <nav aria-label="Primary" className="mx-auto max-w-[1200px] animate-rise-in">
+      <nav aria-label="Primary" className="page animate-rise-in">
         {/* Desktop: three floating pieces */}
         <div className="hidden grid-cols-[1fr_auto_1fr] items-center gap-4 md:grid">
           <button
@@ -248,7 +248,7 @@ export const Navigation = () => {
               aria-label={`Search (${spotlightShortcut})`}
             >
               <Search className="h-4 w-4" strokeWidth={1.75} />
-              <kbd className="rounded-md border border-foreground/10 px-1.5 font-mono text-[0.6875rem]">{spotlightShortcut}</kbd>
+              <kbd className="hidden whitespace-nowrap rounded-md border border-foreground/10 px-1.5 font-mono text-[0.6875rem] lg:inline">{spotlightShortcut}</kbd>
             </button>
             {socials.map(({ label, href, icon: Icon }) => (
               <a

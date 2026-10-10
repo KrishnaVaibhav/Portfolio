@@ -43,7 +43,7 @@ type Edu = (typeof education)[number];
   Dalhousie shield's gold border carries a moving foil.
 */
 const UniversityMark = ({ edu }: { edu: Edu }) => (
-  <div className="mark-plate relative aspect-square w-28 shrink-0 md:w-32" style={{ transform: "translateZ(40px)" }}>
+  <div className="mark-plate relative aspect-square w-20 shrink-0 sm:w-28 md:w-32" style={{ transform: "translateZ(40px)" }}>
     <div
       aria-hidden
       className="absolute -inset-3 rounded-[40px] opacity-50 blur-2xl transition-opacity duration-700 group-hover/edu:opacity-90"
@@ -76,11 +76,11 @@ export const Education = () => {
           <h2 className="headline">Education.</h2>
         </Reveal>
 
-        <div className="mt-14 grid gap-5 md:grid-cols-12">
+        <div className="mt-14 grid gap-5 md:grid-cols-12 [&>*]:min-w-0">
           {education.map((edu, index) => (
             <Reveal key={edu.university} index={index} className={cn(index === 0 ? "md:col-span-7" : "md:col-span-5")}>
-              <TiltCard tilt={5} className="surface group/edu flex h-full flex-col justify-between gap-12 p-7 md:p-9">
-                <div className="flex items-start justify-between gap-6 preserve-3d">
+              <TiltCard tilt={5} className="surface group/edu flex h-full flex-col justify-between gap-12 p-5 sm:p-7 md:p-9">
+                <div className="flex items-start justify-between gap-4 preserve-3d sm:gap-6">
                   <UniversityMark edu={edu} />
                   <div className="text-right" style={{ transform: "translateZ(24px)" }}>
                     <p className="font-mono text-[0.8125rem] tabular text-muted-foreground">{edu.period}</p>
