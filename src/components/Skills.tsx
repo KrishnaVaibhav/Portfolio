@@ -111,7 +111,7 @@ export const Skills = () => {
 
   return (
     <section id="skills" className="section">
-      <div className="section-inner grid items-center gap-14 lg:grid-cols-12 lg:gap-10">
+      <div className="section-inner grid items-center gap-10 lg:grid-cols-12 lg:gap-10">
         <div className="min-w-0 lg:col-span-7">
           <Reveal>
             <h2 className="headline">Technical expertise.</h2>
@@ -119,7 +119,7 @@ export const Skills = () => {
           </Reveal>
 
           {/* Segmented control */}
-          <Reveal index={1} className="mt-10">
+          <Reveal index={1} className="mt-8">
             <div
               ref={tabsRef}
               role="tablist"
@@ -153,13 +153,13 @@ export const Skills = () => {
             id="skill-panel"
             role="tabpanel"
             aria-labelledby={`skill-tab-${activeCategory}`}
-            className="mt-8 grid gap-x-10 sm:grid-cols-2"
+            className="mt-8 grid gap-x-8 sm:grid-cols-2"
           >
             {active.skills.map((skill, idx) => (
               <div
                 key={`${activeCategory}-${skill.name}`}
                 data-tech={skill.name}
-                className="flex items-center justify-between gap-4 border-b py-4 animate-in fade-in-0 slide-in-from-bottom-2 fill-mode-both duration-500"
+                className="flex items-center justify-between gap-4 border-b py-3 animate-in fade-in-0 slide-in-from-bottom-2 fill-mode-both duration-500"
                 style={{ animationDelay: `${idx * 45}ms` }}
               >
                 <span className="text-[1.0625rem] tracking-[-0.01em]">{skill.name}</span>

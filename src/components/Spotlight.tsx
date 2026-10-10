@@ -57,7 +57,7 @@ export const Spotlight = () => {
     {
       heading: "Sections",
       items: [
-        { label: "About", hint: "Section", icon: UserRound, tint: "bg-[#64d2ff]", keywords: ["bio", "who"], run: () => goToSection("#about") },
+        { label: "About", hint: "Section", icon: UserRound, tint: "bg-[#64d2ff]", keywords: ["bio", "who"], run: () => goToSection("#top") },
         { label: "Skills", hint: "Section", icon: Layers, tint: "bg-[#5e5ce6]", run: () => goToSection("#skills") },
         { label: "Experience", hint: "Section", icon: Briefcase, tint: "bg-[#0071e3]", keywords: ["work", "jobs", "career"], run: () => goToSection("#experience") },
         { label: "Education", hint: "Section", icon: GraduationCap, tint: "bg-[#ff9f0a]", keywords: ["degree", "university"], run: () => goToSection("#education") },

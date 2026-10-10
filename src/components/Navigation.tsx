@@ -30,7 +30,7 @@ const useActiveSection = (enabled: boolean) => {
       return;
     }
     const band = { rootMargin: "-45% 0px -50% 0px" };
-    const targets = ["#top", "#about", "#skills", "#experience", "#education", "#projects", "#certifications", "#contact"]
+    const targets = ["#top", "#skills", "#experience", "#education", "#projects", "#certifications", "#contact"]
       .map((id) => document.querySelector(id))
       .filter((el): el is Element => !!el);
 
@@ -38,8 +38,8 @@ const useActiveSection = (enabled: boolean) => {
       for (const entry of entries) {
         if (!entry.isIntersecting) continue;
         const id = `#${entry.target.id}`;
-        // Hero and About have no nav item; Education sits inside the Experience stretch.
-        setActive(id === "#top" || id === "#about" ? null : id === "#education" ? "#experience" : id);
+        // The hero has no nav item; Education sits inside the Experience stretch.
+        setActive(id === "#top" ? null : id === "#education" ? "#experience" : id);
       }
     }, band);
     targets.forEach((el) => io.observe(el));

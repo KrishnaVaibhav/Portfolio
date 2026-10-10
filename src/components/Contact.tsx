@@ -123,7 +123,7 @@ export const Contact = () => {
 
   return (
     <section id="contact" className="section">
-      <div className="section-inner grid items-center gap-14 lg:grid-cols-12 lg:gap-16">
+      <div className="section-inner grid items-center gap-10 lg:grid-cols-12 lg:gap-12">
         {/* Portrait card: tilts in 3D with a sheen that follows the pointer */}
         <Reveal className="mx-auto w-full max-w-[420px] lg:col-span-5 lg:mx-0 lg:max-w-[min(100%,560px)]">
           <figure ref={portraitRef} className="tilt group relative">
@@ -163,7 +163,7 @@ export const Contact = () => {
               <ScrollText text="Open to opportunities in cloud development and DevOps. Whether you need a cloud architect, a full-stack developer or a DevOps engineer, let's talk about how I can help your team." />
             </p>
 
-            <div className="mt-10">
+            <div className="mt-8">
               <Button size="lg" asChild className="group">
                 <a href={`mailto:${profile.email}`}>
                   <Send className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -173,7 +173,7 @@ export const Contact = () => {
             </div>
           </Reveal>
 
-          <Reveal index={1} className="mt-12 grid max-w-xl gap-8">
+          <Reveal index={1} className="mt-8 grid max-w-xl gap-8">
             <Group title="Contact" rows={contactInfo} />
             <Group title="Profiles" rows={socialLinks} />
           </Reveal>

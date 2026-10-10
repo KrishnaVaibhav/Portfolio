@@ -143,7 +143,7 @@ export const Experience = () => {
           <p className="lede">Enterprise cloud work across banking, healthcare, research and teaching.</p>
         </Reveal>
 
-        <ol className="relative mt-24 [--lane:1.75rem] [--rail:1.25rem] md:mt-28 md:[--rail:33.333%]">
+        <ol className="relative mt-14 [--lane:1.75rem] [--rail:1.25rem] md:mt-16 md:[--rail:25%]">
           {/* Main line of the graph, filled by scroll where CSS scroll timelines are supported */}
           <div aria-hidden className="absolute bottom-0 top-0 w-px -translate-x-1/2 bg-border" style={{ left: "var(--rail)" }}>
             <div className="scroll-fill h-full w-full bg-gradient-to-b from-primary via-primary/60 to-transparent" />
@@ -158,7 +158,7 @@ export const Experience = () => {
             return (
               <li
                 key={exp.company + exp.title}
-                className="relative grid gap-6 pb-20 pl-14 last:pb-0 md:grid-cols-3 md:gap-12 md:pl-0"
+                className="relative grid gap-5 pb-12 pl-14 last:pb-0 md:grid-cols-[1fr_3fr] md:gap-10 md:pb-14 md:pl-0"
               >
                 {lane === 1 && <Branch />}
 
@@ -183,7 +183,7 @@ export const Experience = () => {
                   </div>
                 </Reveal>
 
-                <Reveal index={1} className={lane ? "pl-6 md:col-span-2 md:pl-16" : "md:col-span-2 md:pl-12"}>
+                <Reveal index={1} className={lane ? "pl-6 md:pl-16" : "md:pl-12"}>
                   <h3 className="font-display text-3xl font-semibold tracking-[-0.03em] md:text-4xl">{exp.title}</h3>
                   <p className="mt-4 max-w-[62ch] text-lg leading-relaxed text-muted-foreground">{exp.description}</p>
 

@@ -198,8 +198,8 @@
     /* clip (not hidden): trims decorative overhang without breaking sticky */
     overflow-x: clip;
     padding-inline: var(--gutter);
-    padding-top: clamp(4.5rem, 7vw, 8rem);
-    padding-bottom: clamp(5rem, 8vw, 9.5rem);
+    padding-top: clamp(3rem, 4.5vw, 5.5rem);
+    padding-bottom: clamp(3.5rem, 5vw, 6rem);
   }
 
   /* The page column: fluid up to --page-max, centred. */
@@ -215,14 +215,14 @@
 
   .headline {
     @apply font-display font-semibold;
-    font-size: clamp(2.5rem, 1.6rem + 3.4vw, 5.25rem);
+    font-size: clamp(2.25rem, 1.5rem + 2.6vw, 4.5rem);
     line-height: 1.04;
     letter-spacing: -0.035em;
   }
 
   /* Paragraph copy keeps a comfortable line length however wide the page gets. */
   .lede {
-    @apply mt-5 leading-relaxed text-muted-foreground;
+    @apply mt-4 leading-relaxed text-muted-foreground;
     max-width: var(--measure);
     font-size: clamp(1.0625rem, 0.95rem + 0.45vw, 1.375rem);
   }
@@ -506,7 +506,7 @@
 
 @layer components {
   .stack-stage {
-    --plate: clamp(180px, min(23vw, 36vh), 470px);
+    --plate: clamp(170px, min(19vw, 26vh), 400px);
     perspective: 1800px;
     perspective-origin: 50% 40%;
   }
@@ -604,28 +604,31 @@
   to { --gap: calc(var(--gap-open) * 0.22); }
 }
 
-@keyframes stack-assemble {
-  from { --spread: 2.8; opacity: 0; }
-  35% { opacity: 1; }
-  to { --spread: 1; opacity: 1; }
+/*
+  Entrance: each layer drops onto the stack from above, bottom layer first.
+  It animates the individual `translate` property, which the compositor runs
+  off the main thread (so it stays smooth while the page is still starting
+  up), and deliberately no opacity: fading a preserve-3d element flattens it,
+  which made the old entrance render flat and then pop into depth.
+*/
+@keyframes layer-in {
+  from { translate: 0 0 calc(240px + var(--i) * 90px); }
+  to { translate: 0 0 0; }
 }
 
-/* On load the layers fly in from wide apart and settle together (backwards
-   fill only, so the hover spread takes over once it has finished). */
 @media (prefers-reduced-motion: no-preference) {
-  .stack-scene {
-    animation: stack-assemble 1.8s var(--ease-spring) 0.25s backwards;
+  .stack-layer {
+    animation: layer-in 1.25s var(--ease-apple) both;
+    animation-delay: calc(0.15s + var(--i) * 0.1s);
   }
 }
 
 @supports (animation-timeline: scroll()) {
   @media (prefers-reduced-motion: no-preference) {
     .stack-scene {
-      animation:
-        stack-collapse linear both,
-        stack-assemble 1.8s var(--ease-spring) 0.25s backwards;
-      animation-timeline: scroll(root), auto;
-      animation-range: 0 75vh, normal;
+      animation: stack-collapse linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 75vh;
     }
   }
 }

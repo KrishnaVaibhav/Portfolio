@@ -142,16 +142,16 @@ export const Certifications = () => {
         </Reveal>
 
         <Reveal index={1}>
-          <div className="-mx-5 mt-16 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-6 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:py-10 [perspective:1600px]">
+          <div className="-mx-5 mt-10 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-6 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:py-6 [perspective:1600px]">
             {certifications.map((cert, idx) => (
               <Pass key={cert.code} cert={cert} index={idx} />
             ))}
           </div>
         </Reveal>
 
-        <div className="mt-16 border-t pt-12">
+        <div className="mt-10 border-t pt-8">
           <h3 className="text-xl font-semibold tracking-[-0.02em]">Key achievements</h3>
-          <ul className="mt-8 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="mt-6 grid gap-x-8 gap-y-6 sm:grid-cols-2 lg:grid-cols-4">
             {achievements.map((achievement, idx) => (
               <Reveal as="li" key={achievement} index={idx} className="flex flex-col gap-3">
                 <CheckCircle2 className="h-5 w-5 text-link" strokeWidth={1.75} aria-hidden />

@@ -76,10 +76,10 @@ export const Education = () => {
           <h2 className="headline">Education.</h2>
         </Reveal>
 
-        <div className="mt-14 grid gap-5 md:grid-cols-12 [&>*]:min-w-0">
+        <div className="mt-8 grid gap-5 md:grid-cols-12 [&>*]:min-w-0">
           {education.map((edu, index) => (
             <Reveal key={edu.university} index={index} className={cn(index === 0 ? "md:col-span-7" : "md:col-span-5")}>
-              <TiltCard tilt={5} className="surface group/edu flex h-full flex-col justify-between gap-12 p-5 sm:p-7 md:p-9">
+              <TiltCard tilt={5} className="surface group/edu flex h-full flex-col justify-between gap-8 p-5 sm:p-7 md:p-8">
                 <div className="flex items-start justify-between gap-4 preserve-3d sm:gap-6">
                   <UniversityMark edu={edu} />
                   <div className="text-right" style={{ transform: "translateZ(24px)" }}>
