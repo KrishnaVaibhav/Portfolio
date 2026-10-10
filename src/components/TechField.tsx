@@ -5,38 +5,49 @@ import {
   siGitlab, siJest, siSelenium, siPostman, siApachekafka, siGit, siRedux, siSupabase,
 } from "simple-icons";
 import { usePrefersReducedMotion } from "@/hooks/use-motion";
+import { isDarkResolved, onAppearanceChange } from "@/lib/theme";
 
 /*
-  A background made of the stack. Tiny monochrome logos drift in three depth
-  layers far behind the content:
-    - scroll moves each layer at its own speed (parallax)
-    - icons near the pointer brighten, ease away and wire up to it
-    - hovering any technology on the page ([data-tech]) lights its logo in
-      the accent colour and draws a thin, flowing line back to what you hovered
+  A background made of the stack. Tiny grey logos drift in three depth layers
+  far behind the content, and take on their brand colour only while something
+  is happening to them, then fade back to grey:
+    - scroll moves each layer at its own speed (parallax) and briefly tints it
+    - icons near the pointer brighten, colour up, ease away and wire up to it
+    - hovering any technology on the page ([data-tech]) lights its logo in its
+      brand colour and draws a thin, flowing line back to what you hovered
   One fixed canvas; scroll is read inside the animation loop, never listened to.
 */
 
-type Glyph = { key: string; aliases: string[]; path?: Path2D; text?: string };
+type RGB = [number, number, number];
+type Glyph = { key: string; aliases: string[]; path?: Path2D; text?: string; brand: RGB };
 
-const g = (key: string, icon: { path: string } | null, aliases: string[], text?: string): Glyph => ({
+const hexRgb = (hex: string): RGB => {
+  const n = parseInt(hex.replace("#", ""), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+};
+
+// Brand colour comes from the icon set unless overridden (OpenJDK's is black;
+// Java's own orange reads far better).
+const g = (key: string, icon: { path: string; hex: string } | null, aliases: string[], text?: string, hex?: string): Glyph => ({
   key,
   aliases,
   path: icon ? new Path2D(icon.path) : undefined,
   text,
+  brand: hexRgb(hex ?? icon?.hex ?? "888888"),
 });
 
 // Order matters for matching: cloud names first (so "Azure (App Services, AKS)"
 // reads as Azure), and "javascript" before "java".
 const GLYPHS: Glyph[] = [
   // Azure and AWS logos are not distributed by simple-icons; use their wordmarks.
-  g("azure", null, ["azure", "cosmos", "service bus", "key vault", "app service", "bicep", "arm template"], "Azure"),
-  g("aws", null, ["aws", "lambda", "ec2", "s3", "fargate", "cloudformation", "api gateway", "guardduty", "rds"], "aws"),
+  g("azure", null, ["azure", "cosmos", "service bus", "key vault", "app service", "bicep", "arm template"], "Azure", "0078D4"),
+  g("aws", null, ["aws", "lambda", "ec2", "s3", "fargate", "cloudformation", "api gateway", "guardduty", "rds"], "aws", "FF9900"),
   g("javascript", siJavascript, ["javascript"]),
   g("typescript", siTypescript, ["typescript"]),
   g("react", siReact, ["react"]),
   g("redux", siRedux, ["redux"]),
   g("node", siNodedotjs, ["node"]),
-  g("java", siOpenjdk, ["java", "junit"]),
+  g("java", siOpenjdk, ["java", "junit"], undefined, "E76F00"),
   g("spring", siSpringboot, ["spring"]),
   g("dotnet", siDotnet, [".net", "c#"]),
   g("python", siPython, ["python"]),
@@ -73,6 +84,10 @@ type Particle = {
   oy: number;
   glow: number; // 0..1 proximity / focus brightness
   focus: number; // 0..1 eased highlight
+  lit: boolean; // currently "ignited" (in colour), for the one-off pulse
+  pop: number; // spring scale kick when it ignites
+  popV: number;
+  rot: number; // tilt from the pointer's push
 };
 
 // True when nothing opaque sits over (x, y), so a logo drawn there is actually visible.
@@ -88,6 +103,33 @@ const isExposed = (x: number, y: number) => {
 const readToken = (name: string) =>
   `hsl(${getComputedStyle(document.documentElement).getPropertyValue(name).trim().split(/\s+/).join(", ")})`;
 
+// A token like "240 3% 12%" as RGB, so grey can blend into a brand colour.
+const readTokenRgb = (name: string): RGB => {
+  const [h, sat, l] = getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim()
+    .split(/\s+/)
+    .map((v) => parseFloat(v));
+  const S = sat / 100, L = l / 100;
+  const k = (n: number) => (n + h / 30) % 12;
+  const a = S * Math.min(L, 1 - L);
+  const f = (n: number) => L - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  return [f(0) * 255, f(8) * 255, f(4) * 255];
+};
+
+const mix = (a: RGB, b: RGB, t: number): RGB => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+const rgb = (c: RGB) => `rgb(${c[0] | 0}, ${c[1] | 0}, ${c[2] | 0})`;
+const luma = ([r, gr, b]: RGB) => (0.2126 * r + 0.7152 * gr + 0.0722 * b) / 255;
+
+// Keep every brand colour legible on the current background: very dark brands
+// (Kafka) lift on dark, very pale ones (JavaScript yellow) deepen on light.
+const brandFor = (gl: Glyph, dark: boolean): RGB => {
+  const L = luma(gl.brand);
+  if (dark && L < 0.25) return mix(gl.brand, [255, 255, 255], 0.6);
+  if (!dark && L > 0.6) return mix(gl.brand, [0, 0, 0], 0.3);
+  return gl.brand;
+};
+
 export const TechField = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const reduced = usePrefersReducedMotion();
@@ -101,8 +143,14 @@ export const TechField = () => {
     let W = 0, H = 0, dpr = 1;
     let particles: Particle[] = [];
     let ink = readToken("--foreground");
-    let accent = readToken("--link");
-    let dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    let inkRgb = readTokenRgb("--foreground");
+    let dark = isDarkResolved();
+    let brands = GLYPHS.map((gl) => brandFor(gl, dark));
+    // Scroll activity 0..1: rises while the page moves, decays when it stops.
+    let lastScroll = window.scrollY;
+    // Ignition pulses: a brand-coloured ring that ripples out once when an icon lights up.
+    let rings: { i: number; start: number; colour: string }[] = [];
+    let activity = 0;
 
     const pointer = { x: -9999, y: -9999, active: false };
     let focusGlyph = -1;
@@ -131,6 +179,10 @@ export const TechField = () => {
           oy: 0,
           glow: 0,
           focus: 0,
+          lit: false,
+          pop: 0,
+          popV: 0,
+          rot: 0,
         };
       });
     };
@@ -163,6 +215,9 @@ export const TechField = () => {
     let frame = 0;
     const tick = () => {
       const scrollY = window.scrollY;
+      const speed = Math.abs(scrollY - lastScroll);
+      lastScroll = scrollY;
+      activity += (Math.min(1, speed / 30) - activity) * (speed > 0.5 ? 0.15 : 0.04);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, W, H);
 
@@ -242,9 +297,9 @@ export const TechField = () => {
       // Network lines from the pointer to nearby icons.
       if (pointer.active && !reduced) {
         ctx.lineWidth = 1;
-        ctx.strokeStyle = ink;
         for (const { x, y, p } of positions) {
           if (p.glow < 0.05) continue;
+          ctx.strokeStyle = rgb(mix(inkRgb, brands[p.glyph], Math.min(1, p.glow * 1.6)));
           ctx.globalAlpha = p.glow * 0.32 * p.depth;
           ctx.beginPath();
           ctx.moveTo(pointer.x, pointer.y);
@@ -260,7 +315,7 @@ export const TechField = () => {
           dash = reduced ? 0 : dash - 0.6;
           ctx.save();
           ctx.globalAlpha = 0.5 * t.p.focus;
-          ctx.strokeStyle = accent;
+          ctx.strokeStyle = rgb(brands[t.p.glyph]);
           ctx.lineWidth = 1.25;
           ctx.setLineDash([3, 5]);
           ctx.lineDashOffset = dash;
@@ -274,24 +329,76 @@ export const TechField = () => {
         }
       }
 
+      // Ignition rings, under the icons.
+      const now = performance.now();
+      rings = rings.filter((r) => now - r.start < 950);
+      for (const r of rings) {
+        const at = positions[r.i];
+        if (!at) continue;
+        const t = (now - r.start) / 950;
+        const e = 1 - Math.pow(1 - t, 3);
+        const size = 12 + at.p.depth * 13;
+        ctx.globalAlpha = Math.pow(1 - t, 2) * (dark ? 0.6 : 0.5);
+        ctx.strokeStyle = r.colour;
+        ctx.lineWidth = 0.6 + 1.4 * (1 - t);
+        ctx.beginPath();
+        ctx.arc(at.x, at.y, size * (0.75 + 1.9 * e), 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
       // Icons.
-      for (const { x, y, p } of positions) {
+      for (const { x, y, p, i } of positions) {
         const focus = p.focus;
-        const size = (12 + p.depth * 13) * (1 + focus * 0.7 + p.glow * 0.15);
+        // How much brand colour shows: full when focused, strong near the
+        // pointer, a gentle tint while scrolling, grey when nothing happens.
+        // Eased so colour arrives quickly and saturated rather than muddy.
+        const raw = Math.min(1, Math.max(focus, p.glow * 2, activity * 0.55 * p.depth));
+        const colour = 1 - Math.pow(1 - raw, 2);
+        const brand = brands[p.glyph];
+
+        // Ignite once on the way up (hysteresis stops flicker at the edge):
+        // a ring ripples out and the logo gets a small spring kick.
+        if (!reduced) {
+          if (!p.lit && raw > 0.6) {
+            p.lit = true;
+            p.popV += 0.32;
+            if (rings.length < 12) rings.push({ i, start: now, colour: rgb(brand) });
+          } else if (p.lit && raw < 0.2) {
+            p.lit = false;
+          }
+          p.popV += -p.pop * 0.2;
+          p.popV *= 0.76;
+          p.pop += p.popV;
+          // Lean away from the pointer's push, like a leaf in a breeze.
+          p.rot += (Math.max(-0.35, Math.min(0.35, p.ox * 0.025)) - p.rot) * 0.1;
+        }
+
+        const size = (12 + p.depth * 13) * (1 + focus * 0.7 + p.glow * 0.18 + p.pop * 0.5);
         ctx.save();
         ctx.translate(x, y);
-        if (focus > 0.02) {
-          const halo = ctx.createRadialGradient(0, 0, 0, 0, 0, size * 1.6);
-          halo.addColorStop(0, accent);
+        ctx.rotate(p.rot);
+
+        // Soft brand glow behind any coloured icon; strongest when focused.
+        const haloA = Math.max(focus * 0.24, colour * (dark ? 0.2 : 0.14) * p.depth);
+        if (haloA > 0.01) {
+          const reach = size * (1.5 + colour * 0.5);
+          const halo = ctx.createRadialGradient(0, 0, 0, 0, 0, reach);
+          halo.addColorStop(0, rgb(brand));
           halo.addColorStop(1, "transparent");
-          ctx.globalAlpha = 0.18 * focus;
+          ctx.globalAlpha = haloA;
           ctx.fillStyle = halo;
           ctx.beginPath();
-          ctx.arc(0, 0, size * 1.6, 0, Math.PI * 2);
+          ctx.arc(0, 0, reach, 0, Math.PI * 2);
           ctx.fill();
         }
-        ctx.globalAlpha = Math.min(1, base * (0.6 + p.depth) + p.glow * 0.55 * p.depth + focus * 0.85);
-        ctx.fillStyle = focus > 0.3 ? accent : ink;
+
+        ctx.globalAlpha = Math.min(
+          1,
+          base * (0.6 + p.depth) + p.glow * 0.55 * p.depth + focus * 0.85 + activity * 0.12 * p.depth +
+            // Colour gets real presence; a little more on a light background.
+            colour * (dark ? 0.3 : 0.45) * p.depth,
+        );
+        ctx.fillStyle = colour > 0.01 ? rgb(mix(inkRgb, brand, colour)) : ink;
         drawGlyph(GLYPHS[p.glyph], size);
         ctx.restore();
       }
@@ -325,11 +432,12 @@ export const TechField = () => {
         focusEl = null;
       }
     };
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    // Follows the visible appearance: the visitor's choice or, by default, the device.
     const onScheme = () => {
-      dark = mq.matches;
+      dark = isDarkResolved();
       ink = readToken("--foreground");
-      accent = readToken("--link");
+      inkRgb = readTokenRgb("--foreground");
+      brands = GLYPHS.map((gl) => brandFor(gl, dark));
     };
 
     resize();
@@ -341,7 +449,7 @@ export const TechField = () => {
     document.addEventListener("pointerout", onOut);
     document.addEventListener("focusin", onOver);
     document.addEventListener("focusout", onOut);
-    mq.addEventListener("change", onScheme);
+    const offAppearance = onAppearanceChange(onScheme);
     // Fonts arrive after first paint; refresh the wordmarks once they do.
     document.fonts?.ready.then(onScheme).catch(() => undefined);
 
@@ -354,7 +462,7 @@ export const TechField = () => {
       document.removeEventListener("pointerout", onOut);
       document.removeEventListener("focusin", onOver);
       document.removeEventListener("focusout", onOut);
-      mq.removeEventListener("change", onScheme);
+      offAppearance();
     };
   }, [reduced]);
 
