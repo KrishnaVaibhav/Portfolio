@@ -84,6 +84,10 @@ type Particle = {
   oy: number;
   glow: number; // 0..1 proximity / focus brightness
   focus: number; // 0..1 eased highlight
+  lit: boolean; // currently "ignited" (in colour), for the one-off pulse
+  pop: number; // spring scale kick when it ignites
+  popV: number;
+  rot: number; // tilt from the pointer's push
 };
 
 // True when nothing opaque sits over (x, y), so a logo drawn there is actually visible.
@@ -144,6 +148,8 @@ export const TechField = () => {
     let brands = GLYPHS.map((gl) => brandFor(gl, dark));
     // Scroll activity 0..1: rises while the page moves, decays when it stops.
     let lastScroll = window.scrollY;
+    // Ignition pulses: a brand-coloured ring that ripples out once when an icon lights up.
+    let rings: { i: number; start: number; colour: string }[] = [];
     let activity = 0;
 
     const pointer = { x: -9999, y: -9999, active: false };
@@ -173,6 +179,10 @@ export const TechField = () => {
           oy: 0,
           glow: 0,
           focus: 0,
+          lit: false,
+          pop: 0,
+          popV: 0,
+          rot: 0,
         };
       });
     };
@@ -319,31 +329,74 @@ export const TechField = () => {
         }
       }
 
+      // Ignition rings, under the icons.
+      const now = performance.now();
+      rings = rings.filter((r) => now - r.start < 950);
+      for (const r of rings) {
+        const at = positions[r.i];
+        if (!at) continue;
+        const t = (now - r.start) / 950;
+        const e = 1 - Math.pow(1 - t, 3);
+        const size = 12 + at.p.depth * 13;
+        ctx.globalAlpha = Math.pow(1 - t, 2) * (dark ? 0.6 : 0.5);
+        ctx.strokeStyle = r.colour;
+        ctx.lineWidth = 0.6 + 1.4 * (1 - t);
+        ctx.beginPath();
+        ctx.arc(at.x, at.y, size * (0.75 + 1.9 * e), 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
       // Icons.
-      for (const { x, y, p } of positions) {
+      for (const { x, y, p, i } of positions) {
         const focus = p.focus;
-        const size = (12 + p.depth * 13) * (1 + focus * 0.7 + p.glow * 0.15);
         // How much brand colour shows: full when focused, strong near the
         // pointer, a gentle tint while scrolling, grey when nothing happens.
-        const colour = Math.min(1, Math.max(focus, p.glow * 1.8, activity * 0.55 * p.depth));
+        // Eased so colour arrives quickly and saturated rather than muddy.
+        const raw = Math.min(1, Math.max(focus, p.glow * 2, activity * 0.55 * p.depth));
+        const colour = 1 - Math.pow(1 - raw, 2);
         const brand = brands[p.glyph];
+
+        // Ignite once on the way up (hysteresis stops flicker at the edge):
+        // a ring ripples out and the logo gets a small spring kick.
+        if (!reduced) {
+          if (!p.lit && raw > 0.6) {
+            p.lit = true;
+            p.popV += 0.32;
+            if (rings.length < 12) rings.push({ i, start: now, colour: rgb(brand) });
+          } else if (p.lit && raw < 0.2) {
+            p.lit = false;
+          }
+          p.popV += -p.pop * 0.2;
+          p.popV *= 0.76;
+          p.pop += p.popV;
+          // Lean away from the pointer's push, like a leaf in a breeze.
+          p.rot += (Math.max(-0.35, Math.min(0.35, p.ox * 0.025)) - p.rot) * 0.1;
+        }
+
+        const size = (12 + p.depth * 13) * (1 + focus * 0.7 + p.glow * 0.18 + p.pop * 0.5);
         ctx.save();
         ctx.translate(x, y);
-        if (focus > 0.02) {
-          const halo = ctx.createRadialGradient(0, 0, 0, 0, 0, size * 1.6);
+        ctx.rotate(p.rot);
+
+        // Soft brand glow behind any coloured icon; strongest when focused.
+        const haloA = Math.max(focus * 0.24, colour * (dark ? 0.2 : 0.14) * p.depth);
+        if (haloA > 0.01) {
+          const reach = size * (1.5 + colour * 0.5);
+          const halo = ctx.createRadialGradient(0, 0, 0, 0, 0, reach);
           halo.addColorStop(0, rgb(brand));
           halo.addColorStop(1, "transparent");
-          ctx.globalAlpha = 0.18 * focus;
+          ctx.globalAlpha = haloA;
           ctx.fillStyle = halo;
           ctx.beginPath();
-          ctx.arc(0, 0, size * 1.6, 0, Math.PI * 2);
+          ctx.arc(0, 0, reach, 0, Math.PI * 2);
           ctx.fill();
         }
+
         ctx.globalAlpha = Math.min(
           1,
           base * (0.6 + p.depth) + p.glow * 0.55 * p.depth + focus * 0.85 + activity * 0.12 * p.depth +
-            // Colour needs a little more presence on a light background.
-            colour * (dark ? 0.12 : 0.3) * p.depth,
+            // Colour gets real presence; a little more on a light background.
+            colour * (dark ? 0.3 : 0.45) * p.depth,
         );
         ctx.fillStyle = colour > 0.01 ? rgb(mix(inkRgb, brand, colour)) : ink;
         drawGlyph(GLYPHS[p.glyph], size);
