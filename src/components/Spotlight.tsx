@@ -6,10 +6,12 @@ import type { LucideIcon } from "lucide-react";
 import {
   Search, UserRound, Layers, Briefcase, GraduationCap, FolderGit2, BadgeCheck, MessageCircle,
   Copy, Mail, Phone, Linkedin, Github, Radio, Lock, Users, Shield, Award, CheckCircle2, CornerDownLeft,
+  Monitor, Sun, Moon,
 } from "lucide-react";
 import { copyToClipboard, onSpotlight } from "@/lib/island";
 import { profile } from "@/data/profile";
 import { navigateWithTransition } from "@/lib/view-transition";
+import { setThemePref } from "@/lib/theme";
 
 type Item = {
   label: string;
@@ -80,6 +82,14 @@ export const Spotlight = () => {
         { label: "Azure Developer Associate (AZ-204)", hint: "Verify", icon: Shield, tint: "bg-[#0071e3]", keywords: ["microsoft"], run: () => openUrl("https://learn.microsoft.com/api/credentials/share/en-us/KrishnaVaibhav/D4B8C34A386E99D6?sharingId=E00486C99D01BA6") },
         { label: "AWS Developer Associate (DVA-C02)", hint: "Verify", icon: Award, tint: "bg-[#1d1d1f]", keywords: ["amazon"], run: () => openUrl("https://cp.certmetrics.com/amazon/en/public/verify/credential/392466d9b23b457e8a7cf0fc0d992be8") },
         { label: "ServiceNow Certified Administrator (CSA)", hint: "Verify", icon: CheckCircle2, tint: "bg-[#62d84e]", run: () => openUrl("https://www.servicenow.com/products/certification.html") },
+      ],
+    },
+    {
+      heading: "Appearance",
+      items: [
+        { label: "Light mode", hint: "Appearance", icon: Sun, tint: "bg-[#ff9f0a]", keywords: ["theme", "day", "bright"], run: () => setThemePref("light") },
+        { label: "Dark mode", hint: "Appearance", icon: Moon, tint: "bg-[#5e5ce6]", keywords: ["theme", "night"], run: () => setThemePref("dark") },
+        { label: "System default appearance", hint: "Appearance", icon: Monitor, tint: "bg-[#636366]", keywords: ["theme", "auto", "mode", "device"], run: () => setThemePref("system") },
       ],
     },
     {

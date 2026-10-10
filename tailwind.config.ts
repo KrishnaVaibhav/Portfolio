@@ -2,7 +2,15 @@ import type { Config } from "tailwindcss";
 import plugin from "tailwindcss/plugin";
 
 export default {
-  darkMode: "media",
+  // `dark:` applies when the visitor chose Dark, or follows a dark device
+  // while they have not explicitly chosen Light (see the appearance tokens).
+  darkMode: [
+    "variant",
+    [
+      "&:is([data-theme=dark] *)",
+      "@media (prefers-color-scheme: dark) { &:not([data-theme=light] *) }",
+    ],
+  ],
   content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
   prefix: "",
   theme: {
