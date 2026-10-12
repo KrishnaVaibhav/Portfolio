@@ -3,6 +3,7 @@ import {
   siReact, siTypescript, siJavascript, siNodedotjs, siOpenjdk, siSpringboot, siDotnet, siPython,
   siDocker, siKubernetes, siPostgresql, siMongodb, siRedis, siMysql, siGithubactions, siJenkins,
   siGitlab, siJest, siSelenium, siPostman, siApachekafka, siGit, siRedux, siSupabase,
+  siExpress, siJunit5, siGithub, siJira, siSwagger, siAndroid, siNpm, siVite, siLinux, siGrafana,
 } from "simple-icons";
 import { usePrefersReducedMotion } from "@/hooks/use-motion";
 import { isDarkResolved, onAppearanceChange } from "@/lib/theme";
@@ -47,7 +48,9 @@ const GLYPHS: Glyph[] = [
   g("react", siReact, ["react"]),
   g("redux", siRedux, ["redux"]),
   g("node", siNodedotjs, ["node"]),
-  g("java", siOpenjdk, ["java", "junit"], undefined, "E76F00"),
+  g("express", siExpress, ["express", "restful", "rest api"]),
+  g("junit", siJunit5, ["junit"]),
+  g("java", siOpenjdk, ["java"], undefined, "E76F00"),
   g("spring", siSpringboot, ["spring"]),
   g("dotnet", siDotnet, [".net", "c#"]),
   g("python", siPython, ["python"]),
@@ -59,6 +62,7 @@ const GLYPHS: Glyph[] = [
   g("mysql", siMysql, ["mysql"]),
   g("kafka", siApachekafka, ["kafka"]),
   g("actions", siGithubactions, ["github actions"]),
+  g("github", siGithub, ["github"]),
   g("jenkins", siJenkins, ["jenkins"]),
   g("gitlab", siGitlab, ["gitlab"]),
   g("git", siGit, ["git", "ci/cd"]),
@@ -66,6 +70,13 @@ const GLYPHS: Glyph[] = [
   g("selenium", siSelenium, ["selenium"]),
   g("postman", siPostman, ["postman"]),
   g("supabase", siSupabase, ["supabase"]),
+  g("swagger", siSwagger, ["swagger", "openapi"]),
+  g("jira", siJira, ["jira", "agile", "scrum"]),
+  g("android", siAndroid, ["android", "mobile", "cross-platform"]),
+  g("grafana", siGrafana, ["grafana", "monitoring", "observability"]),
+  g("npm", siNpm, ["npm"]),
+  g("vite", siVite, ["vite"]),
+  g("linux", siLinux, ["linux"]),
 ];
 
 const matchGlyph = (label: string) => {
@@ -161,17 +172,25 @@ export const TechField = () => {
     const lastPos: { x: number; y: number }[] = [];
 
     const seed = () => {
-      const count = Math.round(Math.min(48, Math.max(GLYPHS.length, (W * H) / 36000)));
-      // Every technology appears at least once, in a scrambled order.
+      // Roughly one logo per 15,000 px² (about 86 on a 1440×900 screen), fewer
+      // on phones, capped for very large displays.
+      const count = Math.round(Math.min(110, Math.max(24, (W * H) / 15000)));
+      // Every technology appears (at least once where there is room), scrambled.
       const order = Array.from({ length: count }, (_, i) => i % GLYPHS.length).sort(() => Math.random() - 0.5);
+      // Spread evenly: one logo per cell of a grid shaped like the screen,
+      // jittered inside its cell, so there are no clumps and no empty patches.
+      const cols = Math.max(1, Math.round(Math.sqrt((count * W) / H)));
+      const rows = Math.ceil(count / cols);
+      const cells = Array.from({ length: cols * rows }, (_, i) => i).sort(() => Math.random() - 0.5);
       particles = order.map((glyph, i) => {
         const depth = [0.35, 0.6, 1][i % 3];
         const angle = Math.random() * Math.PI * 2;
         const speed = (0.04 + Math.random() * 0.06) * depth;
+        const cell = cells[i];
         return {
           glyph,
-          x: Math.random() * W,
-          y: Math.random() * H,
+          x: ((cell % cols) + 0.15 + Math.random() * 0.7) * (W / cols),
+          y: (Math.floor(cell / cols) + 0.15 + Math.random() * 0.7) * (H / rows),
           depth,
           vx: Math.cos(angle) * speed,
           vy: Math.sin(angle) * speed,
