@@ -34,9 +34,7 @@ const education = [
   },
 ];
 
-
 type Edu = (typeof education)[number];
-
 /*
   University mark as a layered app-icon plate: the logo floats on its own plane
   (parallax as the card tilts, lifting further on hover), a specular sheen
