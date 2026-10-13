@@ -34,6 +34,7 @@ const education = [
   },
 ];
 
+
 type Edu = (typeof education)[number];
 
 /*
